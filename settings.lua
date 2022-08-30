@@ -24,7 +24,7 @@ end
 local function InitSettings()
 	local colred = {0, 1, 0, 1}
 	TH_Settings = {}
-	local settingname = -THname
+	local settingname = THname
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
 
