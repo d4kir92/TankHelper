@@ -1,9 +1,6 @@
 -- By D4KiR
 
-THname = "Tank Helper"
-THcolorname = "|c008888ff"
-THauthor = "D4KiR"
-THcolorauthor = "|c0000ffff"
+THname = "TankHelper |T132362/:16:16:0:0|t by |cFFAAAAFFD4KiR |T132115/:16:16:0:0|t"
 
 SetCVar("ScriptErrors", 1)
 
