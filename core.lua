@@ -434,6 +434,8 @@ function THSetStatusText()
 		return
 	end
 
+	THStatusColor = THStatusColor or { 1, 1, 1, 1 }
+	
 	if not THGetConfig("hidestatus", false) then
 		local text = THGT("ready", nil, true) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
