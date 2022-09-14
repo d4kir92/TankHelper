@@ -91,7 +91,6 @@ end
 function ResetIcons1()
 	for i, v in pairs(ricons1) do
 		if frameCockpit:IsShown() then
-			--v.bgtexture:SetColorTexture(0, 0, 0, 0)
 			v.bgtexture:SetTexture("")
 		end
 	end
@@ -127,8 +126,7 @@ for i = 1, 9 do
 	frameCockpit["btn" .. i]:SetSize(iconbtn, iconbtn)
 
 	frameCockpit["btn" .. i].bgtexture = frameCockpit["btn" .. i]:CreateTexture(nil, "OVERLAY")
-	--frameCockpit["btn" .. i].bgtexture:SetAllPoints(frameCockpit["btn" .. i])
-	--frameCockpit["btn" .. i].bgtexture:SetColorTexture(1, 1, 0, THBORDERALPHA)
+
 	frameCockpit["btn" .. i].bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 	frameCockpit["btn" .. i].bgtexture:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
 	frameCockpit["btn" .. i].bgtexture:SetSize(iconbtn * 1.2, iconbtn * 1.2)
@@ -158,7 +156,6 @@ for i = 1, 9 do
 			ResetIcons1()
 			if THGetConfig("autoselect", nil) ~= i then
 				if frameCockpit:IsShown() then
-					--self.bgtexture:SetColorTexture(1, 1, 0, THBORDERALPHA)
 					self.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 				end
 				THTAB["autoselect"] = i
@@ -348,7 +345,6 @@ frameCockpit:HookScript("OnEvent", function(self, e, ...)
 		if THGetConfig("autoselect", nil) ~= nil then
 			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
 			if frameCockpit:IsShown() then
-				--btn.bgtexture:SetColorTexture(1, 1, 0, THBORDERALPHA)
 				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 			end
 		end
@@ -429,12 +425,11 @@ C_Timer.After(0, THDesignThink)
 
 
 
+local THStatusColor = { 1, 1, 1, 1 }
 function THSetStatusText()
 	if frameCockpit == nil or frameStatus == nil then
 		return
 	end
-
-	THStatusColor = THStatusColor or { 1, 1, 1, 1 }
 	
 	if not THGetConfig("hidestatus", false) then
 		local text = THGT("ready", nil, true) .. "!"
@@ -499,10 +494,11 @@ function THSetStatusText()
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
-
-		--frameStatus.text:SetTextColor(THStatusColor[1], THStatusColor[2], THStatusColor[3], THStatusColor[4])
-		frameStatus.text:SetText(text)
-		frameStatus.texture:SetColorTexture(THStatusColor[1], THStatusColor[2], THStatusColor[3], THStatusColor[4])
+		
+		frameStatus.text:SetText( text )
+		if frameStatus.texture.SetColorTexture and THStatusColor[1] and THStatusColor[2] and THStatusColor[3] then
+			frameStatus.texture:SetColorTexture( THStatusColor[1], THStatusColor[2], THStatusColor[3], THStatusColor[4] )
+		end
 	end
 end
 THSetStatusText()
@@ -590,7 +586,6 @@ function THUpdatePosAndSize()
 		if THGetConfig("autoselect", nil) ~= nil then
 			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
 			if frameCockpit:IsShown() then
-				--btn.bgtexture:SetColorTexture(1, 1, 0, THBORDERALPHA)
 				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 			end
 		end
