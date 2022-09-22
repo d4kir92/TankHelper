@@ -1,6 +1,6 @@
 ## Interface: 11403
-## Version: 1.0.6
-## Title: TankHelper |T132362/:16:16:0:0|t by |cff3FC7EBD4KiR |T132115/:16:16:0:0|t 
+## Version: 1.0.7
+## Title: TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
 ## DefaultState: enabled
