@@ -634,60 +634,69 @@ frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 
 function THUpdateThreatStatus( np, reset )
 	if np.UnitFrame == nil then
-		C_Timer.After( 0.1, function()
-			THUpdateThreatStatus( np, reset )
-		end )
 		return
 	end
-	local unit = np.UnitFrame.unit
-	if unit then
-		if np and np.th_threat ~= nil then
-			local isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation( "PLAYER", unit )
-
-			if THGetConfig( "nameplatethreat", true ) and scaledPercentage and not reset then
-				scaledPercentage = tonumber( string.format( "%.0f", scaledPercentage ) )
-
-				np.th_threat.text:SetText( scaledPercentage .. "%" )
-				if scaledPercentage > 100 then
-					np.th_threat.texture:SetTexture( "Interface\\COMMON\\Indicator-Yellow" )
-					np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
-					np.th_threat.texture:SetAlpha( 1 )
-					np.th_threat.text:SetTextColor( 1, 1, 0, 1 )
-				elseif scaledPercentage == 100 then
-					np.th_threat.texture:SetTexture( "Interface\\MINIMAP\\Minimap_shield_normal" )
-					np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
-					np.th_threat.texture:SetAlpha( 0.33 )
-					np.th_threat.text:SetTextColor( 0, 1, 0, 0.33 )
-				elseif scaledPercentage == 0 then
-					np.th_threat.texture:SetTexture( "Interface\\WORLDSTATEFRAME\\CombatSwords" )
-					np.th_threat.texture:SetTexCoord( 0, 0.5, 0, 0.5 )
-					np.th_threat.texture:SetAlpha( 1 )
-					np.th_threat.text:SetTextColor( 1, 0, 0, 1 )
-				else
-					np.th_threat.texture:SetTexture( "Interface\\WORLDSTATEFRAME\\CombatSwords" )
-					np.th_threat.texture:SetTexCoord( 0, 0.5, 0, 0.5 )
-					np.th_threat.texture:SetAlpha( 1 )
-					np.th_threat.text:SetTextColor( 1, 1, 0, 1 )
-				end
-			else
-				np.th_threat.text:SetText( -1 .. "%" )
-
-				np.th_threat.texture:SetTexture( nil )
-				np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
-				np.th_threat.texture:SetAlpha( 0 )
-				np.th_threat.text:SetTextColor( 0, 0, 0, 0 )
-			end
-		end
+	if np.th_threat == nil then
+		return
 	end
 
-	C_Timer.After( 0.1, function()
-		THUpdateThreatStatus( np, reset )
-	end )
+	local unit = np.UnitFrame.unit
+	if unit == nil then
+		return 
+	end
+	local isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation( "PLAYER", unit )
+	if THGetConfig( "nameplatethreat", true ) and scaledPercentage and not reset then
+		scaledPercentage = tonumber( string.format( "%.0f", scaledPercentage ) )
+
+		np.th_threat.text:SetText( scaledPercentage .. "%" )
+		if scaledPercentage > 100 then
+			np.th_threat.texture:SetTexture( "Interface\\COMMON\\Indicator-Yellow" )
+			np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
+			np.th_threat.texture:SetAlpha( 1 )
+			np.th_threat.text:SetTextColor( 1, 1, 0, 1 )
+		elseif scaledPercentage == 100 then
+			np.th_threat.texture:SetTexture( "Interface\\MINIMAP\\Minimap_shield_normal" )
+			np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
+			np.th_threat.texture:SetAlpha( 0.33 )
+			np.th_threat.text:SetTextColor( 0, 1, 0, 0.33 )
+		elseif scaledPercentage == 0 then
+			np.th_threat.texture:SetTexture( "Interface\\WORLDSTATEFRAME\\CombatSwords" )
+			np.th_threat.texture:SetTexCoord( 0, 0.5, 0, 0.5 )
+			np.th_threat.texture:SetAlpha( 1 )
+			np.th_threat.text:SetTextColor( 1, 0, 0, 1 )
+		else
+			np.th_threat.texture:SetTexture( "Interface\\WORLDSTATEFRAME\\CombatSwords" )
+			np.th_threat.texture:SetTexCoord( 0, 0.5, 0, 0.5 )
+			np.th_threat.texture:SetAlpha( 1 )
+			np.th_threat.text:SetTextColor( 1, 1, 0, 1 )
+		end
+	else
+		np.th_threat.text:SetText( -1 .. "%" )
+
+		np.th_threat.texture:SetTexture( nil )
+		np.th_threat.texture:SetTexCoord( 0, 1, 0, 1 )
+		np.th_threat.texture:SetAlpha( 0 )
+		np.th_threat.text:SetTextColor( 0, 0, 0, 0 )
+	end
 end
+
+local nps = {}
+function THThinkNameplates()
+	if THGetConfig( "nameplatethreat", true ) then
+		for i, np in pairs( nps ) do
+			THUpdateThreatStatus( np )
+		end
+
+		C_Timer.After( 0.33, THThinkNameplates )
+	else
+		C_Timer.After( 1, THThinkNameplates )
+	end
+end
+C_Timer.After( 2, THThinkNameplates )
 
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "NAME_PLATE_CREATED" then
-		local np = select(1, ...)
+		local np = select( 1, ... )
 		if np.th_threat == nil then
 			np.th_threat = CreateFrame( "FRAME", nil, np )
 			np.th_threat:SetSize( 1, 1 )
@@ -703,7 +712,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat.text:SetText( "CREATED" )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 
-			THUpdateThreatStatus( np )
+			table.insert( nps, np )
 		end
     end
 end)
