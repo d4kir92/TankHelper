@@ -17,6 +17,7 @@ function THthlang_enUS()
 	thlang.playerhavenotenoughpower = "Player have not enough power"
 
 	--Settings
+	thlang.showalways = "Show Always"
 	thlang.showtranslation = "Show Translation"
 	thlang.ibr = "Column Spacing: VALUE"
 	thlang.cbr = "Row Spacing: VALUE"

@@ -1,4 +1,3 @@
--- LIB Design
 
 function THCreateText(tab)
 	tab.textsize = tab.textsize or 12
@@ -141,7 +140,7 @@ function THcreateF(tab)
 	local frame = CreateFrame("FRAME", tab.name, tab.parent)
 	frame:SetWidth(tab.w)
 	frame:SetHeight(tab.h)
-	--frame:ClearAllPoints()
+
 	frame:SetPoint(tab.align, tab.parent, tab.align, tab.x, tab.y)
 
 	tab.layer = tab.layer or "BACKGROUND"

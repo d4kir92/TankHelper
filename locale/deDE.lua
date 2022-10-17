@@ -16,6 +16,7 @@ function THthlang_deDE()
 	thlang.playerhavenotenoughpower = "Spieler hat nicht genug Kraft"
 
 	--Settings
+	thlang.showalways = "Immer anzeigen"
 	thlang.showtranslation = "Übersetzung anzeigen"
 	thlang.ibr = "Spaltenabstand: VALUE"
 	thlang.cbr = "Zeilenabstand: VALUE"

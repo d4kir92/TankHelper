@@ -1,4 +1,3 @@
--- By D4KiR
 
 THname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 

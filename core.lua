@@ -1,4 +1,3 @@
--- By D4KiR
 
 local THBORDERALPHA = 0.5
 
@@ -65,24 +64,29 @@ function THRW(msg)
 end
 
 function THPullIn(t)
-	if C_PartyInfo and C_PartyInfo.DoCountdown then
-		C_PartyInfo.DoCountdown(t);
-	end
-	if IsInInstance() then
-		local tab = {}
-		tab["VALUE"] = t
-		THRW(THGT("pullinx", tab))
-		for i = 1, t do
-			C_Timer.After( i, function()
-				if t - i == 0 then
-					THRW(THGT("go") .. "!")
-				else
-					THRW(t - i)
-				end
-			end )
-		end
+	if SlashCmdList["DEADLYBOSSMODS"] then
+		SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
 	else
-		print("[TANK HELPER] " .. THGT("youmustbeinaninstance", nil, true) .. "!")
+		if C_PartyInfo and C_PartyInfo.DoCountdown then
+			C_PartyInfo.DoCountdown( t );
+		end
+
+		if IsInInstance() then
+			local tab = {}
+			tab["VALUE"] = t
+			THRW(THGT("pullinx", tab))
+			for i = 1, t do
+				C_Timer.After( i, function()
+					if t - i == 0 then
+						THRW(THGT("go") .. "!")
+					else
+						THRW(t - i)
+					end
+				end )
+			end
+		else
+			print("[TANK HELPER] " .. THGT("youmustbeinaninstance", nil, true) .. "!")
+		end
 	end
 end
 
@@ -166,7 +170,6 @@ for i = 1, 9 do
 	end)
 	table.insert(ricons1, frameCockpit["btn" .. i])
 
-	-- Raid icon secondary
 	if IsRaidMarkerActive then
 		frameCockpit["btnwm" .. i] = CreateFrame("Button", "btnwm" .. i, frameCockpit, "SecureActionButtonTemplate")
 		frameCockpit["btnwm" .. i]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (i - 1) * (iconbtn + ibr), -obr - iconbtn - cbr)
@@ -256,7 +259,6 @@ for i = 1, 9 do
 		Y = Y + 1
 	end
 
-	-- Pulltimer
 	if i <= #pt then
 		frameCockpit["btnp" .. i] = CreateFrame("Button", "btnp" .. i, frameCockpit, "UIPanelButtonTemplate")
 		frameCockpit["btnp" .. i]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (i - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
@@ -269,7 +271,6 @@ for i = 1, 9 do
 	end
 end
 
--- Ready Check
 frameCockpit["btnReadycheck"] = CreateFrame("Button", "btnReadycheck", frameCockpit, "UIPanelButtonTemplate")
 frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
 if IsRaidMarkerActive or InitiateRolePoll then
@@ -283,7 +284,6 @@ frameCockpit["btnReadycheck"]:SetScript("OnClick", function(self, btn, down)
 	DoReadyCheck();
 end)
 
--- Role Check
 if InitiateRolePoll then
 	frameCockpit["btnRolepoll"] = CreateFrame("Button", "btnRolepoll", frameCockpit, "UIPanelButtonTemplate")
 	frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + 50, -obr - Y * (iconbtn + cbr))
@@ -294,13 +294,12 @@ if InitiateRolePoll then
 	end)
 end
 
--- Discord
 frameCockpit["btnDiscord"] = CreateFrame("Button", "btnDiscord", frameCockpit, "UIPanelButtonTemplate")
 frameCockpit["btnDiscord"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
 frameCockpit["btnDiscord"]:SetSize(iconbtn, iconbtn)
 frameCockpit["btnDiscord"]:SetText("D")
 frameCockpit["btnDiscord"]:SetScript("OnClick", function(self, btn, down)
-	local s = CreateFrame("Frame", nil, UIParent) -- or you actual parent instead
+	local s = CreateFrame("Frame", nil, UIParent)
 	s:SetSize(300, 2 * iconbtn + 2 * 10)
 	s:SetPoint("CENTER")
 
@@ -340,7 +339,6 @@ frameCockpit:RegisterEvent("UNIT_POWER_UPDATE")
 frameCockpit:RegisterEvent("GROUP_ROSTER_UPDATE");
 frameCockpit:RegisterEvent("RAID_ROSTER_UPDATE");
 frameCockpit:HookScript("OnEvent", function(self, e, ...)
-	--if not InCombatLockdown() then
 	if e == "PLAYER_ENTERING_WORLD" then
 		if THGetConfig("autoselect", nil) ~= nil then
 			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
@@ -355,7 +353,7 @@ frameCockpit:HookScript("OnEvent", function(self, e, ...)
 	end
 
 	if e == "PLAYER_TARGET_CHANGED" then
-		if UnitExists("TARGET") and UnitIsEnemy("TARGET", "PLAYER") then--and GetRaidTargetIndex("TARGET") == nil and id ~= nil then
+		if UnitExists("TARGET") and UnitIsEnemy("TARGET", "PLAYER") then
 			if (GetRaidTargetIndex("TARGET") == nil) and THGetConfig("autoselect", nil) ~= nil then
 				SetRaidTarget("TARGET", THGetConfig("autoselect", nil));
 			end
@@ -413,6 +411,16 @@ function THDesignThink()
 			end
 		end
 
+		if THGetConfig( "showalways", false ) then
+			frameCockpit:Show()
+		else
+			if UnitInParty( "PLAYER" ) or UnitInRaid( "PLAYER" ) then
+				frameCockpit:Show()
+			else
+				frameCockpit:Hide()
+			end
+		end
+
 		frameCockpit:SetMovable(not THGetConfig("fixposition", false))
 		frameCockpit:EnableMouse(not THGetConfig("fixposition", false))
 		frameStatus:SetMovable(not THGetConfig("fixposition", false))
@@ -443,7 +451,7 @@ function THSetStatusText()
 			local power = 1
 			local dead = false
 
-			if UnitExists("PLAYER") then --not UnitIsDead("PARTY" .. i) then
+			if UnitExists("PLAYER") then
 				local percent = UnitHealth("PLAYER") / UnitHealthMax("PLAYER")
 				if percent < health then
 					health = percent
@@ -461,7 +469,7 @@ function THSetStatusText()
 			end
 
 			for i = 1, 4 do
-				if UnitExists("PARTY" .. i) then --not UnitIsDead("PARTY" .. i) then
+				if UnitExists("PARTY" .. i) then
 					local percent = UnitHealth("PARTY" .. i) / UnitHealthMax("PARTY" .. i)
 					if percent < health then
 						health = percent
@@ -558,12 +566,12 @@ function THUpdatePosAndSize()
 		end
 	end
 
-	local bw = obr + (5 - 1) * (iconbtn + ibr) 	-- Before width
-	local aw = obr + iconbtn + ibr				-- After width
-	local bsw = frameCockpit:GetWidth() - bw - aw  -- Button size width
+	local bw = obr + (5 - 1) * (iconbtn + ibr)
+	local aw = obr + iconbtn + ibr
+	local bsw = frameCockpit:GetWidth() - bw - aw
 	if IsRaidMarkerActive or InitiateRolePoll then
-		bsw = bsw - ibr 	-- Space between the two
-		bsw = bsw / 2		-- Two buttons
+		bsw = bsw - ibr
+		bsw = bsw / 2
 	end
 
 	frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
@@ -624,7 +632,6 @@ end
 
 
 
--- NAMEPLATE 
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("NAME_PLATE_CREATED")
 frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
@@ -639,7 +646,6 @@ function THUpdateThreatStatus( np, reset )
 	if np.th_threat == nil then
 		return
 	end
-
 	local unit = np.UnitFrame.unit
 	if unit == nil then
 		return 
@@ -681,13 +687,13 @@ function THUpdateThreatStatus( np, reset )
 end
 
 local nps = {}
-function THThinkNameplates()
-	if THGetConfig( "nameplatethreat", true ) then
+function THThinkNameplates( force )
+	if THGetConfig( "nameplatethreat", true ) or force then
 		for i, np in pairs( nps ) do
 			THUpdateThreatStatus( np )
 		end
 
-		C_Timer.After( 0.33, THThinkNameplates )
+		C_Timer.After( 0.2, THThinkNameplates )
 	else
 		C_Timer.After( 1, THThinkNameplates )
 	end
@@ -701,7 +707,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat = CreateFrame( "FRAME", nil, np )
 			np.th_threat:SetSize( 1, 1 )
 			np.th_threat:SetPoint( "CENTER", np, "CENTER", 0, 0 )
-			--np.th_threat:SetIgnoreParentAlpha( true )
+			-- np.th_threat:SetIgnoreParentAlpha( true )
 			
 			np.th_threat.texture = np:CreateTexture( nil, "OVERLAY" )
 			np.th_threat.texture:SetSize(42, 42)
@@ -709,8 +715,12 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			
 			np.th_threat.text = np:CreateFontString( nil, "OVERLAY" ) 
 			np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
-			np.th_threat.text:SetText( "CREATED" )
+			np.th_threat.text:SetText( "CREATED BY TankHelper" )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
+
+			C_Timer.After( 0.02, function()
+				THUpdateThreatStatus( np )
+			end )
 
 			table.insert( nps, np )
 		end

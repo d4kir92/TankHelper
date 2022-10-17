@@ -1,4 +1,3 @@
--- LIB Math
 
 function mathR(num, dec)
 	dec = dec or 2

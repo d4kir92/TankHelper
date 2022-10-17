@@ -1,4 +1,3 @@
--- LIB Design
 
 thlang = thlang or {}
 ethlang = ethlang or {}
@@ -22,7 +21,7 @@ function THGT(str, tab, force)
 		if force then
 			return result
 		elseif THGetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-			return eng .. " [" .. result .. "]"
+			return result
 		else
 			return eng
 		end
@@ -34,19 +33,14 @@ end
 function THUpdatethlanguage()
 	THthlang_enUS()
 	if GetLocale() == "enUS" then
-		--THmsg("Translation found! [enUS (English)]")
 		THthlang_enUS()
 	elseif GetLocale() == "deDE" then
-		--THmsg("Translation found! [deDE (Deutsch)]")
 		THthlang_deDE()
 	elseif GetLocale() == "koKR" then
-		--THmsg("Translation found! [koKR (Korean)]")
 		THthlang_koKR()
 	elseif GetLocale() == "ruRU" then
-		--THmsg("Translation found! [ruRU (Russian)]")
 		THthlang_ruRU()
 	elseif GetLocale() == "zhTW" then
-		--THmsg("Translation found! [zhTW (Traditional Chinese)]")
 		THthlang_zhTW()
 	end
 end

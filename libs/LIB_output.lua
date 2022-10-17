@@ -1,4 +1,3 @@
--- LIB Output
 
 THname = THname or "X"
 

@@ -1,4 +1,3 @@
--- By D4KiR
 
 THBUILD = "CLASSIC"
 if select(4, GetBuildInfo()) > 90000 then
@@ -30,7 +29,18 @@ local function InitSettings()
 	THCreateText(settings_header)
 	Y = Y - BR
 
-	-- showtranslation
+	local settings_showalways = {}
+	settings_showalways.name = "showalways"
+	settings_showalways.parent = TH_Settings.panel
+	settings_showalways.checked = THGetConfig( "showalways", false )
+	settings_showalways.text = "showalways"
+	settings_showalways.x = 10
+	settings_showalways.y = Y
+	settings_showalways.dbvalue = "showalways"
+	settings_showalways.color = colred
+	THCreateCheckBox(settings_showalways)
+	Y = Y - 24
+
 	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = TH_Settings.panel
@@ -39,12 +49,10 @@ local function InitSettings()
 	settings_showtranslation.x = 10
 	settings_showtranslation.y = Y
 	settings_showtranslation.dbvalue = "showtranslation"
-	--settings_showtranslation.func = RUI
 	settings_showtranslation.color = colred
 	THCreateCheckBox(settings_showtranslation)
 	Y = Y - 24
 
-	-- fixposition
 	local settings_fixposition = {}
 	settings_fixposition.name = "fixposition"
 	settings_fixposition.parent = TH_Settings.panel
@@ -53,12 +61,10 @@ local function InitSettings()
 	settings_fixposition.x = 10
 	settings_fixposition.y = Y
 	settings_fixposition.dbvalue = "fixposition"
-	--settings_fixposition.func = RUI
 	settings_fixposition.color = colred
 	THCreateCheckBox(settings_fixposition)
 	Y = Y - 24
 
-	-- hidestatus
 	local settings_hidestatus = {}
 	settings_hidestatus.name = "hidestatus"
 	settings_hidestatus.parent = TH_Settings.panel
@@ -67,12 +73,10 @@ local function InitSettings()
 	settings_hidestatus.x = 10
 	settings_hidestatus.y = Y
 	settings_hidestatus.dbvalue = "hidestatus"
-	--settings_hidestatus.func = RUI
 	settings_hidestatus.color = colred
 	THCreateCheckBox(settings_hidestatus)
 	Y = Y - 24
 
-	-- nameplatethreat
 	local settings_nameplatethreat = {}
 	settings_nameplatethreat.name = "nameplatethreat"
 	settings_nameplatethreat.parent = TH_Settings.panel
@@ -81,12 +85,11 @@ local function InitSettings()
 	settings_nameplatethreat.x = 10
 	settings_nameplatethreat.y = Y
 	settings_nameplatethreat.dbvalue = "nameplatethreat"
-	--settings_nameplatethreat.func = RUI
 	settings_nameplatethreat.color = colred
+	settings_nameplatethreat.func = function() THThinkNameplates( true ) end
 	THCreateCheckBox(settings_nameplatethreat)
 	Y = Y - 24
 
-	-- obr
 	Y = Y - BR
 	local settings_obr = {}
 	settings_obr.name = "obr"
@@ -105,7 +108,6 @@ local function InitSettings()
 	THCreateSlider(settings_obr)
 	Y = Y - H
 	
-	-- ibr
 	Y = Y - BR
 	local settings_ibr = {}
 	settings_ibr.name = "ibr"
@@ -124,7 +126,6 @@ local function InitSettings()
 	THCreateSlider(settings_ibr)
 	Y = Y - H
 
-	-- cbr
 	Y = Y - BR
 	local settings_cbr = {}
 	settings_cbr.name = "cbr"
@@ -143,7 +144,6 @@ local function InitSettings()
 	THCreateSlider(settings_cbr)
 	Y = Y - H
 
-	-- iconsize
 	Y = Y - BR
 	local settings_iconsize = {}
 	settings_iconsize.name = "iconsize"
