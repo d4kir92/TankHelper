@@ -73,13 +73,13 @@ function THPullIn(t)
 		tab["VALUE"] = t
 		THRW(THGT("pullinx", tab))
 		for i = 1, t do
-			C_Timer.After(i, function()
+			C_Timer.After( i, function()
 				if t - i == 0 then
 					THRW(THGT("go") .. "!")
 				else
 					THRW(t - i)
 				end
-			end)
+			end )
 		end
 	else
 		print("[TANK HELPER] " .. THGT("youmustbeinaninstance", nil, true) .. "!")
@@ -248,7 +248,7 @@ for i = 1, 9 do
 					btn2:SetAlpha(1);
 				end
 			end
-			C_Timer.After(0.3, btn.think)
+			C_Timer.After( 0.33, btn.think )
 		end
 		btn.think()
 		
@@ -419,9 +419,9 @@ function THDesignThink()
 		frameStatus:EnableMouse(not THGetConfig("fixposition", false))
 	end
 
-	C_Timer.After(0.3, THDesignThink)
+	C_Timer.After( 0.33, THDesignThink )
 end
-C_Timer.After(0, THDesignThink)
+C_Timer.After( 0.1, THDesignThink )
 
 
 
@@ -501,7 +501,6 @@ function THSetStatusText()
 		end
 	end
 end
-THSetStatusText()
 
 
 
@@ -582,14 +581,14 @@ function THUpdatePosAndSize()
 	frameStatus:SetSize(frameCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 
 	ResetIcons1()
-	C_Timer.After(1, function()
+	C_Timer.After( 1, function()
 		if THGetConfig("autoselect", nil) ~= nil then
 			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
 			if frameCockpit:IsShown() then
 				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 			end
 		end
-	end)
+	end )
 
 	local point = THTAB["frameCockpit" .. "point"]
 	local parent = THTAB["frameCockpit" .. "parent"]
@@ -617,8 +616,9 @@ end
 function THSetup()
 	if not InCombatLockdown() then
 		THUpdatePosAndSize()
+		THSetStatusText()
 	else
-		C_Timer.After( 0.1, THSetup )
+		C_Timer.After( 0.15, THSetup )
 	end
 end
 
@@ -634,11 +634,13 @@ frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 
 function THUpdateThreatStatus( np, reset )
 	if np.UnitFrame == nil then
+		C_Timer.After( 0.1, function()
+			THUpdateThreatStatus( np, reset )
+		end )
 		return
 	end
 	local unit = np.UnitFrame.unit
 	if unit then
-		--local np = _G["NamePlate" .. string.gsub( unit, "nameplate", "" )]
 		if np and np.th_threat ~= nil then
 			local isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation( "PLAYER", unit )
 
@@ -677,6 +679,10 @@ function THUpdateThreatStatus( np, reset )
 			end
 		end
 	end
+
+	C_Timer.After( 0.1, function()
+		THUpdateThreatStatus( np, reset )
+	end )
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -687,10 +693,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat:SetSize( 1, 1 )
 			np.th_threat:SetPoint( "CENTER", np, "CENTER", 0, 0 )
 			--np.th_threat:SetIgnoreParentAlpha( true )
-			np.th_threat:HookScript( "OnUpdate", function()
-				THUpdateThreatStatus( np )
-			end )
-
+			
 			np.th_threat.texture = np:CreateTexture( nil, "OVERLAY" )
 			np.th_threat.texture:SetSize(42, 42)
 			np.th_threat.texture:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
@@ -699,6 +702,8 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
 			np.th_threat.text:SetText( "CREATED" )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
+
+			THUpdateThreatStatus( np )
 		end
     end
 end)

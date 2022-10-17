@@ -9,18 +9,6 @@ elseif select(4, GetBuildInfo()) > 19999 then
 	THBUILD = "TBC"
 end
 
-function ReloadUF()
-	PlayerFrameTexture:SetTexture(PlayerFrameTexture:GetTexture())
-	TargetFrameTextureFrameTexture:SetTexture(TargetFrameTextureFrameTexture:GetTexture())
-	TargetFrameTextureFrameTexture:SetTexture(TargetFrameTextureFrameTexture:GetTexture())
-	if FocusFrameTextureFrameTexture ~= nil then
-		FocusFrameTextureFrameTexture:SetTexture(FocusFrameTextureFrameTexture:GetTexture())
-	end
-	for i = 1, 4 do
-		_G["PartyMemberFrame" .. i .. "Texture"]:SetTexture(_G["PartyMemberFrame" .. i .. "Texture"]:GetTexture())
-	end
-end
-
 local function InitSettings()
 	local colred = {0, 1, 0, 1}
 	TH_Settings = {}
@@ -180,11 +168,7 @@ end
 THloaded = false
 THSETUP = false
 
-local vars = false
-local addo = false
 local frame = CreateFrame("FRAME")
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("VARIABLES_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
@@ -195,14 +179,6 @@ function frame:OnEvent(event)
 		THSETUP = true
 
 		THSetup()
-	end
-	if event == "VARIABLES_LOADED" then
-		vars = true
-		--THSetup()
-	end
-	if event == "ADDON_LOADED" then
-		addo = true
-		--THSetup()
 	end
 end
 frame:SetScript("OnEvent", frame.OnEvent)

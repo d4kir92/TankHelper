@@ -37,8 +37,6 @@ function THCreateCheckBox(tab)
 		THTAB[tab.dbvalue] = status
 		if tab.func ~= nil then
 			tab:func()
-		else
-			--THSetup()
 		end
 	end)
 
@@ -81,8 +79,6 @@ function THCreateSlider(tab)
 		SL.Text:SetText(THGT(tab.text, trans, true))
 		if tab.func ~= nil then
 			tab:func()
-		else
-			--THSetup()
 		end
 	end)
 
