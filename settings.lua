@@ -57,7 +57,7 @@ local function InitSettings()
 	THCreateComboBox(settings_channel)
 	Y = Y - 40
 
-	--[[local settings_showtranslation = {}
+	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = TH_Settings.panel
 	settings_showtranslation.checked = THGetConfig("showtranslation", true)
@@ -67,7 +67,7 @@ local function InitSettings()
 	settings_showtranslation.dbvalue = "showtranslation"
 	settings_showtranslation.color = colred
 	THCreateCheckBox(settings_showtranslation)
-	Y = Y - 24]]
+	Y = Y - 24
 
 	local settings_fixposition = {}
 	settings_fixposition.name = "fixposition"
