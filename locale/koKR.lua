@@ -5,11 +5,15 @@ thlang = thlang or {}
 function THthlang_koKR()
 	-- Pulltimer
 	thlang.pullinx = "VALUE 가져 오기"
-	thlang.go = "Go"
-	
+	thlang.go = "이동"
+	thlang.countdown = "카운트다운"
+	thlang.countdownmessage = "카운트다운 + 메시지"
+	thlang.countdownmessageisdisabled = "카운트다운 메시지가 비활성화되었습니다"
+
 	-- Status
 	thlang.ready = "준비"
 	thlang.youmustbeinaninstance = "인스턴스에 있어야합니다"
+	thlang.youmustbeinagrouporaraid = "그룹 또는 레이드에 속해 있어야 합니다"
 	thlang.playerdead = "플레이어 사망"
 	thlang.playerlowhp = "플레이어 낮은 체력"
 	thlang.playernotfull = "플레이어가 꽉 차지 않음"
@@ -22,4 +26,6 @@ function THthlang_koKR()
 	thlang.obr = "외부 테두리: VALUE"
 	thlang.iconsize = "아이콘 사이즈: VALUE"
 	thlang.fixposition = "위치 고정"
+	thlang.hidestatus = "상태 프레임 숨기기"
+	thlang.nameplatethreat = "명판 위협 표시"
 end

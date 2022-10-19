@@ -6,7 +6,6 @@ function THGT(str, tab, force)
 	local strid = string.lower(str)
 	local result = thlang[strid]
 	local eng = ethlang[strid]
-
 	if result ~= nil and eng ~= nil then
 		if tab ~= nil then
 			for i, v in pairs(tab) do

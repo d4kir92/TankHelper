@@ -7,10 +7,14 @@ function THthlang_enUS()
 	-- Pulltimer
 	thlang.pullinx = "Pull in VALUE"
 	thlang.go = "GO"
-	
+	thlang.countdown = "Countdown"
+	thlang.countdownmessage = "Countdown + Message"
+	thlang.countdownmessageisdisabled = "Countdown Message is disabled"
+
 	-- Status
 	thlang.ready = "Ready"
 	thlang.youmustbeinaninstance = "You must be in an Instance"
+	thlang.youmustbeinagrouporaraid = "You must be in a group or a raid"
 	thlang.playerdead = "Player dead"
 	thlang.playerlowhp = "Player low hp"
 	thlang.playernotfull = "Player not full"

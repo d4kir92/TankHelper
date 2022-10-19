@@ -41,7 +41,23 @@ local function InitSettings()
 	THCreateCheckBox(settings_showalways)
 	Y = Y - 24
 
-	local settings_showtranslation = {}
+	Y = Y - 10
+	local settings_channel = {}
+	settings_channel.name = "COUNTDOWNMODE"
+	settings_channel.parent = TH_Settings.panel
+	settings_channel.text = "COUNTDOWNMODE"
+	settings_channel.value = THGetConfig( "COUNTDOWNMODE", "COUNTDOWNMESSAGE" )
+	settings_channel.x = 0
+	settings_channel.y = Y
+	settings_channel.dbvalue = "COUNTDOWNMODE"
+	settings_channel.tab = {
+		{ Name = "COUNTDOWN", Code = "COUNTDOWN" },
+		{ Name = "COUNTDOWNMESSAGE", Code = "COUNTDOWNMESSAGE" },
+	}
+	THCreateComboBox(settings_channel)
+	Y = Y - 40
+
+	--[[local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = TH_Settings.panel
 	settings_showtranslation.checked = THGetConfig("showtranslation", true)
@@ -51,7 +67,7 @@ local function InitSettings()
 	settings_showtranslation.dbvalue = "showtranslation"
 	settings_showtranslation.color = colred
 	THCreateCheckBox(settings_showtranslation)
-	Y = Y - 24
+	Y = Y - 24]]
 
 	local settings_fixposition = {}
 	settings_fixposition.name = "fixposition"

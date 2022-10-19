@@ -6,10 +6,14 @@ function THthlang_deDE()
 	-- Pulltimer
 	thlang.pullinx = "Angriff in VALUE"
 	thlang.go = "LOS"
-		
+	thlang.countdown = "Countdown"
+	thlang.countdownmessage = "Countdown + Nachricht"
+	thlang.countdownmessageisdisabled = "Countdown Nachricht ist deaktiviert"
+
 	-- Status
 	thlang.ready = "Bereit"
 	thlang.youmustbeinaninstance = "Du musst in einer Instanz sein"
+	thlang.youmustbeinagrouporaraid = "Du musst in einer Gruppe oder einem Schlachtzug sein"
 	thlang.playerdead = "Spieler tot"
 	thlang.playerlowhp = "Spieler mit wenig Gesundheit"
 	thlang.playernotfull = "Spieler ist nicht voll"

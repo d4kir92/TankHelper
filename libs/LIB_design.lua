@@ -1,3 +1,6 @@
+-- LIB Design
+
+local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 function THCreateText(tab)
 	tab.textsize = tab.textsize or 12
@@ -170,4 +173,32 @@ function THcreateF(tab)
 	end
 
 	return frame
+end
+
+function THCreateComboBox(tab)
+	tab = tab or {}
+	tab.parent = tab.parent or UIParent
+	tab.tooltip = tab.tooltip or ""
+	tab.x = tab.x or 0
+	tab.y = tab.y or 0
+
+	local CB = LibDD:Create_UIDropDownMenu(tab.name, tab.parent)
+	CB:SetPoint("TOPLEFT", tab.x, tab.y)
+
+	LibDD:UIDropDownMenu_Initialize(CB, function(self, level, menuList)
+		for i, channel in pairs(tab.tab) do
+			local info = LibDD:UIDropDownMenu_CreateInfo()
+			info.text, info.value, info.arg1 = THGT( channel.Name ), channel.Code, i
+			info.func = function(self, arg1, arg2, checked)
+				THTAB[tab.dbvalue] = self.value
+				LibDD:UIDropDownMenu_SetSelectedValue(CB, self.value);
+			end
+			LibDD:UIDropDownMenu_AddButton(info, level)
+		end
+	end)
+
+	LibDD:UIDropDownMenu_SetWidth(CB, 200)
+	LibDD:UIDropDownMenu_SetSelectedValue(CB, tab.value);
+
+	return CB
 end

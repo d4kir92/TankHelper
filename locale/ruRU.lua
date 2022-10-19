@@ -6,10 +6,14 @@ function THthlang_ruRU()
 	-- Pulltimer
 	thlang.pullinx = "Атакуйте VALUE"
 	thlang.go = "Идти"
-		
+	thlang.countdown = "Обратный отсчет"
+	thlang.countdownmessage = "Обратный отсчет + сообщение"
+	thlang.countdownmessageisdisabled = "Сообщение об обратном отсчете отключено"
+
 	-- Status
 	thlang.ready = "Готовность"
 	thlang.youmustbeinaninstance = "Вы должны быть в подземелье"
+	thlang.youmustbeinagrouporaraid = "Вы должны быть в группе или рейде"
 	thlang.playerdead = "Игрок мертв"
 	thlang.playerlowhp = "Игрок с низким здоровьем"
 	thlang.playernotfull = "Игрок не с полным здоровьем"
@@ -22,4 +26,6 @@ function THthlang_ruRU()
 	thlang.obr = "Внешняя граница: VALUE"
 	thlang.iconsize = "Размер значка: VALUE"
 	thlang.fixposition = "исправить положение"
+	thlang.hidestatus = "Скрыть рамку состояния"
+	thlang.nameplatethreat = "Показать угрозу для таблички"
 end

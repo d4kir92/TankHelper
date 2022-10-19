@@ -23,6 +23,10 @@ if not IsRaidMarkerActive then
 	rows = 2
 end
 
+function THMSG( msg )
+	print( "|cff3FC7EB" .. "[TankHelper |T132362:16:16:0:0|t]|r " .. msg )
+end
+
 frameCockpit = CreateFrame("Frame", "frameCockpit", UIParent)
 frameCockpit:SetPoint("Center", UIParent, "Center")
 frameCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, rows * iconbtn + (rows - 1) * cbr + 2 * obr)
@@ -51,27 +55,32 @@ frameCockpit.texture:SetAllPoints(frameCockpit)
 frameCockpit.texture2 = frameCockpit:CreateTexture(nil, "BACKGROUND")
 frameCockpit.texture2:SetColorTexture(0, 0, 0, 0.2)
 
+function THShouldShow()
+	return IsInInstance() or UnitInParty("PLAYER") or UnitInRaid("PLAYER")
+end
+
 function THRW(msg)
 	if THBUILD ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	else
-		if IsInInstance() then
+		if THShouldShow() then
 			SendChatMessage(msg)
 		else
-			print("[TANK HELPER] " .. THGT("youmustbeinaninstance", nil, true) .. "!")
+			THMSG( THGT("youmustbeinagrouporaraid", nil, true) .. "!" )
 		end
 	end
 end
 
-function THPullIn(t)
-	if SlashCmdList["DEADLYBOSSMODS"] then
-		SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
-	else
-		if C_PartyInfo and C_PartyInfo.DoCountdown then
-			C_PartyInfo.DoCountdown( t );
+function THPullIn( t )
+	if THShouldShow() then
+		if SlashCmdList["DEADLYBOSSMODS"] then
+			SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
+		else
+			if C_PartyInfo and C_PartyInfo.DoCountdown then
+				C_PartyInfo.DoCountdown( t )
+			end
 		end
-
-		if IsInInstance() then
+		if THGetConfig( "COUNTDOWNMODE", "COUNTDOWNMESSAGE" ) == "COUNTDOWNMESSAGE" then
 			local tab = {}
 			tab["VALUE"] = t
 			THRW(THGT("pullinx", tab))
@@ -84,9 +93,11 @@ function THPullIn(t)
 					end
 				end )
 			end
-		else
-			print("[TANK HELPER] " .. THGT("youmustbeinaninstance", nil, true) .. "!")
+		elseif SlashCmdList["DEADLYBOSSMODS"] == nil then
+			THMSG( THGT("countdownmessageisdisabled", nil, true) .. "." )
 		end
+	else
+		THMSG( THGT("youmustbeinagrouporaraid", nil, true) .. "!" )
 	end
 end
 
@@ -404,7 +415,7 @@ function THDesignThink()
 		if THGetConfig("hidestatus", false) then
 			frameStatus:Hide()
 		else
-			if UnitInParty("PLAYER") or UnitInRaid("PLAYER") then
+			if THShouldShow() then
 				frameStatus:Show()
 			else
 				frameStatus:Hide()
@@ -414,7 +425,7 @@ function THDesignThink()
 		if THGetConfig( "showalways", false ) then
 			frameCockpit:Show()
 		else
-			if UnitInParty( "PLAYER" ) or UnitInRaid( "PLAYER" ) then
+			if THShouldShow() then
 				frameCockpit:Show()
 			else
 				frameCockpit:Hide()

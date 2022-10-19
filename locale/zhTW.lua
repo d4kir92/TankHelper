@@ -4,12 +4,16 @@ thlang = thlang or {}
 
 function THthlang_zhTW()
 	-- Pulltimer
-	thlang.pullinx = "拉怪於VALUE後"
+	thlang.pullinx = "拉怪於 VALUE 後"
 	thlang.go = "上"
-		
+	thlang.countdown = "倒計時"
+	thlang.countdownmessage = "倒計時 + 消息"
+	thlang.countdownmessageisdisabled = "倒計時消息被禁用"
+
 	-- Status
 	thlang.ready = "準備好"
 	thlang.youmustbeinaninstance = "你必須在一個副本中"
+	thlang.youmustbeinagrouporaraid = "你必須在一個小組或一個團隊中"
 	thlang.playerdead = "玩家死亡"
 	thlang.playerlowhp = "玩家低生命值"
 	thlang.playernotfull = "玩家未滿"
@@ -21,5 +25,7 @@ function THthlang_zhTW()
 	thlang.cbr = "行間距: VALUE"
 	thlang.obr = "外邊框: VALUE"
 	thlang.iconsize = "圖示大小: VALUE"
-	thlang.fixposition = "Fixed Position"
+	thlang.fixposition = "固定位置"
+	thlang.hidestatus = "隱藏狀態框"
+	thlang.nameplatethreat = "顯示銘牌威脅"
 end
