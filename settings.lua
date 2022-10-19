@@ -43,16 +43,18 @@ local function InitSettings()
 
 	Y = Y - 10
 	local settings_channel = {}
-	settings_channel.name = "COUNTDOWNMODE"
+	settings_channel.name = "PULLTIMERMODE"
 	settings_channel.parent = TH_Settings.panel
-	settings_channel.text = "COUNTDOWNMODE"
-	settings_channel.value = THGetConfig( "COUNTDOWNMODE", "COUNTDOWNMESSAGE" )
+	settings_channel.text = "PULLTIMERMODE"
+	settings_channel.value = THGetConfig( "PULLTIMERMODE", "AUTO" )
 	settings_channel.x = 0
 	settings_channel.y = Y
-	settings_channel.dbvalue = "COUNTDOWNMODE"
+	settings_channel.dbvalue = "PULLTIMERMODE"
 	settings_channel.tab = {
-		{ Name = "COUNTDOWN", Code = "COUNTDOWN" },
-		{ Name = "COUNTDOWNMESSAGE", Code = "COUNTDOWNMESSAGE" },
+		{ Name = "AUTO", Code = "AUTO" },
+		{ Name = "ONLYTHIRDPARTY", Code = "ONLYTHIRDPARTY" },
+		{ Name = "ONLYTH", Code = "ONLYTH" },
+		{ Name = "BOTH", Code = "BOTH" },
 	}
 	THCreateComboBox(settings_channel)
 	Y = Y - 40

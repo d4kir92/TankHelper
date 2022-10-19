@@ -73,14 +73,32 @@ end
 
 function THPullIn( t )
 	if THShouldShow() then
-		if SlashCmdList["DEADLYBOSSMODS"] then
-			SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
+		if THGetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH" then
+			if SlashCmdList["DEADLYBOSSMODS"] then
+				SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
+			elseif IsAddOnLoaded( "BigWigs" ) then
+				DEFAULT_CHAT_FRAME.editBox:SetText( "/pull " .. t )
+				ChatEdit_SendText( DEFAULT_CHAT_FRAME.editBox, 0 )
+			else
+				if C_PartyInfo and C_PartyInfo.DoCountdown then
+					C_PartyInfo.DoCountdown( t )
+				end
+			end
 		else
 			if C_PartyInfo and C_PartyInfo.DoCountdown then
 				C_PartyInfo.DoCountdown( t )
 			end
 		end
-		if THGetConfig( "COUNTDOWNMODE", "COUNTDOWNMESSAGE" ) == "COUNTDOWNMESSAGE" then
+
+		if ( THGetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" and ( SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) ) ) 
+			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTH"
+			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH"
+			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+
+			if THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+				THMSG( "Found no Thirdparty countdown addon" .. "!" .. " Using Default timer." )
+			end
+
 			local tab = {}
 			tab["VALUE"] = t
 			THRW(THGT("pullinx", tab))
@@ -93,8 +111,6 @@ function THPullIn( t )
 					end
 				end )
 			end
-		elseif SlashCmdList["DEADLYBOSSMODS"] == nil then
-			THMSG( THGT("countdownmessageisdisabled", nil, true) .. "." )
 		end
 	else
 		THMSG( THGT("youmustbeinagrouporaraid", nil, true) .. "!" )

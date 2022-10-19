@@ -6,9 +6,10 @@ function THthlang_zhTW()
 	-- Pulltimer
 	thlang.pullinx = "拉怪於 VALUE 後"
 	thlang.go = "上"
-	thlang.countdown = "倒計時"
-	thlang.countdownmessage = "倒計時 + 消息"
-	thlang.countdownmessageisdisabled = "倒計時消息被禁用"
+	thlang.auto = "自動"
+	thlang.onlythirdparty = "使用其他插件的倒計時"
+	thlang.onlyth = "使用坦克助手倒計時"
+	thlang.both = "同時使用"
 
 	-- Status
 	thlang.ready = "準備好"

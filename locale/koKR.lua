@@ -6,9 +6,10 @@ function THthlang_koKR()
 	-- Pulltimer
 	thlang.pullinx = "VALUE 가져 오기"
 	thlang.go = "이동"
-	thlang.countdown = "카운트다운"
-	thlang.countdownmessage = "카운트다운 + 메시지"
-	thlang.countdownmessageisdisabled = "카운트다운 메시지가 비활성화되었습니다"
+	thlang.auto = "자동"
+	thlang.onlythirdparty = "다른 애드온의 카운트다운 사용"
+	thlang.onlyth = "탱크 도우미 카운트다운 사용"
+	thlang.both = "둘 다 사용"
 
 	-- Status
 	thlang.ready = "준비"

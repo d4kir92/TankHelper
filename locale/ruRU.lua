@@ -6,9 +6,10 @@ function THthlang_ruRU()
 	-- Pulltimer
 	thlang.pullinx = "Атакуйте VALUE"
 	thlang.go = "Идти"
-	thlang.countdown = "Обратный отсчет"
-	thlang.countdownmessage = "Обратный отсчет + сообщение"
-	thlang.countdownmessageisdisabled = "Сообщение об обратном отсчете отключено"
+	thlang.auto = "Автоматически"
+	thlang.onlythirdparty = "Использовать обратный отсчет из других аддонов"
+	thlang.onlyth = "Использовать обратный отсчет от Tank Helper"
+	thlang.both = "Использовать оба"
 
 	-- Status
 	thlang.ready = "Готовность"

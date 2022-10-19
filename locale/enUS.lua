@@ -7,9 +7,10 @@ function THthlang_enUS()
 	-- Pulltimer
 	thlang.pullinx = "Pull in VALUE"
 	thlang.go = "GO"
-	thlang.countdown = "Countdown"
-	thlang.countdownmessage = "Countdown + Message"
-	thlang.countdownmessageisdisabled = "Countdown Message is disabled"
+	thlang.auto = "Automatic"
+	thlang.onlythirdparty = "Use countdown from other addons"
+	thlang.onlyth = "Use Tank Helper countdown"
+	thlang.both = "Use Both"
 
 	-- Status
 	thlang.ready = "Ready"

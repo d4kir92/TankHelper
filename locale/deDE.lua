@@ -6,9 +6,10 @@ function THthlang_deDE()
 	-- Pulltimer
 	thlang.pullinx = "Angriff in VALUE"
 	thlang.go = "LOS"
-	thlang.countdown = "Countdown"
-	thlang.countdownmessage = "Countdown + Nachricht"
-	thlang.countdownmessageisdisabled = "Countdown Nachricht ist deaktiviert"
+	thlang.auto = "Automatisch"
+	thlang.onlythirdparty = "Countdown von anderen Addons verwenden"
+	thlang.onlyth = "Countdown von Tank Helper verwenden"
+	thlang.both = "Beide verwenden"
 
 	-- Status
 	thlang.ready = "Bereit"
