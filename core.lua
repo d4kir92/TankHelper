@@ -745,7 +745,10 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat.text:SetText( "CREATED BY TankHelper" )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 
-			C_Timer.After( 0.02, function()
+			C_Timer.After( 0.04, function()
+				THUpdateThreatStatus( np )
+			end )
+			C_Timer.After( 0.1, function()
 				THUpdateThreatStatus( np )
 			end )
 
