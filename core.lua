@@ -667,15 +667,15 @@ frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 
 function THUpdateThreatStatus( np, reset )
-	if np.UnitFrame == nil then
-		return
-	end
 	if np.th_threat == nil then
 		return
 	end
-	local unit = np.UnitFrame.unit
+	local unit = np.unit
+	if np.UnitFrame ~= nil then
+		unit = np.UnitFrame.unit
+	end
 	if unit == nil then
-		return 
+		unit = strlower( np:GetName() )
 	end
 	local isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation( "PLAYER", unit )
 	if THGetConfig( "nameplatethreat", true ) and scaledPercentage and not reset then
@@ -742,13 +742,16 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			
 			np.th_threat.text = np:CreateFontString( nil, "OVERLAY" ) 
 			np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
-			np.th_threat.text:SetText( "CREATED BY TankHelper" )
+			np.th_threat.text:SetText( "Created by TankHelper -> if you see this tell the Dev." )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 
 			C_Timer.After( 0.04, function()
 				THUpdateThreatStatus( np )
 			end )
 			C_Timer.After( 0.1, function()
+				THUpdateThreatStatus( np )
+			end )
+			C_Timer.After( 0.2, function()
 				THUpdateThreatStatus( np )
 			end )
 
