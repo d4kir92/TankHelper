@@ -532,6 +532,12 @@ function THSetStatusText()
 		
 		frameStatus.text:SetText( text )
 		if frameStatus.texture.SetColorTexture and THStatusColor[1] and THStatusColor[2] and THStatusColor[3] then
+			if THStatusColor[4] > 1 then
+				THStatusColor[4] = 1
+			end
+			if THStatusColor[4] < 0 then
+				THStatusColor[4] = 0
+			end
 			frameStatus.texture:SetColorTexture( THStatusColor[1], THStatusColor[2], THStatusColor[3], THStatusColor[4] )
 		end
 	end

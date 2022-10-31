@@ -1,6 +1,6 @@
 
 THBUILD = "CLASSIC"
-if select(4, GetBuildInfo()) > 90000 then
+if select(4, GetBuildInfo()) >= 100000 then
 	THBUILD = "RETAIL"
 elseif select(4, GetBuildInfo()) > 29999 then
 	THBUILD = "WRATH"
