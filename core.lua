@@ -610,7 +610,7 @@ function THUpdatePosAndSize()
 	frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
 	frameCockpit["btnReadycheck"]:SetSize(bsw, iconbtn)
 
-	if IsRaidMarkerActive then
+	if InitiateRolePoll then
 		frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr - THROW * (iconbtn + cbr))
 		frameCockpit["btnRolepoll"]:SetSize(bsw, iconbtn)
 	end
