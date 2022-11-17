@@ -1,8 +1,18 @@
 
-thlang = thlang or {}
-ethlang = ethlang or {}
+local AddOnName, TankHelper = ...
 
-function THGT(str, tab, force)
+local thlang = {}
+local ethlang = {}
+
+function TankHelper:GetLangTab()
+	return thlang
+end
+
+function TankHelper:GetELangTab()
+	return ethlang
+end
+
+function TankHelper:GT(str, tab, force)
 	local strid = string.lower(str)
 	local result = thlang[strid]
 	local eng = ethlang[strid]
@@ -19,7 +29,7 @@ function THGT(str, tab, force)
 		end
 		if force then
 			return result
-		elseif THGetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
+		elseif TankHelper:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
 			return result
 		else
 			return eng
@@ -29,18 +39,18 @@ function THGT(str, tab, force)
 	end
 end
 
-function THUpdatethlanguage()
-	THthlang_enUS()
+function TankHelper:UpdateLanguage()
+	TankHelper:LangenUS()
 	if GetLocale() == "enUS" then
-		THthlang_enUS()
+		TankHelper:LangenUS()
 	elseif GetLocale() == "deDE" then
-		THthlang_deDE()
+		TankHelper:LangdeDE()
 	elseif GetLocale() == "koKR" then
-		THthlang_koKR()
+		TankHelper:LangkoKR()
 	elseif GetLocale() == "ruRU" then
-		THthlang_ruRU()
+		TankHelper:LangruRU()
 	elseif GetLocale() == "zhTW" then
-		THthlang_zhTW()
+		TankHelper:LangzhTW()
 	end
 end
-THUpdatethlanguage()
+TankHelper:UpdateLanguage()

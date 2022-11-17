@@ -1,9 +1,12 @@
 -- enUS English
 
-thlang = thlang or {}
-ethlang = ethlang or {}
+local AddOnName, TankHelper = ...
 
-function THthlang_enUS()
+function TankHelper:LangenUS()
+	local thlang = TankHelper:GetLangTab()
+	
+	local ethlang = TankHelper:GetELangTab()
+	
 	-- Pulltimer
 	thlang.pullinx = "Pull in VALUE"
 	thlang.go = "GO"
@@ -36,5 +39,3 @@ function THthlang_enUS()
 		ethlang[i] = v
 	end
 end
-THthlang_enUS()
-

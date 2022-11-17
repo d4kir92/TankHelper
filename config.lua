@@ -1,9 +1,9 @@
 
-THname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
+local AddOnName, TankHelper = ...
 
 SetCVar("ScriptErrors", 1)
 
-function THGetConfig(str, val)
+function TankHelper:GetConfig(str, val)
 	local setting = val
 
 	THTAB = THTAB or {}

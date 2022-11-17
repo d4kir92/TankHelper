@@ -1,8 +1,10 @@
 -- deDE German Deutsch
 
-thlang = thlang or {}
+local AddOnName, TankHelper = ...
 
-function THthlang_deDE()
+function TankHelper:LangdeDE()
+	local thlang = TankHelper:GetLangTab()
+
 	-- Pulltimer
 	thlang.pullinx = "Angriff in VALUE"
 	thlang.go = "LOS"

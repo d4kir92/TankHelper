@@ -1,8 +1,10 @@
 -- deDE German Deutsch
 
-thlang = thlang or {}
+local AddOnName, TankHelper = ...
 
-function THthlang_koKR()
+function TankHelper:LangkoKR()
+	local thlang = TankHelper:GetLangTab()
+	
 	-- Pulltimer
 	thlang.pullinx = "VALUE 가져 오기"
 	thlang.go = "이동"

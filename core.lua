@@ -1,4 +1,6 @@
 
+local AddOnName, TankHelper = ...
+
 local THBORDERALPHA = 0.5
 
 local obr = 6 -- Outside Border
@@ -21,10 +23,6 @@ local rows = 3
 local cols = 9
 if not IsRaidMarkerActive then
 	rows = 2
-end
-
-function THMSG( msg )
-	print( "|cff3FC7EB" .. "[TankHelper |T132362:16:16:0:0|t]|r " .. msg )
 end
 
 frameCockpit = CreateFrame("Frame", "frameCockpit", UIParent)
@@ -55,25 +53,25 @@ frameCockpit.texture:SetAllPoints(frameCockpit)
 frameCockpit.texture2 = frameCockpit:CreateTexture(nil, "BACKGROUND")
 frameCockpit.texture2:SetColorTexture(0, 0, 0, 0.2)
 
-function THShouldShow()
+function TankHelper:ShouldShow()
 	return IsInInstance() or UnitInParty("PLAYER") or UnitInRaid("PLAYER")
 end
 
-function THRW(msg)
+function TankHelper:RW(msg)
 	if THBUILD ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	else
-		if THShouldShow() then
+		if TankHelper:ShouldShow() then
 			SendChatMessage(msg)
 		else
-			THMSG( THGT("youmustbeinagrouporaraid", nil, true) .. "!" )
+			TankHelper:MSG( TankHelper:GT("youmustbeinagrouporaraid", nil, true) .. "!" )
 		end
 	end
 end
 
-function THPullIn( t )
-	if THShouldShow() then
-		if THGetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH" then
+function TankHelper:PullIn( t )
+	if TankHelper:ShouldShow() then
+		if TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH" then
 			if SlashCmdList["DEADLYBOSSMODS"] then
 				SlashCmdList["DEADLYBOSSMODS"]( "pull ".. t )
 			elseif IsAddOnLoaded( "BigWigs" ) then
@@ -90,36 +88,36 @@ function THPullIn( t )
 			end
 		end
 
-		if ( THGetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" and ( SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) ) ) 
-			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTH"
-			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH"
-			or THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+		if ( TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" and ( SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) ) ) 
+			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTH"
+			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH"
+			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
 
-			if THGetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
-				THMSG( "Found no Thirdparty countdown addon" .. "!" .. " Using Default timer." )
+			if TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+				TankHelper:MSG( "Found no Thirdparty countdown addon" .. "!" .. " Using Default timer." )
 			end
 
 			local tab = {}
 			tab["VALUE"] = t
-			THRW(THGT("pullinx", tab))
+			TankHelper:RW(TankHelper:GT("pullinx", tab))
 			for i = 1, t do
 				C_Timer.After( i, function()
 					if t - i == 0 then
-						THRW(THGT("go") .. "!")
+						TankHelper:RW(TankHelper:GT("go") .. "!")
 					else
-						THRW(t - i)
+						TankHelper:RW(t - i)
 					end
 				end )
 			end
 		end
 	else
-		THMSG( THGT("youmustbeinagrouporaraid", nil, true) .. "!" )
+		TankHelper:MSG( TankHelper:GT("youmustbeinagrouporaraid", nil, true) .. "!" )
 	end
 end
 
 
 
-function ResetIcons1()
+function TankHelper:ResetIcons1()
 	for i, v in pairs(ricons1) do
 		if frameCockpit:IsShown() then
 			v.bgtexture:SetTexture("")
@@ -129,7 +127,7 @@ end
 
 
 
-function THUpdateRaidIcons()
+function TankHelper:UpdateRaidIcons()
 	for i = 1, 9 do
 		local rembtn = frameCockpit["btn" .. i].texture
 		if i == 9 then
@@ -181,11 +179,11 @@ for i = 1, 9 do
 				SetRaidTarget("TARGET", i);
 			else
 				SetRaidTarget("TARGET", 0);
-				THUpdateRaidIcons();
+				TankHelper:UpdateRaidIcons();
 			end
 		elseif btn == "RightButton" and i < 9 then
-			ResetIcons1()
-			if THGetConfig("autoselect", nil) ~= i then
+			TankHelper:ResetIcons1()
+			if TankHelper:GetConfig("autoselect", nil) ~= i then
 				if frameCockpit:IsShown() then
 					self.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 				end
@@ -293,7 +291,7 @@ for i = 1, 9 do
 		frameCockpit["btnp" .. i]:SetText(pt[i])
 
 		frameCockpit["btnp" .. i]:SetScript("OnClick", function(self, btn, down)
-			THPullIn(pt[i])
+			TankHelper:PullIn(pt[i])
 		end)
 	end
 end
@@ -367,8 +365,8 @@ frameCockpit:RegisterEvent("GROUP_ROSTER_UPDATE");
 frameCockpit:RegisterEvent("RAID_ROSTER_UPDATE");
 frameCockpit:HookScript("OnEvent", function(self, e, ...)
 	if e == "PLAYER_ENTERING_WORLD" then
-		if THGetConfig("autoselect", nil) ~= nil then
-			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
+		if TankHelper:GetConfig("autoselect", nil) ~= nil then
+			local btn = frameCockpit["btn" .. TankHelper:GetConfig("autoselect", nil)]
 			if frameCockpit:IsShown() then
 				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 			end
@@ -376,19 +374,19 @@ frameCockpit:HookScript("OnEvent", function(self, e, ...)
 	end
 
 	if e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE" then
-		THUpdateRaidIcons()
+		TankHelper:UpdateRaidIcons()
 	end
 
 	if e == "PLAYER_TARGET_CHANGED" then
 		if UnitExists("TARGET") and UnitIsEnemy("TARGET", "PLAYER") then
-			if (GetRaidTargetIndex("TARGET") == nil) and THGetConfig("autoselect", nil) ~= nil then
-				SetRaidTarget("TARGET", THGetConfig("autoselect", nil));
+			if (GetRaidTargetIndex("TARGET") == nil) and TankHelper:GetConfig("autoselect", nil) ~= nil then
+				SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", nil));
 			end
 		end
 	end
 
 	if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
-		THSetStatusText()
+		TankHelper:SetStatusText()
 	end
 end)
 
@@ -426,48 +424,48 @@ frameStatus.text:SetText("")
 frameStatus.text:SetPoint("CENTER", frameStatus, "CENTER", 0, 0)
 
 frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
-function THDesignThink()
+function TankHelper:DesignThink()
 	if not InCombatLockdown() then
-		if THGetConfig("hidestatus", false) then
+		if TankHelper:GetConfig("hidestatus", false) then
 			frameStatus:Hide()
 		else
-			if THShouldShow() then
+			if TankHelper:ShouldShow() then
 				frameStatus:Show()
 			else
 				frameStatus:Hide()
 			end
 		end
 
-		if THGetConfig( "showalways", false ) then
+		if TankHelper:GetConfig( "showalways", false ) then
 			frameCockpit:Show()
 		else
-			if THShouldShow() then
+			if TankHelper:ShouldShow() then
 				frameCockpit:Show()
 			else
 				frameCockpit:Hide()
 			end
 		end
 
-		frameCockpit:SetMovable(not THGetConfig("fixposition", false))
-		frameCockpit:EnableMouse(not THGetConfig("fixposition", false))
-		frameStatus:SetMovable(not THGetConfig("fixposition", false))
-		frameStatus:EnableMouse(not THGetConfig("fixposition", false))
+		frameCockpit:SetMovable(not TankHelper:GetConfig("fixposition", false))
+		frameCockpit:EnableMouse(not TankHelper:GetConfig("fixposition", false))
+		frameStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
+		frameStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
 	end
 
-	C_Timer.After( 0.33, THDesignThink )
+	C_Timer.After( 0.33, TankHelper.DesignThink )
 end
-C_Timer.After( 0.1, THDesignThink )
+C_Timer.After( 0.1, TankHelper.DesignThink )
 
 
 
 local THStatusColor = { 1, 1, 1, 1 }
-function THSetStatusText()
+function TankHelper:SetStatusText()
 	if frameCockpit == nil or frameStatus == nil then
 		return
 	end
 	
-	if not THGetConfig("hidestatus", false) then
-		local text = THGT("ready", nil, true) .. "!"
+	if not TankHelper:GetConfig("hidestatus", false) then
+		local text = TankHelper:GT("ready", nil, true) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
 
 		if InCombatLockdown() then
@@ -516,16 +514,16 @@ function THSetStatusText()
 			end
 
 			if dead then
-				text = THGT("playerdead", nil, true) .. "!"
+				text = TankHelper:GT("playerdead", nil, true) .. "!"
 				THStatusColor = {0, 0, 0, 1}
 			elseif health < 0.3 then
-				text = THGT("playerlowhp", nil, true) .. "!"
+				text = TankHelper:GT("playerlowhp", nil, true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif health < 0.9 then
-				text = THGT("playernotfull", nil, true) .. "!"
+				text = TankHelper:GT("playernotfull", nil, true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif power < 0.9 then
-				text = THGT("playerhavenotenoughpower", nil, true) .. "!"
+				text = TankHelper:GT("playerhavenotenoughpower", nil, true) .. "!"
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
@@ -545,7 +543,7 @@ end
 
 
 
-function THUpdatePosAndSize()
+function TankHelper:UpdatePosAndSize()
 	if THTAB["obr"] ~= nil and THTAB["obr"] >= 16 then
 		THTAB["obr"] = 6
 	end
@@ -555,10 +553,10 @@ function THUpdatePosAndSize()
 	if THTAB["cbr"] ~= nil and THTAB["cbr"] >= 16 then
 		THTAB["cbr"] = 3
 	end
-	obr = THGetConfig("obr", 6) 				-- Outer Border
-	ibr = THGetConfig("ibr", 1) 				-- Column Spacer
-	cbr = THGetConfig("cbr", 3) 				-- Row Spacer
-	iconsize = THGetConfig("iconsize", 16)
+	obr = TankHelper:GetConfig("obr", 6) 				-- Outer Border
+	ibr = TankHelper:GetConfig("ibr", 1) 				-- Column Spacer
+	cbr = TankHelper:GetConfig("cbr", 3) 				-- Row Spacer
+	iconsize = TankHelper:GetConfig("iconsize", 16)
 	iconbr = iconsize / 4
 	iconbtn = iconsize + 2 * iconbr
 
@@ -621,10 +619,10 @@ function THUpdatePosAndSize()
 
 	frameStatus:SetSize(frameCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 
-	ResetIcons1()
+	TankHelper:ResetIcons1()
 	C_Timer.After( 1, function()
-		if THGetConfig("autoselect", nil) ~= nil then
-			local btn = frameCockpit["btn" .. THGetConfig("autoselect", nil)]
+		if TankHelper:GetConfig("autoselect", nil) ~= nil then
+			local btn = frameCockpit["btn" .. TankHelper:GetConfig("autoselect", nil)]
 			if frameCockpit:IsShown() then
 				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 			end
@@ -654,12 +652,12 @@ end
 
 
 
-function THSetup()
+function TankHelper:InitSetup()
 	if not InCombatLockdown() then
-		THUpdatePosAndSize()
-		THSetStatusText()
+		TankHelper:UpdatePosAndSize()
+		TankHelper:SetStatusText()
 	else
-		C_Timer.After( 0.15, THSetup )
+		C_Timer.After( 0.15, TankHelper.InitSetup )
 	end
 end
 
@@ -672,7 +670,7 @@ frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 
-function THUpdateThreatStatus( np, reset )
+function TankHelper:UpdateThreatStatus( np, reset )
 	if np.th_threat == nil then
 		return
 	end
@@ -684,7 +682,7 @@ function THUpdateThreatStatus( np, reset )
 		unit = strlower( np:GetName() )
 	end
 	local isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation( "PLAYER", unit )
-	if THGetConfig( "nameplatethreat", true ) and scaledPercentage and not reset then
+	if TankHelper:GetConfig( "nameplatethreat", true ) and scaledPercentage and not reset then
 		scaledPercentage = tonumber( string.format( "%.0f", scaledPercentage ) )
 
 		np.th_threat.text:SetText( scaledPercentage .. "%" )
@@ -720,18 +718,18 @@ function THUpdateThreatStatus( np, reset )
 end
 
 local nps = {}
-function THThinkNameplates( force )
-	if THGetConfig( "nameplatethreat", true ) or force then
+function TankHelper:ThinkNameplates( force )
+	if TankHelper:GetConfig( "nameplatethreat", true ) or force then
 		for i, np in pairs( nps ) do
-			THUpdateThreatStatus( np )
+			TankHelper:UpdateThreatStatus( np )
 		end
 
-		C_Timer.After( 0.2, THThinkNameplates )
+		C_Timer.After( 0.2, TankHelper.ThinkNameplates )
 	else
-		C_Timer.After( 1, THThinkNameplates )
+		C_Timer.After( 1, TankHelper.ThinkNameplates )
 	end
 end
-C_Timer.After( 2, THThinkNameplates )
+C_Timer.After( 2, TankHelper.ThinkNameplates )
 
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "NAME_PLATE_CREATED" then
@@ -752,13 +750,13 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 
 			C_Timer.After( 0.04, function()
-				THUpdateThreatStatus( np )
+				TankHelper:UpdateThreatStatus( np )
 			end )
 			C_Timer.After( 0.1, function()
-				THUpdateThreatStatus( np )
+				TankHelper:UpdateThreatStatus( np )
 			end )
 			C_Timer.After( 0.2, function()
-				THUpdateThreatStatus( np )
+				TankHelper:UpdateThreatStatus( np )
 			end )
 
 			table.insert( nps, np )

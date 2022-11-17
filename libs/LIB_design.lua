@@ -1,14 +1,16 @@
 -- LIB Design
 
+local AddOnName, TankHelper = ...
+
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
-function THCreateText(tab)
+function TankHelper:CreateText(tab)
 	tab.textsize = tab.textsize or 12
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
 	tab.frame:SetFrameStrata("HIGH")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(THGT(tab.text, nil, true))
+	text:SetText(TankHelper:GT(tab.text, nil, true))
 	tab.color = tab.color or {1, 1, 1, 1}
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
@@ -16,14 +18,14 @@ function THCreateText(tab)
 	tab.color[4] = tab.color[4] or 1
 	text:SetTextColor(tab.color[1], tab.color[2], tab.color[3], tab.color[4])
 
-	hooksecurefunc("THUpdatethlanguage", function()
-		text:SetText(THGT(tab.text, nil, true))
-	end)
+	hooksecurefunc( TankHelper, "UpdateLanguage", function()
+		text:SetText(TankHelper:GT(tab.text, nil, true))
+	end )
 
 	return text
 end
 
-function THCreateCheckBox(tab)
+function TankHelper:CreateCheckBox(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.tooltip = tab.tooltip or ""
@@ -46,12 +48,12 @@ function THCreateCheckBox(tab)
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
 	tab.color = tab.color or {1, 1, 1, 1}
-	CB.text = THCreateText(tab)
+	CB.text = TankHelper:CreateText(tab)
 
 	return CB
 end
 
-function THCreateSlider(tab)
+function TankHelper:CreateSlider(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.x = tab.x or 0
@@ -63,7 +65,7 @@ function THCreateSlider(tab)
 	SL.High:SetText(tab.max)
 	local trans = {}
 	trans["VALUE"] = tab.value
-	SL.Text:SetText(THGT(tab.text, trans, true))
+	SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
 	SL:SetMinMaxValues(tab.min, tab.max)
 	SL:SetValue(tab.value)
 	SL:SetWidth(600)
@@ -72,28 +74,28 @@ function THCreateSlider(tab)
 	SL:SetValueStep(tab.steps)
 	SL.decimals = tab.decimals or 1
 	SL:SetScript("OnValueChanged", function(self, val)
-		val = mathR(val, self.decimals)
+		val = TankHelper:MathR(val, self.decimals)
 		val = val - val % tab.steps
-		val = mathR(val, self.decimals)
+		val = TankHelper:MathR(val, self.decimals)
 		THTAB[tab.dbvalue] = val
 		trans = {}
 		trans["VALUE"] = val
-		SL.Text:SetText(THGT(tab.text, trans, true))
+		SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
 		if tab.func ~= nil then
 			tab:func()
 		end
 	end)
 
-	hooksecurefunc("THUpdatethlanguage", function()
+	hooksecurefunc( TankHelper, "UpdateLanguage", function()
 		trans = {}
 		trans["VALUE"] = SL:GetValue()
-		SL.Text:SetText(THGT(tab.text, trans, true))
-	end)
+		SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
+	end )
 
 	return EB
 end
 
-function THCTexture(frame, tab)
+function TankHelper:CTexture(frame, tab)
 	tab.layer = tab.layer or "BACKGROUND"
 	local texture = frame:CreateTexture(nil, tab.layer)
 	tab.texture = tab.texture or ""
@@ -130,7 +132,7 @@ function THCTexture(frame, tab)
 	return texture
 end
 
-function THcreateF(tab)
+function TankHelper:CreateF(tab)
 	tab.w = tab.w or 2
 	tab.h = tab.h or 2
 	tab.x = tab.x or 0
@@ -147,7 +149,7 @@ function THcreateF(tab)
 	frame:SetPoint(tab.align, tab.parent, tab.align, tab.x, tab.y)
 
 	tab.layer = tab.layer or "BACKGROUND"
-	frame.texture = THCTexture(frame, tab)
+	frame.texture = TankHelper:CTexture(frame, tab)
 
 	tab.textlayer = tab.textlayer or "ARTWORK"
 	frame.text = frame:CreateFontString(nil, tab.textlayer)
@@ -175,7 +177,7 @@ function THcreateF(tab)
 	return frame
 end
 
-function THCreateComboBox(tab)
+function TankHelper:CreateComboBox(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.tooltip = tab.tooltip or ""
@@ -188,7 +190,7 @@ function THCreateComboBox(tab)
 	LibDD:UIDropDownMenu_Initialize(CB, function(self, level, menuList)
 		for i, channel in pairs(tab.tab) do
 			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info.text, info.value, info.arg1 = THGT( channel.Name ), channel.Code, i
+			info.text, info.value, info.arg1 = TankHelper:GT( channel.Name ), channel.Code, i
 			info.func = function(self, arg1, arg2, checked)
 				THTAB[tab.dbvalue] = self.value
 				LibDD:UIDropDownMenu_SetSelectedValue(CB, self.value);

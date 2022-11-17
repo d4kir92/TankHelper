@@ -1,8 +1,10 @@
 -- ruRU Russian
 
-thlang = thlang or {}
+local AddOnName, TankHelper = ...
 
-function THthlang_ruRU()
+function TankHelper:LangruRU()
+	local thlang = TankHelper:GetLangTab()
+	
 	-- Pulltimer
 	thlang.pullinx = "Атакуйте VALUE"
 	thlang.go = "Идти"

@@ -1,8 +1,10 @@
 -- zhTW Traditional Chinese
 
-thlang = thlang or {}
+local AddOnName, TankHelper = ...
 
-function THthlang_zhTW()
+function TankHelper:LangzhTW()
+	local thlang = TankHelper:GetLangTab()
+	
 	-- Pulltimer
 	thlang.pullinx = "拉怪於 VALUE 後"
 	thlang.go = "上"
