@@ -1,8 +1,6 @@
 
 local AddOnName, TankHelper = ...
 
-SetCVar("ScriptErrors", 1)
-
 function TankHelper:GetConfig(str, val)
 	local setting = val
 
