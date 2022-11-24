@@ -188,14 +188,11 @@ end
 local THloaded = false
 local THSETUP = false
 
-SetCVar( "ScriptErrors", 1 )
 local frame = CreateFrame("FRAME")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
-
-		SetCVar( "ScriptErrors", 1 )
 
 		InitSettings()
 
