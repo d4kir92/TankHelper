@@ -35,6 +35,8 @@ function TankHelper:LangenUS()
 	thlang.hidestatus = "Hide Status Frame"
 	thlang.nameplatethreat = "Show Nameplate Threat"
 	
+	thlang.pulltimermode = "Pulltimer Mode"
+
 	for i, v in pairs(thlang) do
 		ethlang[i] = v
 	end

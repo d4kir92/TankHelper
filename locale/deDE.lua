@@ -32,4 +32,6 @@ function TankHelper:LangdeDE()
 	thlang.fixposition = "Fixierte Position"
 	thlang.hidestatus = "Statusfenster verstecken"
 	thlang.nameplatethreat = "Zeige Namenschild Bedrohung"
+
+	thlang.pulltimermode = "Pulltimer Modus"
 end
