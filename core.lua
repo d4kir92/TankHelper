@@ -58,7 +58,7 @@ function TankHelper:ShouldShow()
 end
 
 function TankHelper:RW(msg)
-	if THBUILD ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
+	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	else
 		if TankHelper:ShouldShow() then

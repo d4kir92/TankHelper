@@ -1,13 +1,22 @@
 
 local AddOnName, TankHelper = ...
 
-THBUILD = "CLASSIC"
-if select(4, GetBuildInfo()) >= 100000 then
-	THBUILD = "RETAIL"
-elseif select(4, GetBuildInfo()) > 29999 then
-	THBUILD = "WRATH"
-elseif select(4, GetBuildInfo()) > 19999 then
-	THBUILD = "TBC"
+local BuildNr = select(4, GetBuildInfo())
+local Build = "CLASSIC"
+if BuildNr >= 100000 then
+	Build = "RETAIL"
+elseif BuildNr > 29999 then
+	Build = "WRATH"
+elseif BuildNr > 19999 then
+	Build = "TBC"
+end
+
+function TankHelper:GetWoWBuildNr()
+	return BuildNr
+end
+
+function TankHelper:GetWoWBuild()
+	return Build
 end
 
 local function InitSettings()
