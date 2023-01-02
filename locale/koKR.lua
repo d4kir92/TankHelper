@@ -6,7 +6,7 @@ function TankHelper:LangkoKR()
 	local thlang = TankHelper:GetLangTab()
 	
 	-- Pulltimer
-	thlang.pullinx = "VALUE 가져 오기"
+	thlang.pullinx = "%0.1f 가져 오기"
 	thlang.go = "이동"
 	thlang.auto = "자동"
 	thlang.onlythirdparty = "다른 애드온의 카운트다운 사용"
@@ -24,10 +24,10 @@ function TankHelper:LangkoKR()
 
 	--Settings
 	thlang.showtranslation = "번역 보기"
-	thlang.ibr = "열 간격: VALUE"
-	thlang.cbr = "행 간격: VALUE"
-	thlang.obr = "외부 테두리: VALUE"
-	thlang.iconsize = "아이콘 사이즈: VALUE"
+	thlang.ibr = "열 간격: %0.1f"
+	thlang.cbr = "행 간격: %0.1f"
+	thlang.obr = "외부 테두리: %0.1f"
+	thlang.iconsize = "아이콘 사이즈: %0.1f"
 	thlang.fixposition = "위치 고정"
 	thlang.hidestatus = "상태 프레임 숨기기"
 	thlang.nameplatethreat = "명판 위협 표시"

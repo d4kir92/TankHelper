@@ -64,7 +64,7 @@ function TankHelper:RW(msg)
 		if TankHelper:ShouldShow() then
 			SendChatMessage(msg)
 		else
-			TankHelper:MSG( TankHelper:GT("youmustbeinagrouporaraid", nil, true) .. "!" )
+			TankHelper:MSG( TankHelper:GT( "youmustbeinagrouporaraid", true) .. "!" )
 		end
 	end
 end
@@ -97,13 +97,12 @@ function TankHelper:PullIn( t )
 				TankHelper:MSG( "Found no Thirdparty countdown addon" .. "!" .. " Using Default timer." )
 			end
 
-			local tab = {}
-			tab["VALUE"] = t
-			TankHelper:RW(TankHelper:GT("pullinx", tab))
+
+			TankHelper:RW( format( TankHelper:GT( "pullinx" ), t ) )
 			for i = 1, t do
 				C_Timer.After( i, function()
 					if t - i == 0 then
-						TankHelper:RW(TankHelper:GT("go") .. "!")
+						TankHelper:RW(TankHelper:GT( "go") .. "!")
 					else
 						TankHelper:RW(t - i)
 					end
@@ -111,7 +110,7 @@ function TankHelper:PullIn( t )
 			end
 		end
 	else
-		TankHelper:MSG( TankHelper:GT("youmustbeinagrouporaraid", nil, true) .. "!" )
+		TankHelper:MSG( TankHelper:GT( "youmustbeinagrouporaraid", true) .. "!" )
 	end
 end
 
@@ -355,6 +354,52 @@ frameCockpit["btnDiscord"]:SetScript("OnClick", function(self, btn, down)
 end)
 
 
+local ts = 0
+local delay = 1
+local targetGUID = UnitGUID( "TARGET" )
+
+function TankHelper:TargetIconLogic()
+	delay = TankHelper:GetConfig( "targettingdelay", 0.8 )
+
+	if TankHelper:GetConfig( "autoselect", nil) == nil then -- no Auto marking
+		return false
+	end
+
+	if not UnitExists( "TARGET" ) then -- No Unit
+		ts = GetTime()
+		targetGUID = nil
+		return true
+	end
+
+	if GetRaidTargetIndex( "TARGET" ) ~= nil then -- Already Has Raid Target Icon
+		return true
+	end
+
+	if targetGUID and UnitGUID( "TARGET" ) == targetGUID then 						-- if target is the current one
+		if ts <= GetTime() then 													-- is target for X time
+			SetRaidTarget( "TARGET", TankHelper:GetConfig( "autoselect", nil ) ) 	-- then set icon
+		end
+	end
+
+	if not UnitIsEnemy( "TARGET", "PLAYER" ) then -- if is not enemy reset the time
+		ts = GetTime()
+		targetGUID = nil
+	else
+		if targetGUID and UnitGUID( "TARGET" ) ~= targetGUID then -- switch from enemy to enemy, then add delay
+			ts = GetTime() + delay
+		end
+		targetGUID = UnitGUID( "TARGET" )
+	end
+
+	return true
+end
+
+function TankHelper:UpdateTargetIcon()
+	TankHelper:TargetIconLogic()
+	
+	C_Timer.After( 0.1, TankHelper.UpdateTargetIcon )
+end
+TankHelper:UpdateTargetIcon()
 
 frameCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
 frameCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -374,15 +419,13 @@ frameCockpit:HookScript("OnEvent", function(self, e, ...)
 	end
 
 	if e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE" then
-		TankHelper:UpdateRaidIcons()
+		if not UnitExists( "TARGET" ) or not UnitIsEnemy( "TARGET", "PLAYER" ) then
+			TankHelper:UpdateRaidIcons()
+		end
 	end
 
 	if e == "PLAYER_TARGET_CHANGED" then
-		if UnitExists("TARGET") and UnitIsEnemy("TARGET", "PLAYER") then
-			if (GetRaidTargetIndex("TARGET") == nil) and TankHelper:GetConfig("autoselect", nil) ~= nil then
-				SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", nil));
-			end
-		end
+		TankHelper:TargetIconLogic()
 	end
 
 	if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
@@ -465,7 +508,7 @@ function TankHelper:SetStatusText()
 	end
 	
 	if not TankHelper:GetConfig("hidestatus", false) then
-		local text = TankHelper:GT("ready", nil, true) .. "!"
+		local text = TankHelper:GT( "ready", true) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
 
 		if InCombatLockdown() then
@@ -514,16 +557,16 @@ function TankHelper:SetStatusText()
 			end
 
 			if dead then
-				text = TankHelper:GT("playerdead", nil, true) .. "!"
+				text = TankHelper:GT( "playerdead", true) .. "!"
 				THStatusColor = {0, 0, 0, 1}
 			elseif health < 0.3 then
-				text = TankHelper:GT("playerlowhp", nil, true) .. "!"
+				text = TankHelper:GT( "playerlowhp", true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif health < 0.9 then
-				text = TankHelper:GT("playernotfull", nil, true) .. "!"
+				text = TankHelper:GT( "playernotfull", true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif power < 0.9 then
-				text = TankHelper:GT("playerhavenotenoughpower", nil, true) .. "!"
+				text = TankHelper:GT( "playerhavenotenoughpower", true) .. "!"
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
@@ -543,7 +586,9 @@ end
 
 
 
-function TankHelper:UpdatePosAndSize()
+function TankHelper:UpdateDesign()
+	local scalecockpit = TankHelper:GetConfig( "scalecockpit", 1 )
+	local scalestatus = TankHelper:GetConfig( "scalestatus", 1 )
 	if THTAB["obr"] ~= nil and THTAB["obr"] >= 16 then
 		THTAB["obr"] = 6
 	end
@@ -559,6 +604,9 @@ function TankHelper:UpdatePosAndSize()
 	iconsize = TankHelper:GetConfig("iconsize", 16)
 	iconbr = iconsize / 4
 	iconbtn = iconsize + 2 * iconbr
+
+	frameCockpit:SetScale( scalecockpit )
+	frameStatus:SetScale( scalestatus )
 
 	local THROW = 1
 	
@@ -654,7 +702,7 @@ end
 
 function TankHelper:InitSetup()
 	if not InCombatLockdown() then
-		TankHelper:UpdatePosAndSize()
+		TankHelper:UpdateDesign()
 		TankHelper:SetStatusText()
 	else
 		C_Timer.After( 0.15, TankHelper.InitSetup )

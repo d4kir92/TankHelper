@@ -6,7 +6,7 @@ function TankHelper:LangzhTW()
 	local thlang = TankHelper:GetLangTab()
 	
 	-- Pulltimer
-	thlang.pullinx = "拉怪於 VALUE 後"
+	thlang.pullinx = "拉怪於 %0.1f 後"
 	thlang.go = "上"
 	thlang.auto = "自動"
 	thlang.onlythirdparty = "使用其他插件的倒計時"
@@ -24,10 +24,10 @@ function TankHelper:LangzhTW()
 
 	--Settings
 	thlang.showtranslation = "顯示翻譯"
-	thlang.ibr = "欄間距: VALUE"
-	thlang.cbr = "行間距: VALUE"
-	thlang.obr = "外邊框: VALUE"
-	thlang.iconsize = "圖示大小: VALUE"
+	thlang.ibr = "欄間距: %0.1f"
+	thlang.cbr = "行間距: %0.1f"
+	thlang.obr = "外邊框: %0.1f"
+	thlang.iconsize = "圖示大小: %0.1f"
 	thlang.fixposition = "固定位置"
 	thlang.hidestatus = "隱藏狀態框"
 	thlang.nameplatethreat = "顯示銘牌威脅"

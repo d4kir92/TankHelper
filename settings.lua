@@ -119,6 +119,64 @@ local function InitSettings()
 	TankHelper:CreateCheckBox(settings_nameplatethreat)
 	Y = Y - 24
 
+
+
+	Y = Y - BR
+	local settings_targettingdelay = {}
+	settings_targettingdelay.name = "targettingdelay"
+	settings_targettingdelay.parent = TH_Settings.panel
+	settings_targettingdelay.value = TankHelper:GetConfig( "targettingdelay", 0.8 )
+	settings_targettingdelay.text = "targettingdelay"
+	settings_targettingdelay.x = 10
+	settings_targettingdelay.y = Y
+	settings_targettingdelay.min = 0.0
+	settings_targettingdelay.max = 5.0
+	settings_targettingdelay.steps = 0.1
+	settings_targettingdelay.decimals = 1
+	settings_targettingdelay.dbvalue = "targettingdelay"
+	settings_targettingdelay.color = {0, 1, 0, 1}
+	settings_targettingdelay.func = TankHelper.UpdateDesign
+	TankHelper:CreateSlider(settings_targettingdelay)
+	Y = Y - H - H
+
+
+
+	Y = Y - BR
+	local settings_scalecockpit = {}
+	settings_scalecockpit.name = "scalecockpit"
+	settings_scalecockpit.parent = TH_Settings.panel
+	settings_scalecockpit.value = TankHelper:GetConfig("scalecockpit", 1)
+	settings_scalecockpit.text = "scalecockpit"
+	settings_scalecockpit.x = 10
+	settings_scalecockpit.y = Y
+	settings_scalecockpit.min = 0.1
+	settings_scalecockpit.max = 2.0
+	settings_scalecockpit.steps = 0.1
+	settings_scalecockpit.decimals = 1
+	settings_scalecockpit.dbvalue = "scalecockpit"
+	settings_scalecockpit.color = {0, 1, 0, 1}
+	settings_scalecockpit.func = TankHelper.UpdateDesign
+	TankHelper:CreateSlider(settings_scalecockpit)
+	Y = Y - H
+
+	Y = Y - BR
+	local settings_scalestatus = {}
+	settings_scalestatus.name = "scalestatus"
+	settings_scalestatus.parent = TH_Settings.panel
+	settings_scalestatus.value = TankHelper:GetConfig("scalestatus", 1)
+	settings_scalestatus.text = "scalestatus"
+	settings_scalestatus.x = 10
+	settings_scalestatus.y = Y
+	settings_scalestatus.min = 0.1
+	settings_scalestatus.max = 2.0
+	settings_scalestatus.steps = 0.1
+	settings_scalestatus.decimals = 1
+	settings_scalestatus.dbvalue = "scalestatus"
+	settings_scalestatus.color = {0, 1, 0, 1}
+	settings_scalestatus.func = TankHelper.UpdateDesign
+	TankHelper:CreateSlider(settings_scalestatus)
+	Y = Y - H
+
 	Y = Y - BR
 	local settings_obr = {}
 	settings_obr.name = "obr"
@@ -133,7 +191,7 @@ local function InitSettings()
 	settings_obr.decimals = 0
 	settings_obr.dbvalue = "obr"
 	settings_obr.color = {0, 1, 0, 1}
-	settings_obr.func = TankHelper.UpdatePosAndSize
+	settings_obr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_obr)
 	Y = Y - H
 	
@@ -151,7 +209,7 @@ local function InitSettings()
 	settings_ibr.decimals = 0
 	settings_ibr.dbvalue = "ibr"
 	settings_ibr.color = {0, 1, 0, 1}
-	settings_ibr.func = TankHelper.UpdatePosAndSize
+	settings_ibr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_ibr)
 	Y = Y - H
 
@@ -169,7 +227,7 @@ local function InitSettings()
 	settings_cbr.decimals = 0
 	settings_cbr.dbvalue = "cbr"
 	settings_cbr.color = {0, 1, 0, 1}
-	settings_cbr.func = TankHelper.UpdatePosAndSize
+	settings_cbr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_cbr)
 	Y = Y - H
 
@@ -187,7 +245,7 @@ local function InitSettings()
 	settings_iconsize.decimals = 0
 	settings_iconsize.dbvalue = "iconsize"
 	settings_iconsize.color = {0, 1, 0, 1}
-	settings_iconsize.func = TankHelper.UpdatePosAndSize
+	settings_iconsize.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_iconsize)
 	Y = Y - H
 

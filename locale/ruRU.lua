@@ -6,7 +6,7 @@ function TankHelper:LangruRU()
 	local thlang = TankHelper:GetLangTab()
 	
 	-- Pulltimer
-	thlang.pullinx = "Атакуйте VALUE"
+	thlang.pullinx = "Атакуйте %0.1f"
 	thlang.go = "Идти"
 	thlang.auto = "Автоматически"
 	thlang.onlythirdparty = "Использовать обратный отсчет из других аддонов"
@@ -24,10 +24,10 @@ function TankHelper:LangruRU()
 
 	--Settings
 	thlang.showtranslation = "Показать Перевод"
-	thlang.ibr = "Расстояние между столбцами: VALUE"
-	thlang.cbr = "Расстояние между рядами: VALUE"
-	thlang.obr = "Внешняя граница: VALUE"
-	thlang.iconsize = "Размер значка: VALUE"
+	thlang.ibr = "Расстояние между столбцами: %0.1f"
+	thlang.cbr = "Расстояние между рядами: %0.1f"
+	thlang.obr = "Внешняя граница: %0.1f"
+	thlang.iconsize = "Размер значка: %0.1f"
 	thlang.fixposition = "исправить положение"
 	thlang.hidestatus = "Скрыть рамку состояния"
 	thlang.nameplatethreat = "Показать угрозу для таблички"

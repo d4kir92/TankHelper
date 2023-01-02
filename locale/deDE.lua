@@ -6,7 +6,7 @@ function TankHelper:LangdeDE()
 	local thlang = TankHelper:GetLangTab()
 
 	-- Pulltimer
-	thlang.pullinx = "Angriff in VALUE"
+	thlang.pullinx = "Angriff in %0.1f"
 	thlang.go = "LOS"
 	thlang.auto = "Automatisch"
 	thlang.onlythirdparty = "Countdown von anderen Addons verwenden"
@@ -25,10 +25,13 @@ function TankHelper:LangdeDE()
 	--Settings
 	thlang.showalways = "Immer anzeigen"
 	thlang.showtranslation = "Übersetzung anzeigen"
-	thlang.ibr = "Spaltenabstand: VALUE"
-	thlang.cbr = "Zeilenabstand: VALUE"
-	thlang.obr = "Äußere Grenze: VALUE"
-	thlang.iconsize = "Symbolgröße: VALUE"
+	thlang.targettingdelay = "Verzögerung bei der Zielerfassung: %0.1f"
+	thlang.scalecockpit = "Skalierung Cockpit: %0.1f"
+	thlang.scalestatus = "Skalierung Status: %0.1f"
+	thlang.ibr = "Spaltenabstand: %0.1f"
+	thlang.cbr = "Zeilenabstand: %0.1f"
+	thlang.obr = "Äußere Grenze: %0.1f"
+	thlang.iconsize = "Symbolgröße: %0.1f"
 	thlang.fixposition = "Fixierte Position"
 	thlang.hidestatus = "Statusfenster verstecken"
 	thlang.nameplatethreat = "Zeige Namenschild Bedrohung"

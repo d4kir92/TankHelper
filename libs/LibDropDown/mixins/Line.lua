@@ -161,7 +161,7 @@ Sets the Line text.
 * `text` - text to set on the Line _(string)_
 --]]
 function lineMixin:SetText(text)
-	self.Text:SetFormattedText('%s%s', self.__icon or self.__atlas or '', text)
+	self.Text:SetFormattedText('%0.1f%0.1f', self.__icon or self.__atlas or '', text)
 end
 
 --[[ Line:UpdateText()

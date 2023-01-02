@@ -8,7 +8,7 @@ function TankHelper:CreateText(tab)
 	tab.frame:SetFrameStrata("HIGH")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(TankHelper:GT(tab.text, nil, true))
+	text:SetText(TankHelper:GT(tab.text, true))
 	tab.color = tab.color or {1, 1, 1, 1}
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
@@ -17,7 +17,7 @@ function TankHelper:CreateText(tab)
 	text:SetTextColor(tab.color[1], tab.color[2], tab.color[3], tab.color[4])
 
 	hooksecurefunc( TankHelper, "UpdateLanguage", function()
-		text:SetText(TankHelper:GT(tab.text, nil, true))
+		text:SetText(TankHelper:GT(tab.text, true))
 	end )
 
 	return text
@@ -61,9 +61,7 @@ function TankHelper:CreateSlider(tab)
 	SL:SetPoint("TOPLEFT", tab.x, tab.y)
 	SL.Low:SetText(tab.min)
 	SL.High:SetText(tab.max)
-	local trans = {}
-	trans["VALUE"] = tab.value
-	SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
+	SL.Text:SetText( format( TankHelper:GT( tab.text, true ), tab.value ) )
 	SL:SetMinMaxValues(tab.min, tab.max)
 	SL:SetValue(tab.value)
 	SL:SetWidth(600)
@@ -76,18 +74,22 @@ function TankHelper:CreateSlider(tab)
 		val = val - val % tab.steps
 		val = TankHelper:MathR(val, self.decimals)
 		THTAB[tab.dbvalue] = val
-		trans = {}
-		trans["VALUE"] = val
-		SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
+
+		local val = SL:GetValue()
+		if val then
+			SL.Text:SetText( format( TankHelper:GT( tab.text, true ), val ) )
+		end
+
 		if tab.func ~= nil then
 			tab:func()
 		end
 	end)
 
 	hooksecurefunc( TankHelper, "UpdateLanguage", function()
-		trans = {}
-		trans["VALUE"] = SL:GetValue()
-		SL.Text:SetText(TankHelper:GT(tab.text, trans, true))
+		local val = SL:GetValue()
+		if val then
+			SL.Text:SetText( format( TankHelper:GT( tab.text, true ), val ) )
+		end
 	end )
 
 	return EB
