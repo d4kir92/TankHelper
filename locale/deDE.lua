@@ -37,4 +37,6 @@ function TankHelper:LangdeDE()
 	thlang.nameplatethreat = "Zeige Namenschild Bedrohung"
 
 	thlang.pulltimermode = "Pulltimer Modus"
+
+	thlang.onlytank = "Automatische Kennzeichnung nur als Tank"
 end

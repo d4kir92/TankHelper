@@ -361,6 +361,13 @@ local targetGUID = UnitGUID( "TARGET" )
 function TankHelper:TargetIconLogic()
 	delay = TankHelper:GetConfig( "targettingdelay", 0.8 )
 
+	if UnitGroupRolesAssigned then
+		local role = UnitGroupRolesAssigned( "PLAYER" )
+		if TankHelper:GetConfig( "onlytank", true ) and role ~= "TANK" then -- Only Tank?
+			return false
+		end
+	end
+
 	if TankHelper:GetConfig( "autoselect", nil) == nil then -- no Auto marking
 		return false
 	end
@@ -376,7 +383,7 @@ function TankHelper:TargetIconLogic()
 	end
 
 	if targetGUID and UnitGUID( "TARGET" ) == targetGUID then 						-- if target is the current one
-		if ts <= GetTime() then 													-- is target for X time
+		if ts <= GetTime() then												-- is target for X time
 			SetRaidTarget( "TARGET", TankHelper:GetConfig( "autoselect", nil ) ) 	-- then set icon
 		end
 	end

@@ -40,6 +40,20 @@ local function InitSettings()
 	TankHelper:CreateText(settings_header)
 	Y = Y - BR
 
+	if UnitGroupRolesAssigned then
+		local settings_onlytank = {}
+		settings_onlytank.name = "onlytank"
+		settings_onlytank.parent = TH_Settings.panel
+		settings_onlytank.checked = TankHelper:GetConfig("onlytank", false)
+		settings_onlytank.text = "onlytank"
+		settings_onlytank.x = 10
+		settings_onlytank.y = Y
+		settings_onlytank.dbvalue = "onlytank"
+		settings_onlytank.color = colred
+		TankHelper:CreateCheckBox(settings_onlytank)
+		Y = Y - 24
+	end
+
 	local settings_showalways = {}
 	settings_showalways.name = "showalways"
 	settings_showalways.parent = TH_Settings.panel
