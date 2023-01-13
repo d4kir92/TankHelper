@@ -41,6 +41,7 @@ function TankHelper:LangenUS()
 	thlang.pulltimermode = "Pulltimer Mode"
 
 	thlang.onlytank = "Automatic marking as tank only"
+	thlang.hidelastrow = "Hide last row"
 
 	for i, v in pairs(thlang) do
 		ethlang[i] = v

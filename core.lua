@@ -87,13 +87,13 @@ function TankHelper:PullIn( t )
 				C_PartyInfo.DoCountdown( t )
 			end
 		end
-
-		if ( TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" and ( SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) ) ) 
+		
+		if ( TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "AUTO" and ( not IsAddOnLoaded( "DBM-Core" ) and not IsAddOnLoaded( "BigWigs" ) ) ) 
 			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTH"
 			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "BOTH"
-			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+			or TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and not IsAddOnLoaded( "DBM-Core" ) and not IsAddOnLoaded( "BigWigs" ) then
 
-			if TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and SlashCmdList["DEADLYBOSSMODS"] == nil and not IsAddOnLoaded( "BigWigs" ) then
+			if TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" ) == "ONLYTHIRDPARTY" and not IsAddOnLoaded( "DBM-Core" ) and not IsAddOnLoaded( "BigWigs" ) then
 				TankHelper:MSG( "Found no Thirdparty countdown addon" .. "!" .. " Using Default timer." )
 			end
 
@@ -415,6 +415,7 @@ frameCockpit:RegisterEvent("UNIT_HEALTH")
 frameCockpit:RegisterEvent("UNIT_POWER_UPDATE")
 frameCockpit:RegisterEvent("GROUP_ROSTER_UPDATE");
 frameCockpit:RegisterEvent("RAID_ROSTER_UPDATE");
+frameCockpit:RegisterEvent("ADDON_LOADED");
 frameCockpit:HookScript("OnEvent", function(self, e, ...)
 	if e == "PLAYER_ENTERING_WORLD" then
 		if TankHelper:GetConfig("autoselect", nil) ~= nil then
@@ -424,7 +425,6 @@ frameCockpit:HookScript("OnEvent", function(self, e, ...)
 			end
 		end
 	end
-
 	if e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE" then
 		if not UnitExists( "TARGET" ) or not UnitIsEnemy( "TARGET", "PLAYER" ) then
 			TankHelper:UpdateRaidIcons()
@@ -616,8 +616,13 @@ function TankHelper:UpdateDesign()
 	frameStatus:SetScale( scalestatus )
 
 	local THROW = 1
+
+	local c_rows = rows
+	if TankHelper:GetConfig("hidelastrow", false) then
+		c_rows = 2
+	end
+	frameCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, c_rows * iconbtn + (c_rows - 1) * cbr + 2 * obr)
 	
-	frameCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, rows * iconbtn + (rows - 1) * cbr + 2 * obr)
 	frameCockpit.texture:SetAllPoints(frameCockpit)
 	local sw, sh = frameCockpit:GetSize()
 	frameCockpit.texture2:SetSize(sw - 2 * obr, sh - 2 * obr)
@@ -644,11 +649,16 @@ function TankHelper:UpdateDesign()
 			frameCockpit["btnwm" .. i].texture2:SetSize(iconsize / 1.2, iconsize / 1.2)
 		end
 	end
-	
+
 	for i = 1, 9 do
 		if i <= #pt then
-			frameCockpit["btnp" .. i]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (i - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
-			frameCockpit["btnp" .. i]:SetSize(iconbtn, iconbtn)
+			if TankHelper:GetConfig("hidelastrow", false) then
+				frameCockpit["btnp" .. i]:Hide()
+			else
+				frameCockpit["btnp" .. i]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (i - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
+				frameCockpit["btnp" .. i]:SetSize(iconbtn, iconbtn)
+				frameCockpit["btnp" .. i]:Show()
+			end
 		end
 	end
 
@@ -660,18 +670,31 @@ function TankHelper:UpdateDesign()
 		bsw = bsw / 2
 	end
 
-	frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
-	frameCockpit["btnReadycheck"]:SetSize(bsw, iconbtn)
+	if TankHelper:GetConfig("hidelastrow", false) then
+		frameCockpit["btnReadycheck"]:Hide()
+	else
+		frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - THROW * (iconbtn + cbr))
+		frameCockpit["btnReadycheck"]:SetSize(bsw, iconbtn)
+		frameCockpit["btnReadycheck"]:Show()
+	end
 
 	if InitiateRolePoll then
-		frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr - THROW * (iconbtn + cbr))
-		frameCockpit["btnRolepoll"]:SetSize(bsw, iconbtn)
+		if TankHelper:GetConfig("hidelastrow", false) then
+			frameCockpit["btnRolepoll"]:Hide()
+		else
+			frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr - THROW * (iconbtn + cbr))
+			frameCockpit["btnRolepoll"]:SetSize(bsw, iconbtn)
+			frameCockpit["btnRolepoll"]:Show()
+		end
 	end
-	
-	frameCockpit["btnDiscord"]:ClearAllPoints()
-	frameCockpit["btnDiscord"]:SetSize(iconbtn, iconbtn)
-	frameCockpit["btnDiscord"]:SetPoint("BOTTOMRIGHT", frameCockpit, "BOTTOMRIGHT", -obr, obr)
-
+	if TankHelper:GetConfig("hidelastrow", false) then
+		frameCockpit["btnDiscord"]:Hide()
+	else
+		frameCockpit["btnDiscord"]:ClearAllPoints()
+		frameCockpit["btnDiscord"]:SetSize(iconbtn, iconbtn)
+		frameCockpit["btnDiscord"]:SetPoint("BOTTOMRIGHT", frameCockpit, "BOTTOMRIGHT", -obr, obr)
+		frameCockpit["btnDiscord"]:Show()
+	end
 	frameStatus:SetSize(frameCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 
 	TankHelper:ResetIcons1()

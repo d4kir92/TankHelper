@@ -120,6 +120,19 @@ local function InitSettings()
 	TankHelper:CreateCheckBox(settings_hidestatus)
 	Y = Y - 24
 
+	local settings_hidelastrow = {}
+	settings_hidelastrow.name = "hidelastrow"
+	settings_hidelastrow.parent = TH_Settings.panel
+	settings_hidelastrow.checked = TankHelper:GetConfig("hidelastrow", false)
+	settings_hidelastrow.text = "hidelastrow"
+	settings_hidelastrow.x = 10
+	settings_hidelastrow.y = Y
+	settings_hidelastrow.dbvalue = "hidelastrow"
+	settings_hidelastrow.color = colred
+	settings_hidelastrow.func = TankHelper.UpdateDesign
+	TankHelper:CreateCheckBox(settings_hidelastrow)
+	Y = Y - 24
+
 	local settings_nameplatethreat = {}
 	settings_nameplatethreat.name = "nameplatethreat"
 	settings_nameplatethreat.parent = TH_Settings.panel

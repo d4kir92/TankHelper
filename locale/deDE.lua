@@ -39,4 +39,5 @@ function TankHelper:LangdeDE()
 	thlang.pulltimermode = "Pulltimer Modus"
 
 	thlang.onlytank = "Automatische Kennzeichnung nur als Tank"
+	thlang.hidelastrow = "Letzte Reihe ausblenden"
 end
