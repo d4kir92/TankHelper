@@ -331,8 +331,8 @@ frameCockpit["btnDiscord"]:SetScript("OnClick", function(self, btn, down)
 	s.texture:SetColorTexture(0, 0, 0, 0.5)
 	s.texture:SetAllPoints(s)
 
-	s.text = s:CreateFontString(nil,"ARTWORK") 
-	s.text:SetFont(STANDARD_TEXT_FONT, 11, "")
+	s.text = s:CreateFontString( nil, "ARTWORK", "GameFontNormal" ) 
+	--s.text:SetFont(STANDARD_TEXT_FONT, 11, "")
 	s.text:SetText("Feedback")
 	s.text:SetPoint("CENTER", s, "TOP", 0, -10)
 
@@ -468,8 +468,8 @@ frameStatus.texture = frameStatus:CreateTexture(nil, "BACKGROUND")
 frameStatus.texture:SetColorTexture(0, 0, 0, 0.3)
 frameStatus.texture:SetAllPoints(frameStatus)
 
-frameStatus.text = frameStatus:CreateFontString(nil,"ARTWORK") 
-frameStatus.text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
+frameStatus.text = frameStatus:CreateFontString( nil, "ARTWORK", "GameFontNormal" ) 
+--frameStatus.text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
 frameStatus.text:SetText("")
 frameStatus.text:SetPoint("CENTER", frameStatus, "CENTER", 0, 0)
 
@@ -822,8 +822,8 @@ frame:SetScript("OnEvent", function(self, event, ...)
 			np.th_threat.texture:SetSize(42, 42)
 			np.th_threat.texture:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 			
-			np.th_threat.text = np:CreateFontString( nil, "OVERLAY" ) 
-			np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
+			np.th_threat.text = np:CreateFontString( nil, "OVERLAY", "GameFontNormal" ) 
+			--np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
 			np.th_threat.text:SetText( "Created by TankHelper -> if you see this tell the Dev." )
 			np.th_threat.text:SetPoint( "CENTER", np.th_threat, "TOP", 0, 70 )
 

@@ -81,7 +81,7 @@ local function InitSettings()
 		{ Name = "ONLYTH", Code = "ONLYTH" },
 		{ Name = "BOTH", Code = "BOTH" },
 	}
-	TankHelper:CreateComboBox(settings_channel)
+	TankHelper:CreateDropDown(settings_channel)
 	Y = Y - 40
 
 	local settings_showtranslation = {}

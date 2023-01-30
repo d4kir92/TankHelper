@@ -177,7 +177,7 @@ function TankHelper:CreateF(tab)
 	return frame
 end
 
-function TankHelper:CreateComboBox(tab)
+function TankHelper:CreateDropDown(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.tooltip = tab.tooltip or ""
