@@ -19,6 +19,80 @@ function TankHelper:GetWoWBuild()
 	return Build
 end
 
+function TankHelper:GetColor( name )
+	local r = THTAB[name .. "_r"]
+	local g = THTAB[name .. "_g"]
+	local b = THTAB[name .. "_b"]
+	local a = THTAB[name .. "_a"]
+	return r, g, b, a
+end
+
+function TankHelper:SetColor( name, r, g, b, a )
+	THTAB[name .. "_r"] = r
+	THTAB[name .. "_g"] = g
+	THTAB[name .. "_b"] = b
+	THTAB[name .. "_a"] = a
+
+	TankHelper:UpdateColors()
+end
+
+function TankHelper:UpdateColors()
+	if TankHelper:GetColor( "BGColor" ) == nil then
+		TankHelper:SetColor( "BGColor", 0, 0, 0, 0.4 )
+	end
+	if TankHelper:GetColor( "BRColor" ) == nil then
+		TankHelper:SetColor( "BRColor", 0, 0, 0, 0.2 )
+	end
+
+	local r1, g1, b1, a1 = TankHelper:GetColor( "BRColor" )
+	local r2, g2, b2, a2 = TankHelper:GetColor( "BGColor" )
+	if frameCockpit then
+		if MouseIsOver( frameCockpit ) then
+			if a1 < 0.15 then
+				a1 = 0.15
+			end
+		end
+		frameCockpit.tBRl:SetColorTexture( r1, g1, b1, a1 )
+		frameCockpit.tBRr:SetColorTexture( r1, g1, b1, a1 )
+		frameCockpit.tBRt:SetColorTexture( r1, g1, b1, a1 )
+		frameCockpit.tBRb:SetColorTexture( r1, g1, b1, a1 )
+		--frameCockpit.texture:SetColorTexture( r1, g1, b1, a1 )
+		frameCockpit.tBG:SetColorTexture( r2, g2, b2, a2 )
+	end
+end
+
+function TankHelper:ShowColorPicker( r, g, b, a, changedCallback )
+	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback;
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
+	ColorPickerFrame.previousValues = { r, g, b, a };
+	ColorPickerFrame:SetColorRGB( r, g, b )
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
+
+	ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
+	ColorPickerFrame:Show();
+end
+
+function TankHelper:AddColorPicker( name, parent, x, y )
+	local btn = CreateFrame( "Button", name, parent, "UIPanelButtonTemplate" )
+	btn:SetSize( 140, 25 )
+	btn:SetPoint( "TOPLEFT", parent, "TOPLEFT", x, y )
+	btn:SetText( TankHelper:GT( name ) )
+
+	btn:SetScript( "OnClick", function()
+		local r, g, b, a = TankHelper:GetColor( name )
+		TankHelper:ShowColorPicker( r, g, b, a, function( restore )
+			local newR, newG, newB, newA;
+			if restore then
+				newR, newG, newB, newA = unpack(restore);
+			else
+				newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB();
+			end
+			
+			TankHelper:SetColor( name, newR, newG, newB, newA )
+		end)
+	end )
+end
+
 local function InitSettings()
 	local colred = {0, 1, 0, 1}
 	TH_Settings = {}
@@ -27,8 +101,8 @@ local function InitSettings()
 	TH_Settings.panel.name = settingname
 
 	local Y = -14
-	local H = 16
-	local BR = 30
+	local H = 14
+	local BR = 24
 
 	local settings_header = {}
 	settings_header.frame = TH_Settings.panel
@@ -275,6 +349,9 @@ local function InitSettings()
 	settings_iconsize.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_iconsize)
 	Y = Y - H
+
+	TankHelper:AddColorPicker( "BRColor", TH_Settings.panel, 450, -50 )
+	TankHelper:AddColorPicker( "BGColor", TH_Settings.panel, 450, -75 )
 
 	InterfaceOptions_AddCategory(TH_Settings.panel)
 end

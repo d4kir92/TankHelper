@@ -40,4 +40,8 @@ function TankHelper:LangdeDE()
 
 	thlang.onlytank = "Automatische Kennzeichnung nur als Tank"
 	thlang.hidelastrow = "Letzte Reihe ausblenden"
+
+	thlang.brcolor = "Randfarbe"
+	thlang.bgcolor = "Hintergrundfarbe"
+
 end

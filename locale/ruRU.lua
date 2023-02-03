@@ -31,4 +31,8 @@ function TankHelper:LangruRU()
 	thlang.fixposition = "исправить положение"
 	thlang.hidestatus = "Скрыть рамку состояния"
 	thlang.nameplatethreat = "Показать угрозу для таблички"
+
+	thlang.brcolor = "Border Color"
+	thlang.bgcolor = "Background Color"
+
 end

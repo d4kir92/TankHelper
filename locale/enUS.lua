@@ -43,6 +43,9 @@ function TankHelper:LangenUS()
 	thlang.onlytank = "Automatic marking as tank only"
 	thlang.hidelastrow = "Hide last row"
 
+	thlang.brcolor = "Border Color"
+	thlang.bgcolor = "Background Color"
+
 	for i, v in pairs(thlang) do
 		ethlang[i] = v
 	end

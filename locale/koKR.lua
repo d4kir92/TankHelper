@@ -31,4 +31,8 @@ function TankHelper:LangkoKR()
 	thlang.fixposition = "위치 고정"
 	thlang.hidestatus = "상태 프레임 숨기기"
 	thlang.nameplatethreat = "명판 위협 표시"
+
+	thlang.brcolor = "Border Color"
+	thlang.bgcolor = "Background Color"
+
 end

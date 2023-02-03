@@ -31,4 +31,8 @@ function TankHelper:LangzhTW()
 	thlang.fixposition = "固定位置"
 	thlang.hidestatus = "隱藏狀態框"
 	thlang.nameplatethreat = "顯示銘牌威脅"
+
+	thlang.brcolor = "Border Color"
+	thlang.bgcolor = "Background Color"
+
 end
