@@ -1,5 +1,9 @@
+## Interface-Classic: 11403
+## Interface-BCC: 20504
+## Interface-Wrath: 30401
 ## Interface: 100005
-## Version: 1.5.0
+
+## Version: 1.5.1
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
