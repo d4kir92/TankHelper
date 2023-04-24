@@ -1,6 +1,5 @@
 -- LIB Design
-
-local AddOnName, TankHelper = ...
+local _, TankHelper = ...
 
 function TankHelper:CreateText(tab)
 	tab.textsize = tab.textsize or 12
@@ -9,16 +8,18 @@ function TankHelper:CreateText(tab)
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 	text:SetText(TankHelper:GT(tab.text, true))
+
 	tab.color = tab.color or {1, 1, 1, 1}
+
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
 	tab.color[3] = tab.color[3] or 1
 	tab.color[4] = tab.color[4] or 1
 	text:SetTextColor(tab.color[1], tab.color[2], tab.color[3], tab.color[4])
 
-	hooksecurefunc( TankHelper, "UpdateLanguage", function()
+	hooksecurefunc(TankHelper, "UpdateLanguage", function()
 		text:SetText(TankHelper:GT(tab.text, true))
-	end )
+	end)
 
 	return text
 end
@@ -33,10 +34,12 @@ function TankHelper:CreateCheckBox(tab)
 	CB:SetPoint("TOPLEFT", tab.x, tab.y)
 	CB.tooltip = tab.tooltip
 	CB:SetChecked(tab.checked)
-	CB:SetScript("OnClick", function(self)
+
+	CB:SetScript("OnClick", function(sel)
 		local status = CB:GetChecked()
-		self:SetChecked(status)
+		sel:SetChecked(status)
 		THTAB[tab.dbvalue] = status
+
 		if tab.func ~= nil then
 			tab:func()
 		end
@@ -45,7 +48,9 @@ function TankHelper:CreateCheckBox(tab)
 	tab.frame = CB
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
+
 	tab.color = tab.color or {1, 1, 1, 1}
+
 	CB.text = TankHelper:CreateText(tab)
 
 	return CB
@@ -61,7 +66,7 @@ function TankHelper:CreateSlider(tab)
 	SL:SetPoint("TOPLEFT", tab.x, tab.y)
 	SL.Low:SetText(tab.min)
 	SL.High:SetText(tab.max)
-	SL.Text:SetText( format( TankHelper:GT( tab.text, true ), tab.value ) )
+	SL.Text:SetText(format(TankHelper:GT(tab.text, true), tab.value))
 	SL:SetMinMaxValues(tab.min, tab.max)
 	SL:SetValue(tab.value)
 	SL:SetWidth(600)
@@ -69,15 +74,16 @@ function TankHelper:CreateSlider(tab)
 	tab.steps = tab.steps or 1
 	SL:SetValueStep(tab.steps)
 	SL.decimals = tab.decimals or 1
-	SL:SetScript("OnValueChanged", function(self, val)
-		val = TankHelper:MathR(val, self.decimals)
-		val = val - val % tab.steps
-		val = TankHelper:MathR(val, self.decimals)
-		THTAB[tab.dbvalue] = val
 
-		local val = SL:GetValue()
-		if val then
-			SL.Text:SetText( format( TankHelper:GT( tab.text, true ), val ) )
+	SL:SetScript("OnValueChanged", function(sel, val)
+		val = TankHelper:MathR(val, sel.decimals)
+		val = val - val % tab.steps
+		val = TankHelper:MathR(val, sel.decimals)
+		THTAB[tab.dbvalue] = val
+		local valu = SL:GetValue()
+
+		if valu then
+			SL.Text:SetText(format(TankHelper:GT(tab.text, true), valu))
 		end
 
 		if tab.func ~= nil then
@@ -85,12 +91,13 @@ function TankHelper:CreateSlider(tab)
 		end
 	end)
 
-	hooksecurefunc( TankHelper, "UpdateLanguage", function()
+	hooksecurefunc(TankHelper, "UpdateLanguage", function()
 		local val = SL:GetValue()
+
 		if val then
-			SL.Text:SetText( format( TankHelper:GT( tab.text, true ), val ) )
+			SL.Text:SetText(format(TankHelper:GT(tab.text, true), val))
 		end
-	end )
+	end)
 
 	return EB
 end
@@ -100,12 +107,13 @@ function TankHelper:CTexture(frame, tab)
 	local texture = frame:CreateTexture(nil, tab.layer)
 	tab.texture = tab.texture or ""
 	tab.color = tab.color or {}
+
 	if tab.texture ~= "" then
 		tab.color.r = tab.color.r or 1
 		tab.color.g = tab.color.g or 1
 		tab.color.b = tab.color.b or 1
 		tab.color.a = tab.color.a or 1
-	 	texture:SetTexture(tab.texture)
+		texture:SetTexture(tab.texture)
 		texture:SetVertexColor(tab.color.r, tab.color.g, tab.color.b, tab.color.a)
 	elseif tab.color ~= nil then
 		tab.color.r = tab.color.r or 1
@@ -123,7 +131,6 @@ function TankHelper:CTexture(frame, tab)
 		tab.w = tab.w or frame:GetWidth()
 		tab.h = tab.h or frame:GetHeight()
 		texture:SetSize(tab.w, tab.h)
-
 		tab.x = tab.x or 0
 		tab.y = tab.y or 0
 		texture:SetPoint(tab.align or "TOPLEFT", frame, tab.x, tab.y)
@@ -145,19 +152,18 @@ function TankHelper:CreateF(tab)
 	local frame = CreateFrame("FRAME", tab.name, tab.parent)
 	frame:SetWidth(tab.w)
 	frame:SetHeight(tab.h)
-
 	frame:SetPoint(tab.align, tab.parent, tab.align, tab.x, tab.y)
-
 	tab.layer = tab.layer or "BACKGROUND"
 	frame.texture = TankHelper:CTexture(frame, tab)
-
 	tab.textlayer = tab.textlayer or "ARTWORK"
 	frame.text = frame:CreateFontString(nil, tab.textlayer)
+
 	if tab.framestrata ~= nil then
 		frame:SetFrameStrata(tab.framestrata)
 	else
 		frame:SetFrameStrata("HIGH")
 	end
+
 	frame.text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "")
 	frame.text:SetShadowColor(0, 0, 0, 0.8)
 	frame.text:SetShadowOffset(1, -1)
@@ -169,6 +175,7 @@ function TankHelper:CreateF(tab)
 	end
 
 	frame.oldSetSize = frame.SetSize
+
 	function frame:SetSize(w, h)
 		frame:oldSetSize(w, h)
 		self.texture:SetSize(w, h)
@@ -183,9 +190,9 @@ function TankHelper:CreateDropDown(tab)
 	tab.tooltip = tab.tooltip or ""
 	tab.x = tab.x or 0
 	tab.y = tab.y or 0
-
 	local t = {}
-	for i, v in pairs( tab.tab ) do
+
+	for i, v in pairs(tab.tab) do
 		if v.Code then
 			tinsert(t, v.Code)
 		else
@@ -195,17 +202,18 @@ function TankHelper:CreateDropDown(tab)
 
 	local rows = {
 		["name"] = tab.name,
-		["parent"]= tab.parent,
+		["parent"] = tab.parent,
 		["title"] = tab.text,
-		["items"]= t,
-		["defaultVal"] = tab.value, 
-		["changeFunc"] = function( dropdown_frame, dropdown_val )
+		["items"] = t,
+		["defaultVal"] = tab.value,
+		["changeFunc"] = function(dropdown_frame, dropdown_val)
 			--dropdown_val = tonumber( dropdown_val )
 			THTAB[tab.dbvalue] = dropdown_val
 		end
 	}
-	local DD = TankHelper:CreateDropdown( rows )
-	DD:SetPoint( "TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y )
+
+	local DD = TankHelper:CreateDropdown(rows)
+	DD:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 
 	return DD
 end

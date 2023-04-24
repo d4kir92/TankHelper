@@ -1,12 +1,9 @@
 -- enUS English
-
-local AddOnName, TankHelper = ...
+local _, TankHelper = ...
 
 function TankHelper:LangenUS()
 	local thlang = TankHelper:GetLangTab()
-	
 	local ethlang = TankHelper:GetELangTab()
-	
 	-- Pulltimer
 	thlang.pullinx = "Pull in %0.1f"
 	thlang.go = "GO"
@@ -14,7 +11,6 @@ function TankHelper:LangenUS()
 	thlang.onlythirdparty = "Use countdown from other addons"
 	thlang.onlyth = "Use Tank Helper countdown"
 	thlang.both = "Use Both"
-
 	-- Status
 	thlang.ready = "Ready"
 	thlang.youmustbeinaninstance = "You must be in an Instance"
@@ -23,7 +19,6 @@ function TankHelper:LangenUS()
 	thlang.playerlowhp = "Player low hp"
 	thlang.playernotfull = "Player not full"
 	thlang.playerhavenotenoughpower = "Player have not enough power"
-
 	--Settings
 	thlang.showalways = "Show Always"
 	thlang.showtranslation = "Show Translation"
@@ -37,12 +32,9 @@ function TankHelper:LangenUS()
 	thlang.fixposition = "Fixed Position"
 	thlang.hidestatus = "Hide Status Frame"
 	thlang.nameplatethreat = "Show Nameplate Threat"
-	
 	thlang.pulltimermode = "Pulltimer Mode"
-
 	thlang.onlytank = "Automatic marking as tank only"
 	thlang.hidelastrow = "Hide last row"
-
 	thlang.brcolor = "Border Color"
 	thlang.bgcolor = "Background Color"
 

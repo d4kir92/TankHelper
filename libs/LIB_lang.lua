@@ -1,6 +1,4 @@
-
-local AddOnName, TankHelper = ...
-
+local _, TankHelper = ...
 local thlang = {}
 local ethlang = {}
 
@@ -16,6 +14,7 @@ function TankHelper:GT(str, force)
 	local strid = string.lower(str)
 	local result = thlang[strid]
 	local eng = ethlang[strid]
+
 	if result ~= nil and eng ~= nil then
 		if force then
 			return result
@@ -31,6 +30,7 @@ end
 
 function TankHelper:UpdateLanguage()
 	TankHelper:LangenUS()
+
 	if GetLocale() == "enUS" then
 		TankHelper:LangenUS()
 	elseif GetLocale() == "deDE" then
@@ -43,4 +43,5 @@ function TankHelper:UpdateLanguage()
 		TankHelper:LangzhTW()
 	end
 end
+
 TankHelper:UpdateLanguage()

@@ -1,8 +1,7 @@
-
-local AddOnName, TankHelper = ...
-
+local _, TankHelper = ...
 local BuildNr = select(4, GetBuildInfo())
 local Build = "CLASSIC"
+
 if BuildNr >= 100000 then
 	Build = "RETAIL"
 elseif BuildNr > 29999 then
@@ -19,91 +18,94 @@ function TankHelper:GetWoWBuild()
 	return Build
 end
 
-function TankHelper:GetColor( name )
+function TankHelper:GetColor(name)
 	local r = THTAB[name .. "_r"]
 	local g = THTAB[name .. "_g"]
 	local b = THTAB[name .. "_b"]
 	local a = THTAB[name .. "_a"]
+
 	return r, g, b, a
 end
 
-function TankHelper:SetColor( name, r, g, b, a )
+function TankHelper:SetColor(name, r, g, b, a)
 	THTAB[name .. "_r"] = r
 	THTAB[name .. "_g"] = g
 	THTAB[name .. "_b"] = b
 	THTAB[name .. "_a"] = a
-
 	TankHelper:UpdateColors()
 end
 
 function TankHelper:UpdateColors()
-	if TankHelper:GetColor( "BGColor" ) == nil then
-		TankHelper:SetColor( "BGColor", 0, 0, 0, 0.4 )
-	end
-	if TankHelper:GetColor( "BRColor" ) == nil then
-		TankHelper:SetColor( "BRColor", 0, 0, 0, 0.2 )
+	if TankHelper:GetColor("BGColor") == nil then
+		TankHelper:SetColor("BGColor", 0, 0, 0, 0.4)
 	end
 
-	local r1, g1, b1, a1 = TankHelper:GetColor( "BRColor" )
-	local r2, g2, b2, a2 = TankHelper:GetColor( "BGColor" )
+	if TankHelper:GetColor("BRColor") == nil then
+		TankHelper:SetColor("BRColor", 0, 0, 0, 0.2)
+	end
+
+	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor")
+	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor")
+
 	if frameCockpit then
-		if MouseIsOver( frameCockpit ) then
-			if a1 < 0.15 then
-				a1 = 0.15
-			end
+		if MouseIsOver(frameCockpit) and a1 < 0.15 then
+			a1 = 0.15
 		end
-		frameCockpit.tBRl:SetColorTexture( r1, g1, b1, a1 )
-		frameCockpit.tBRr:SetColorTexture( r1, g1, b1, a1 )
-		frameCockpit.tBRt:SetColorTexture( r1, g1, b1, a1 )
-		frameCockpit.tBRb:SetColorTexture( r1, g1, b1, a1 )
+
+		frameCockpit.tBRl:SetColorTexture(r1, g1, b1, a1)
+		frameCockpit.tBRr:SetColorTexture(r1, g1, b1, a1)
+		frameCockpit.tBRt:SetColorTexture(r1, g1, b1, a1)
+		frameCockpit.tBRb:SetColorTexture(r1, g1, b1, a1)
 		--frameCockpit.texture:SetColorTexture( r1, g1, b1, a1 )
-		frameCockpit.tBG:SetColorTexture( r2, g2, b2, a2 )
+		frameCockpit.tBG:SetColorTexture(r2, g2, b2, a2)
 	end
 end
 
-function TankHelper:ShowColorPicker( r, g, b, a, changedCallback )
-	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback;
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
-	ColorPickerFrame.previousValues = { r, g, b, a };
-	ColorPickerFrame:SetColorRGB( r, g, b )
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
+function TankHelper:ShowColorPicker(r, g, b, a, changedCallback)
+	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
 
-	ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
-	ColorPickerFrame:Show();
+	ColorPickerFrame.previousValues = {r, g, b, a}
+
+	ColorPickerFrame:SetColorRGB(r, g, b)
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
+	ColorPickerFrame:Hide() -- Need to run the OnShow handler.
+	ColorPickerFrame:Show()
 end
 
-function TankHelper:AddColorPicker( name, parent, x, y )
-	local btn = CreateFrame( "Button", name, parent, "UIPanelButtonTemplate" )
-	btn:SetSize( 140, 25 )
-	btn:SetPoint( "TOPLEFT", parent, "TOPLEFT", x, y )
-	btn:SetText( TankHelper:GT( name ) )
+function TankHelper:AddColorPicker(name, parent, x, y)
+	local btn = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+	btn:SetSize(140, 25)
+	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
+	btn:SetText(TankHelper:GT(name))
 
-	btn:SetScript( "OnClick", function()
-		local r, g, b, a = TankHelper:GetColor( name )
-		TankHelper:ShowColorPicker( r, g, b, a, function( restore )
-			local newR, newG, newB, newA;
+	btn:SetScript("OnClick", function()
+		local r, g, b, a = TankHelper:GetColor(name)
+
+		TankHelper:ShowColorPicker(r, g, b, a, function(restore)
+			local newR, newG, newB, newA
+
 			if restore then
-				newR, newG, newB, newA = unpack(restore);
+				newR, newG, newB, newA = unpack(restore)
 			else
-				newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB();
+				newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
 			end
-			
-			TankHelper:SetColor( name, newR, newG, newB, newA )
+
+			TankHelper:SetColor(name, newR, newG, newB, newA)
 		end)
-	end )
+	end)
 end
 
 local function InitSettings()
 	local colred = {0, 1, 0, 1}
+
 	TH_Settings = {}
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
-
 	local Y = -14
 	local H = 14
 	local BR = 24
-
 	local settings_header = {}
 	settings_header.frame = TH_Settings.panel
 	settings_header.parent = TH_Settings.panel
@@ -131,7 +133,7 @@ local function InitSettings()
 	local settings_showalways = {}
 	settings_showalways.name = "showalways"
 	settings_showalways.parent = TH_Settings.panel
-	settings_showalways.checked = TankHelper:GetConfig( "showalways", false )
+	settings_showalways.checked = TankHelper:GetConfig("showalways", false)
 	settings_showalways.text = "showalways"
 	settings_showalways.x = 10
 	settings_showalways.y = Y
@@ -139,25 +141,37 @@ local function InitSettings()
 	settings_showalways.color = colred
 	TankHelper:CreateCheckBox(settings_showalways)
 	Y = Y - 24
-
 	Y = Y - 10
 	local settings_channel = {}
 	settings_channel.name = "PULLTIMERMODE"
 	settings_channel.parent = TH_Settings.panel
 	settings_channel.text = "PULLTIMERMODE"
-	settings_channel.value = TankHelper:GetConfig( "PULLTIMERMODE", "AUTO" )
+	settings_channel.value = TankHelper:GetConfig("PULLTIMERMODE", "AUTO")
 	settings_channel.x = 0
 	settings_channel.y = Y
 	settings_channel.dbvalue = "PULLTIMERMODE"
+
 	settings_channel.tab = {
-		{ Name = "AUTO", Code = "AUTO" },
-		{ Name = "ONLYTHIRDPARTY", Code = "ONLYTHIRDPARTY" },
-		{ Name = "ONLYTH", Code = "ONLYTH" },
-		{ Name = "BOTH", Code = "BOTH" },
+		{
+			Name = "AUTO",
+			Code = "AUTO"
+		},
+		{
+			Name = "ONLYTHIRDPARTY",
+			Code = "ONLYTHIRDPARTY"
+		},
+		{
+			Name = "ONLYTH",
+			Code = "ONLYTH"
+		},
+		{
+			Name = "BOTH",
+			Code = "BOTH"
+		},
 	}
+
 	TankHelper:CreateDropDown(settings_channel)
 	Y = Y - 40
-
 	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = TH_Settings.panel
@@ -169,7 +183,6 @@ local function InitSettings()
 	settings_showtranslation.color = colred
 	TankHelper:CreateCheckBox(settings_showtranslation)
 	Y = Y - 24
-
 	local settings_fixposition = {}
 	settings_fixposition.name = "fixposition"
 	settings_fixposition.parent = TH_Settings.panel
@@ -181,7 +194,6 @@ local function InitSettings()
 	settings_fixposition.color = colred
 	TankHelper:CreateCheckBox(settings_fixposition)
 	Y = Y - 24
-
 	local settings_hidestatus = {}
 	settings_hidestatus.name = "hidestatus"
 	settings_hidestatus.parent = TH_Settings.panel
@@ -193,7 +205,6 @@ local function InitSettings()
 	settings_hidestatus.color = colred
 	TankHelper:CreateCheckBox(settings_hidestatus)
 	Y = Y - 24
-
 	local settings_hidelastrow = {}
 	settings_hidelastrow.name = "hidelastrow"
 	settings_hidelastrow.parent = TH_Settings.panel
@@ -206,27 +217,27 @@ local function InitSettings()
 	settings_hidelastrow.func = TankHelper.UpdateDesign
 	TankHelper:CreateCheckBox(settings_hidelastrow)
 	Y = Y - 24
-
 	local settings_nameplatethreat = {}
 	settings_nameplatethreat.name = "nameplatethreat"
 	settings_nameplatethreat.parent = TH_Settings.panel
-	settings_nameplatethreat.checked = TankHelper:GetConfig( "nameplatethreat", true )
+	settings_nameplatethreat.checked = TankHelper:GetConfig("nameplatethreat", true)
 	settings_nameplatethreat.text = "nameplatethreat"
 	settings_nameplatethreat.x = 10
 	settings_nameplatethreat.y = Y
 	settings_nameplatethreat.dbvalue = "nameplatethreat"
 	settings_nameplatethreat.color = colred
-	settings_nameplatethreat.func = function() TankHelper:ThinkNameplates( true ) end
+
+	settings_nameplatethreat.func = function()
+		TankHelper:ThinkNameplates(true)
+	end
+
 	TankHelper:CreateCheckBox(settings_nameplatethreat)
 	Y = Y - 24
-
-
-
 	Y = Y - BR
 	local settings_targettingdelay = {}
 	settings_targettingdelay.name = "targettingdelay"
 	settings_targettingdelay.parent = TH_Settings.panel
-	settings_targettingdelay.value = TankHelper:GetConfig( "targettingdelay", 0.8 )
+	settings_targettingdelay.value = TankHelper:GetConfig("targettingdelay", 0.8)
 	settings_targettingdelay.text = "targettingdelay"
 	settings_targettingdelay.x = 10
 	settings_targettingdelay.y = Y
@@ -235,13 +246,12 @@ local function InitSettings()
 	settings_targettingdelay.steps = 0.1
 	settings_targettingdelay.decimals = 1
 	settings_targettingdelay.dbvalue = "targettingdelay"
+
 	settings_targettingdelay.color = {0, 1, 0, 1}
+
 	settings_targettingdelay.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_targettingdelay)
 	Y = Y - H - H
-
-
-
 	Y = Y - BR
 	local settings_scalecockpit = {}
 	settings_scalecockpit.name = "scalecockpit"
@@ -255,11 +265,12 @@ local function InitSettings()
 	settings_scalecockpit.steps = 0.1
 	settings_scalecockpit.decimals = 1
 	settings_scalecockpit.dbvalue = "scalecockpit"
+
 	settings_scalecockpit.color = {0, 1, 0, 1}
+
 	settings_scalecockpit.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_scalecockpit)
 	Y = Y - H
-
 	Y = Y - BR
 	local settings_scalestatus = {}
 	settings_scalestatus.name = "scalestatus"
@@ -273,11 +284,12 @@ local function InitSettings()
 	settings_scalestatus.steps = 0.1
 	settings_scalestatus.decimals = 1
 	settings_scalestatus.dbvalue = "scalestatus"
+
 	settings_scalestatus.color = {0, 1, 0, 1}
+
 	settings_scalestatus.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_scalestatus)
 	Y = Y - H
-
 	Y = Y - BR
 	local settings_obr = {}
 	settings_obr.name = "obr"
@@ -291,11 +303,12 @@ local function InitSettings()
 	settings_obr.steps = 1
 	settings_obr.decimals = 0
 	settings_obr.dbvalue = "obr"
+
 	settings_obr.color = {0, 1, 0, 1}
+
 	settings_obr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_obr)
 	Y = Y - H
-	
 	Y = Y - BR
 	local settings_ibr = {}
 	settings_ibr.name = "ibr"
@@ -309,11 +322,12 @@ local function InitSettings()
 	settings_ibr.steps = 1
 	settings_ibr.decimals = 0
 	settings_ibr.dbvalue = "ibr"
+
 	settings_ibr.color = {0, 1, 0, 1}
+
 	settings_ibr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_ibr)
 	Y = Y - H
-
 	Y = Y - BR
 	local settings_cbr = {}
 	settings_cbr.name = "cbr"
@@ -327,11 +341,12 @@ local function InitSettings()
 	settings_cbr.steps = 1
 	settings_cbr.decimals = 0
 	settings_cbr.dbvalue = "cbr"
+
 	settings_cbr.color = {0, 1, 0, 1}
+
 	settings_cbr.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_cbr)
 	Y = Y - H
-
 	Y = Y - BR
 	local settings_iconsize = {}
 	settings_iconsize.name = "iconsize"
@@ -345,31 +360,27 @@ local function InitSettings()
 	settings_iconsize.steps = 2
 	settings_iconsize.decimals = 0
 	settings_iconsize.dbvalue = "iconsize"
+
 	settings_iconsize.color = {0, 1, 0, 1}
+
 	settings_iconsize.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_iconsize)
 	Y = Y - H
-
-	TankHelper:AddColorPicker( "BRColor", TH_Settings.panel, 450, -50 )
-	TankHelper:AddColorPicker( "BGColor", TH_Settings.panel, 450, -75 )
-
+	TankHelper:AddColorPicker("BRColor", TH_Settings.panel, 450, -50)
+	TankHelper:AddColorPicker("BGColor", TH_Settings.panel, 450, -75)
 	InterfaceOptions_AddCategory(TH_Settings.panel)
 end
 
 local THloaded = false
-local THSETUP = false
-
 local frame = CreateFrame("FRAME")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
-
 		InitSettings()
-
-		THSETUP = true
-
 		TankHelper:InitSetup()
 	end
 end
+
 frame:SetScript("OnEvent", frame.OnEvent)
