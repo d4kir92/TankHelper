@@ -298,7 +298,6 @@ local function InitSettings()
 	settings_scalestatus.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_scalestatus)
 	Y = -320
-	print(Y)
 	local settings_targettingdelay = {}
 	settings_targettingdelay.name = "targettingdelay"
 	settings_targettingdelay.parent = TH_Settings.panel
