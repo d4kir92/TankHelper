@@ -368,12 +368,9 @@ end)
 
 local ts = 0
 local setts = 0
-local delay = 1
 local targetGUID = UnitGUID("TARGET")
 
 function TankHelper:TargetIconLogic()
-	delay = TankHelper:GetConfig("targettingdelay", 0.8)
-
 	if UnitGroupRolesAssigned then
 		local role = UnitGroupRolesAssigned("PLAYER")
 		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end -- Only Tank?
@@ -408,7 +405,7 @@ function TankHelper:TargetIconLogic()
 	else
 		-- switch from enemy to enemy, then add delay
 		if targetGUID and UnitGUID("TARGET") ~= targetGUID then
-			ts = GetTime() + delay
+			ts = GetTime() + TankHelper:GetConfig("targettingdelay", 0.8)
 		end
 
 		targetGUID = UnitGUID("TARGET")
@@ -422,7 +419,7 @@ function TankHelper:UpdateTargetIcon()
 	C_Timer.After(0.1, TankHelper.UpdateTargetIcon)
 end
 
-TankHelper:UpdateTargetIcon()
+C_Timer.After(4, TankHelper.UpdateTargetIcon)
 frameCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
 frameCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
 frameCockpit:RegisterEvent("RAID_TARGET_UPDATE")
@@ -518,6 +515,44 @@ C_Timer.After(0.1, TankHelper.DesignThink)
 
 local THStatusColor = {1, 1, 1, 1}
 
+function TankHelper:CheckUnit(unit, dead, health, power)
+	if UnitExists(unit) then
+		local can = true
+
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned then
+			local role = UnitGroupRolesAssigned(unit)
+
+			if role ~= "HEALER" then
+				can = false
+			end
+		end
+
+		if can then
+			local hpercent = UnitHealth(unit) / UnitHealthMax(unit)
+
+			if hpercent < health then
+				health = hpercent
+			end
+
+			local powertype = UnitPowerType(unit)
+
+			if powertype == 0 and UnitPower(unit) > 0 and UnitPowerMax(unit) > 0 then
+				local ppercent = UnitPower(unit) / UnitPowerMax(unit)
+
+				if ppercent < power then
+					power = ppercent
+				end
+			end
+		end
+
+		if UnitIsDead(unit) then
+			dead = true
+		end
+	end
+
+	return dead, health, power
+end
+
 function TankHelper:SetStatusText()
 	if frameCockpit == nil or frameStatus == nil then return end
 
@@ -534,44 +569,14 @@ function TankHelper:SetStatusText()
 			local health = 1
 			local power = 1
 			local dead = false
-
-			if UnitExists("PLAYER") then
-				local percent = UnitHealth("PLAYER") / UnitHealthMax("PLAYER")
-
-				if percent < health then
-					health = percent
-				end
-
-				local powertype = UnitPowerType("PLAYER")
-				local percent2 = UnitPower("PLAYER") / UnitPowerMax("PLAYER")
-
-				if powertype == 0 and percent2 < power then
-					power = percent2
-				end
-
-				if UnitIsDead("PLAYER") then
-					dead = true
-				end
-			end
+			dead, health, power = TankHelper:CheckUnit("PLAYER", dead, health, power)
 
 			for i = 1, 4 do
-				if UnitExists("PARTY" .. i) then
-					local percent = UnitHealth("PARTY" .. i) / UnitHealthMax("PARTY" .. i)
+				dead, health, power = TankHelper:CheckUnit("PARTY" .. i, dead, health, power)
+			end
 
-					if percent < health then
-						health = percent
-					end
-
-					local powertype = UnitPowerType("PARTY" .. i)
-
-					if powertype == 0 and UnitPower("PARTY" .. i) > 0 and UnitPowerMax("PARTY" .. i) > 0 and UnitPower("PARTY" .. i) / UnitPowerMax("PARTY" .. i) < power then
-						power = UnitPower("PARTY" .. i) / UnitPowerMax("PARTY" .. i)
-					end
-
-					if UnitIsDead("PARTY" .. i) then
-						dead = true
-					end
-				end
+			for i = 1, 40 do
+				dead, health, power = TankHelper:CheckUnit("RAID" .. i, dead, health, power)
 			end
 
 			if dead then
@@ -591,6 +596,10 @@ function TankHelper:SetStatusText()
 
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
+		end
+
+		if TankHelper:GetConfig("statusonlyhealers", true) then
+			text = format("%s: %s", TankHelper:GT("healer"), text)
 		end
 
 		frameStatus.text:SetText(text)

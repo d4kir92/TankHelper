@@ -61,6 +61,7 @@ function TankHelper:CreateSlider(tab)
 	tab.parent = tab.parent or UIParent
 	tab.x = tab.x or 0
 	tab.y = tab.y or 0
+	tab.w = tab.w or 600
 	tab.value = tab.value or 0
 	local percentage = tab.percentage or false
 	local SL = CreateFrame("Slider", tab.name, tab.parent, "OptionsSliderTemplate")
@@ -76,7 +77,7 @@ function TankHelper:CreateSlider(tab)
 	SL.Text:SetText(format(TankHelper:GT(tab.text, true), v))
 	SL:SetMinMaxValues(tab.min, tab.max)
 	SL:SetValue(tab.value)
-	SL:SetWidth(600)
+	SL:SetWidth(tab.w)
 	SL:SetObeyStepOnDrag(tab.steps)
 	tab.steps = tab.steps or 1
 	SL:SetValueStep(tab.steps)

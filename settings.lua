@@ -97,7 +97,7 @@ function TankHelper:AddColorPicker(name, parent, x, y)
 end
 
 local function InitSettings()
-	local colred = {0, 1, 0, 1}
+	local colgreen = {0, 1, 0, 1}
 
 	TH_Settings = {}
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
@@ -125,7 +125,7 @@ local function InitSettings()
 		settings_onlytank.x = 10
 		settings_onlytank.y = Y
 		settings_onlytank.dbvalue = "onlytank"
-		settings_onlytank.color = colred
+		settings_onlytank.color = colgreen
 		TankHelper:CreateCheckBox(settings_onlytank)
 		Y = Y - 24
 	end
@@ -138,7 +138,7 @@ local function InitSettings()
 	settings_showalways.x = 10
 	settings_showalways.y = Y
 	settings_showalways.dbvalue = "showalways"
-	settings_showalways.color = colred
+	settings_showalways.color = colgreen
 	TankHelper:CreateCheckBox(settings_showalways)
 	Y = Y - 24
 	Y = Y - 10
@@ -180,8 +180,18 @@ local function InitSettings()
 	settings_showtranslation.x = 10
 	settings_showtranslation.y = Y
 	settings_showtranslation.dbvalue = "showtranslation"
-	settings_showtranslation.color = colred
+	settings_showtranslation.color = colgreen
 	TankHelper:CreateCheckBox(settings_showtranslation)
+	local settings_hidestatus = {}
+	settings_hidestatus.name = "hidestatus"
+	settings_hidestatus.parent = TH_Settings.panel
+	settings_hidestatus.checked = TankHelper:GetConfig("hidestatus", false)
+	settings_hidestatus.text = "hidestatus"
+	settings_hidestatus.x = 300
+	settings_hidestatus.y = Y
+	settings_hidestatus.dbvalue = "hidestatus"
+	settings_hidestatus.color = colgreen
+	TankHelper:CreateCheckBox(settings_hidestatus)
 	Y = Y - 24
 	local settings_fixposition = {}
 	settings_fixposition.name = "fixposition"
@@ -191,19 +201,18 @@ local function InitSettings()
 	settings_fixposition.x = 10
 	settings_fixposition.y = Y
 	settings_fixposition.dbvalue = "fixposition"
-	settings_fixposition.color = colred
+	settings_fixposition.color = colgreen
 	TankHelper:CreateCheckBox(settings_fixposition)
-	Y = Y - 24
-	local settings_hidestatus = {}
-	settings_hidestatus.name = "hidestatus"
-	settings_hidestatus.parent = TH_Settings.panel
-	settings_hidestatus.checked = TankHelper:GetConfig("hidestatus", false)
-	settings_hidestatus.text = "hidestatus"
-	settings_hidestatus.x = 10
-	settings_hidestatus.y = Y
-	settings_hidestatus.dbvalue = "hidestatus"
-	settings_hidestatus.color = colred
-	TankHelper:CreateCheckBox(settings_hidestatus)
+	local settings_statusonlyhealers = {}
+	settings_statusonlyhealers.name = "statusonlyhealers"
+	settings_statusonlyhealers.parent = TH_Settings.panel
+	settings_statusonlyhealers.checked = TankHelper:GetConfig("statusonlyhealers", true)
+	settings_statusonlyhealers.text = "statusonlyhealers"
+	settings_statusonlyhealers.x = 300
+	settings_statusonlyhealers.y = Y
+	settings_statusonlyhealers.dbvalue = "statusonlyhealers"
+	settings_statusonlyhealers.color = colgreen
+	TankHelper:CreateCheckBox(settings_statusonlyhealers)
 	Y = Y - 24
 	local settings_hidelastrow = {}
 	settings_hidelastrow.name = "hidelastrow"
@@ -213,9 +222,27 @@ local function InitSettings()
 	settings_hidelastrow.x = 10
 	settings_hidelastrow.y = Y
 	settings_hidelastrow.dbvalue = "hidelastrow"
-	settings_hidelastrow.color = colred
+	settings_hidelastrow.color = colgreen
 	settings_hidelastrow.func = TankHelper.UpdateDesign
 	TankHelper:CreateCheckBox(settings_hidelastrow)
+	local settings_healthmax = {}
+	settings_healthmax.name = "healthmax"
+	settings_healthmax.parent = TH_Settings.panel
+	settings_healthmax.value = TankHelper:GetConfig("healthmax", 0.9)
+	settings_healthmax.text = "healthmax"
+	settings_healthmax.x = 300
+	settings_healthmax.y = -200
+	settings_healthmax.min = 0.1
+	settings_healthmax.max = 1.0
+	settings_healthmax.steps = 0.1
+	settings_healthmax.decimals = 1
+	settings_healthmax.dbvalue = "healthmax"
+	settings_healthmax.percentage = true
+	settings_healthmax.w = 300
+
+	settings_healthmax.color = {0, 1, 0, 1}
+
+	TankHelper:CreateSlider(settings_healthmax)
 	Y = Y - 24
 	local settings_nameplatethreat = {}
 	settings_nameplatethreat.name = "nameplatethreat"
@@ -225,15 +252,53 @@ local function InitSettings()
 	settings_nameplatethreat.x = 10
 	settings_nameplatethreat.y = Y
 	settings_nameplatethreat.dbvalue = "nameplatethreat"
-	settings_nameplatethreat.color = colred
+	settings_nameplatethreat.color = colgreen
 
 	settings_nameplatethreat.func = function()
 		TankHelper:ThinkNameplates(true)
 	end
 
 	TankHelper:CreateCheckBox(settings_nameplatethreat)
-	Y = Y - 24
+	local settings_powermax = {}
+	settings_powermax.name = "powermax"
+	settings_powermax.parent = TH_Settings.panel
+	settings_powermax.value = TankHelper:GetConfig("powermax", 0.9)
+	settings_powermax.text = "powermax"
+	settings_powermax.x = 300
+	settings_powermax.y = -230
+	settings_powermax.min = 0.1
+	settings_powermax.max = 1.0
+	settings_powermax.steps = 0.1
+	settings_powermax.decimals = 1
+	settings_powermax.dbvalue = "powermax"
+	settings_powermax.percentage = true
+	settings_powermax.w = 300
+
+	settings_powermax.color = {0, 1, 0, 1}
+
+	TankHelper:CreateSlider(settings_powermax)
+	Y = Y - H
 	Y = Y - BR
+	local settings_scalestatus = {}
+	settings_scalestatus.name = "scalestatus"
+	settings_scalestatus.parent = TH_Settings.panel
+	settings_scalestatus.value = TankHelper:GetConfig("scalestatus", 1)
+	settings_scalestatus.text = "scalestatus"
+	settings_scalestatus.x = 300
+	settings_scalestatus.y = -260
+	settings_scalestatus.min = 0.1
+	settings_scalestatus.max = 2.0
+	settings_scalestatus.steps = 0.1
+	settings_scalestatus.decimals = 1
+	settings_scalestatus.dbvalue = "scalestatus"
+	settings_scalestatus.w = 300
+
+	settings_scalestatus.color = {0, 1, 0, 1}
+
+	settings_scalestatus.func = TankHelper.UpdateDesign
+	TankHelper:CreateSlider(settings_scalestatus)
+	Y = -320
+	print(Y)
 	local settings_targettingdelay = {}
 	settings_targettingdelay.name = "targettingdelay"
 	settings_targettingdelay.parent = TH_Settings.panel
@@ -251,7 +316,7 @@ local function InitSettings()
 
 	settings_targettingdelay.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_targettingdelay)
-	Y = Y - H - H
+	Y = Y - H
 	Y = Y - BR
 	local settings_scalecockpit = {}
 	settings_scalecockpit.name = "scalecockpit"
@@ -270,25 +335,6 @@ local function InitSettings()
 
 	settings_scalecockpit.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_scalecockpit)
-	Y = Y - H
-	Y = Y - BR
-	local settings_scalestatus = {}
-	settings_scalestatus.name = "scalestatus"
-	settings_scalestatus.parent = TH_Settings.panel
-	settings_scalestatus.value = TankHelper:GetConfig("scalestatus", 1)
-	settings_scalestatus.text = "scalestatus"
-	settings_scalestatus.x = 10
-	settings_scalestatus.y = Y
-	settings_scalestatus.min = 0.1
-	settings_scalestatus.max = 2.0
-	settings_scalestatus.steps = 0.1
-	settings_scalestatus.decimals = 1
-	settings_scalestatus.dbvalue = "scalestatus"
-
-	settings_scalestatus.color = {0, 1, 0, 1}
-
-	settings_scalestatus.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_scalestatus)
 	Y = Y - H
 	Y = Y - BR
 	local settings_obr = {}
@@ -365,45 +411,6 @@ local function InitSettings()
 
 	settings_iconsize.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_iconsize)
-	Y = Y - H
-	Y = Y - BR
-	local settings_healthmax = {}
-	settings_healthmax.name = "healthmax"
-	settings_healthmax.parent = TH_Settings.panel
-	settings_healthmax.value = TankHelper:GetConfig("healthmax", 0.9)
-	settings_healthmax.text = "healthmax"
-	settings_healthmax.x = 10
-	settings_healthmax.y = Y
-	settings_healthmax.min = 0.1
-	settings_healthmax.max = 1.0
-	settings_healthmax.steps = 0.1
-	settings_healthmax.decimals = 1
-	settings_healthmax.dbvalue = "healthmax"
-	settings_healthmax.percentage = true
-
-	settings_healthmax.color = {0, 1, 0, 1}
-
-	TankHelper:CreateSlider(settings_healthmax)
-	Y = Y - H
-	Y = Y - BR
-	local settings_powermax = {}
-	settings_powermax.name = "powermax"
-	settings_powermax.parent = TH_Settings.panel
-	settings_powermax.value = TankHelper:GetConfig("powermax", 0.9)
-	settings_powermax.text = "powermax"
-	settings_powermax.x = 10
-	settings_powermax.y = Y
-	settings_powermax.min = 0.1
-	settings_powermax.max = 1.0
-	settings_powermax.steps = 0.1
-	settings_powermax.decimals = 1
-	settings_powermax.dbvalue = "powermax"
-	settings_powermax.percentage = true
-
-	settings_powermax.color = {0, 1, 0, 1}
-
-	TankHelper:CreateSlider(settings_powermax)
-	Y = Y - H
 	TankHelper:AddColorPicker("BRColor", TH_Settings.panel, 450, -50)
 	TankHelper:AddColorPicker("BGColor", TH_Settings.panel, 450, -75)
 	InterfaceOptions_AddCategory(TH_Settings.panel)
