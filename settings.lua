@@ -366,6 +366,44 @@ local function InitSettings()
 	settings_iconsize.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_iconsize)
 	Y = Y - H
+	Y = Y - BR
+	local settings_healthmax = {}
+	settings_healthmax.name = "healthmax"
+	settings_healthmax.parent = TH_Settings.panel
+	settings_healthmax.value = TankHelper:GetConfig("healthmax", 0.9)
+	settings_healthmax.text = "healthmax"
+	settings_healthmax.x = 10
+	settings_healthmax.y = Y
+	settings_healthmax.min = 0.1
+	settings_healthmax.max = 1.0
+	settings_healthmax.steps = 0.1
+	settings_healthmax.decimals = 1
+	settings_healthmax.dbvalue = "healthmax"
+	settings_healthmax.percentage = true
+
+	settings_healthmax.color = {0, 1, 0, 1}
+
+	TankHelper:CreateSlider(settings_healthmax)
+	Y = Y - H
+	Y = Y - BR
+	local settings_powermax = {}
+	settings_powermax.name = "powermax"
+	settings_powermax.parent = TH_Settings.panel
+	settings_powermax.value = TankHelper:GetConfig("powermax", 0.9)
+	settings_powermax.text = "powermax"
+	settings_powermax.x = 10
+	settings_powermax.y = Y
+	settings_powermax.min = 0.1
+	settings_powermax.max = 1.0
+	settings_powermax.steps = 0.1
+	settings_powermax.decimals = 1
+	settings_powermax.dbvalue = "powermax"
+	settings_powermax.percentage = true
+
+	settings_powermax.color = {0, 1, 0, 1}
+
+	TankHelper:CreateSlider(settings_powermax)
+	Y = Y - H
 	TankHelper:AddColorPicker("BRColor", TH_Settings.panel, 450, -50)
 	TankHelper:AddColorPicker("BGColor", TH_Settings.panel, 450, -75)
 	InterfaceOptions_AddCategory(TH_Settings.panel)

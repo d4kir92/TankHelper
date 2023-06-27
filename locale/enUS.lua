@@ -37,6 +37,8 @@ function TankHelper:LangenUS()
 	thlang.hidelastrow = "Hide last row"
 	thlang.brcolor = "Border Color"
 	thlang.bgcolor = "Background Color"
+	thlang.healthmax = "Status - Warning till %0.1f%% Health"
+	thlang.powermax = "Status - Warning till %0.1f%% Mana"
 
 	for i, v in pairs(thlang) do
 		ethlang[i] = v

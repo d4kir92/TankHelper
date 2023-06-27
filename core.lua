@@ -353,7 +353,7 @@ frameCockpit["btnDiscord"]:SetScript("OnClick", function(self, btn, down)
 	eb:SetFrameStrata("DIALOG")
 	eb:SetSize(280, iconbtn)
 	eb:SetAutoFocus(false)
-	eb:SetText("https://discord.gg/UeBsafs")
+	eb:SetText("https://discord.gg/Ymv5MamPd5")
 	eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
 	s.close = TankHelper:CreateButton("closediscord", s)
 	s.close:SetFrameStrata("DIALOG")
@@ -582,11 +582,11 @@ function TankHelper:SetStatusText()
 				text = TankHelper:GT("playerlowhp", true) .. "!"
 
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
-			elseif health < 0.9 then
+			elseif health < TankHelper:GetConfig("healthmax", 0.9) then
 				text = TankHelper:GT("playernotfull", true) .. "!"
 
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
-			elseif power < 0.9 then
+			elseif power < TankHelper:GetConfig("powermax", 0.9) then
 				text = TankHelper:GT("playerhavenotenoughpower", true) .. "!"
 
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}

@@ -36,4 +36,6 @@ function TankHelper:LangdeDE()
 	thlang.hidelastrow = "Letzte Reihe ausblenden"
 	thlang.brcolor = "Randfarbe"
 	thlang.bgcolor = "Hintergrundfarbe"
+	thlang.healthmax = "Status - Warnung bis %0.1f%% Gesundheit"
+	thlang.powermax = "Status - Warnung bis %0.1f%% Mana"
 end
