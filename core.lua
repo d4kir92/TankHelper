@@ -82,7 +82,7 @@ end
 function TankHelper:RW(msg)
 	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
-	else
+	elseif not InCombatLockdown() then
 		if TankHelper:ShouldShow() then
 			SendChatMessage(msg)
 		else
@@ -291,7 +291,7 @@ for i = 0, 8 do
 			C_Timer.After(0.33, btn.think)
 		end
 
-		btn.think()
+		btn:think()
 		table.insert(ricons2, frameCockpit["btnwm" .. i])
 		Y = Y + 1
 	end
