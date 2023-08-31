@@ -271,7 +271,8 @@ function TankHelper:InitFrames()
 			frameCockpit["btnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", frameCockpit["btnRM" .. btnId], "BOTTOMLEFT", 0, 0)
 			frameCockpit["btnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
 			frameCockpit["btnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
-			frameCockpit["btnRM" .. btnId]:SetAttribute("type", "macro")
+			frameCockpit["btnRM" .. btnId]:SetAttribute("type1", "macro")
+			frameCockpit["btnRM" .. btnId]:SetAttribute("type2", "macro")
 
 			if btnId > 0 then
 				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/wm " .. wms[btnId])
