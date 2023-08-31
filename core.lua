@@ -11,15 +11,15 @@ local pt = {3, 5, 10, 20}
 
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 
+local THStatusColor = {1, 1, 1, 1}
+
 local updatewms = true
 local ricons1 = {}
 local ricons2 = {}
 local rows = 3
 local cols = 9
-
-if not IsRaidMarkerActive then
-	rows = 2
-end
+frameCockpit = CreateFrame("Frame", "frameCockpit", UIParent)
+frameStatus = CreateFrame("Frame", "frameStatus", UIParent)
 
 function TankHelper:CreateButton(name, parent)
 	local btn = CreateFrame("Button", name, parent)
@@ -34,46 +34,6 @@ function TankHelper:CreateButton(name, parent)
 
 	return btn
 end
-
-frameCockpit = CreateFrame("Frame", "frameCockpit", UIParent)
-frameCockpit:SetPoint("Center", UIParent, "Center")
-frameCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, rows * iconbtn + (rows - 1) * cbr + 2 * obr)
-frameCockpit:SetClampedToScreen(true)
-frameCockpit:SetMovable(true)
-frameCockpit:EnableMouse(true)
-frameCockpit:RegisterForDrag("LeftButton")
-
-frameCockpit:SetScript("OnDragStart", function(self)
-	frameCockpit:StartMoving()
-end)
-
-frameCockpit:SetScript("OnDragStop", function(self)
-	frameCockpit:StopMovingOrSizing()
-	local point, parent, relativePoint, ofsx, ofsy = self:GetPoint()
-	THTAB["frameCockpit" .. "point"] = point
-	THTAB["frameCockpit" .. "parent"] = parent
-	THTAB["frameCockpit" .. "relativePoint"] = relativePoint
-	THTAB["frameCockpit" .. "ofsx"] = ofsx
-	THTAB["frameCockpit" .. "ofsy"] = ofsy
-end)
-
-frameCockpit:HookScript("OnUpdate", function(self, elapsed)
-	frameCockpit.hovered = frameCockpit.hovered or false
-
-	if frameCockpit.hovered ~= MouseIsOver(frameCockpit) then
-		frameCockpit.hovered = MouseIsOver(frameCockpit)
-
-		if TankHelper.UpdateColors then
-			TankHelper:UpdateColors()
-		end
-	end
-end)
-
-frameCockpit.tBRl = frameCockpit:CreateTexture(nil, "BACKGROUND")
-frameCockpit.tBRr = frameCockpit:CreateTexture(nil, "BACKGROUND")
-frameCockpit.tBRt = frameCockpit:CreateTexture(nil, "BACKGROUND")
-frameCockpit.tBRb = frameCockpit:CreateTexture(nil, "BACKGROUND")
-frameCockpit.tBG = frameCockpit:CreateTexture(nil, "BACKGROUND")
 
 function TankHelper:ShouldShow()
 	return IsInInstance() or UnitInParty("PLAYER") or UnitInRaid("PLAYER")
@@ -160,99 +120,203 @@ function TankHelper:UpdateRaidIcons()
 	end
 end
 
-local Y = 1
+function TankHelper:CheckUnit(unit, dead, health, power)
+	if UnitExists(unit) then
+		local can = true
 
-for btnId = 0, 8 do
-	frameCockpit["btnM" .. btnId] = TankHelper:CreateButton("btnM" .. btnId, frameCockpit)
-	frameCockpit["btnM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
-	frameCockpit["btnM" .. btnId]:SetSize(iconbtn, iconbtn)
-	frameCockpit["btnM" .. btnId].bgtexture = frameCockpit["btnM" .. btnId]:CreateTexture(nil, "OVERLAY")
-	frameCockpit["btnM" .. btnId].bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-	frameCockpit["btnM" .. btnId].bgtexture:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
-	frameCockpit["btnM" .. btnId].bgtexture:SetSize(iconbtn * 1.2, iconbtn * 1.2)
-	frameCockpit["btnM" .. btnId].bgtexture:SetPoint("CENTER", frameCockpit["btnM" .. btnId], "CENTER", 0, 0)
-	frameCockpit["btnM" .. btnId].bgtexture:SetVertexColor(1, 1, 0, THBORDERALPHA)
-	frameCockpit["btnM" .. btnId].texture = frameCockpit["btnM" .. btnId]:CreateTexture(nil, "ARTWORK")
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned then
+			local role = UnitGroupRolesAssigned(unit)
 
-	if btnId > 0 then
-		frameCockpit["btnM" .. btnId].texture:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
-	else
-		frameCockpit["btnM" .. btnId].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+			if role ~= "HEALER" then
+				can = false
+			end
+		end
+
+		if can then
+			local hpercent = UnitHealth(unit) / UnitHealthMax(unit)
+
+			if hpercent < health then
+				health = hpercent
+			end
+
+			local powertype = UnitPowerType(unit)
+
+			if powertype == 0 and UnitPower(unit) > 0 and UnitPowerMax(unit) > 0 then
+				local ppercent = UnitPower(unit) / UnitPowerMax(unit)
+
+				if ppercent < power then
+					power = ppercent
+				end
+			end
+		end
+
+		if UnitIsDead(unit) then
+			dead = true
+		end
 	end
 
-	frameCockpit["btnM" .. btnId].texture:SetSize(iconsize, iconsize)
-	frameCockpit["btnM" .. btnId].texture:SetPoint("CENTER", frameCockpit["btnM" .. btnId], "CENTER", 0, 0)
-	frameCockpit["btnM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+	return dead, health, power
+end
 
-	frameCockpit["btnM" .. btnId]:SetScript("OnClick", function(self, btn, down)
-		if btn == "LeftButton" then
-			if btnId > 0 and GetRaidTargetIndex("TARGET") ~= btnId then
-				SetRaidTarget("TARGET", btnId)
-			else
-				SetRaidTarget("TARGET", 0)
-				TankHelper:UpdateRaidIcons()
-			end
-		elseif btn == "RightButton" and btnId > 0 then
-			TankHelper:ResetIcons1()
+function TankHelper:InitFrames()
+	if not IsRaidMarkerActive then
+		rows = 2
+	end
 
-			if TankHelper:GetConfig("autoselect", nil) ~= btnId then
-				if frameCockpit:IsShown() then
-					self.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-				end
+	frameCockpit:SetPoint("Center", UIParent, "Center")
+	frameCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, rows * iconbtn + (rows - 1) * cbr + 2 * obr)
+	frameCockpit:SetClampedToScreen(true)
+	frameCockpit:SetMovable(true)
+	frameCockpit:EnableMouse(true)
+	frameCockpit:RegisterForDrag("LeftButton")
 
-				THTAB["autoselect"] = btnId
-			else
-				THTAB["autoselect"] = nil
+	frameCockpit:SetScript("OnDragStart", function(sel)
+		frameCockpit:StartMoving()
+	end)
+
+	frameCockpit:SetScript("OnDragStop", function(sel)
+		frameCockpit:StopMovingOrSizing()
+		local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+		THTAB["frameCockpit" .. "point"] = point
+		THTAB["frameCockpit" .. "parent"] = parent
+		THTAB["frameCockpit" .. "relativePoint"] = relativePoint
+		THTAB["frameCockpit" .. "ofsx"] = ofsx
+		THTAB["frameCockpit" .. "ofsy"] = ofsy
+	end)
+
+	frameCockpit:HookScript("OnUpdate", function(sel, elapsed)
+		frameCockpit.hovered = frameCockpit.hovered or false
+
+		if frameCockpit.hovered ~= MouseIsOver(frameCockpit) then
+			frameCockpit.hovered = MouseIsOver(frameCockpit)
+
+			if TankHelper.UpdateColors then
+				TankHelper:UpdateColors()
 			end
 		end
 	end)
 
-	table.insert(ricons1, frameCockpit["btnM" .. btnId])
+	frameCockpit.tBRl = frameCockpit:CreateTexture(nil, "BACKGROUND")
+	frameCockpit.tBRr = frameCockpit:CreateTexture(nil, "BACKGROUND")
+	frameCockpit.tBRt = frameCockpit:CreateTexture(nil, "BACKGROUND")
+	frameCockpit.tBRb = frameCockpit:CreateTexture(nil, "BACKGROUND")
+	frameCockpit.tBG = frameCockpit:CreateTexture(nil, "BACKGROUND")
+	local Y = 1
 
-	if IsRaidMarkerActive then
-		frameCockpit["btnRM" .. btnId] = CreateFrame("Button", "btnRM" .. btnId, frameCockpit, "SecureActionButtonTemplate")
-		frameCockpit["btnRM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - iconbtn - cbr)
-		frameCockpit["btnRM" .. btnId]:SetSize(iconbtn, iconbtn)
-		frameCockpit["btnRM" .. btnId].texture = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
-		frameCockpit["btnRM" .. btnId].texture:SetTexture("Interface\\RaidFrame\\Raid-WorldPing")
-		frameCockpit["btnRM" .. btnId].texture:SetSize(iconsize, iconsize)
-		frameCockpit["btnRM" .. btnId].texture:SetPoint("CENTER", frameCockpit["btnRM" .. btnId], "CENTER", 0, 0)
-		frameCockpit["btnRM" .. btnId].texture:SetDrawLayer("ARTWORK", 1)
-		frameCockpit["btnRM" .. btnId].tBG = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
-
-		if btnId > 0 then
-			frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
-		else
-			frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
-		end
-
-		frameCockpit["btnRM" .. btnId].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
-		frameCockpit["btnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", frameCockpit["btnRM" .. btnId], "BOTTOMLEFT", 0, 0)
-		frameCockpit["btnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
-		frameCockpit["btnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
-		frameCockpit["btnRM" .. btnId]:SetAttribute("type", "macro")
+	for btnId = 0, 8 do
+		frameCockpit["btnM" .. btnId] = TankHelper:CreateButton("btnM" .. btnId, frameCockpit)
+		frameCockpit["btnM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
+		frameCockpit["btnM" .. btnId]:SetSize(iconbtn, iconbtn)
+		frameCockpit["btnM" .. btnId].bgtexture = frameCockpit["btnM" .. btnId]:CreateTexture(nil, "OVERLAY")
+		frameCockpit["btnM" .. btnId].bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
+		frameCockpit["btnM" .. btnId].bgtexture:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
+		frameCockpit["btnM" .. btnId].bgtexture:SetSize(iconbtn * 1.2, iconbtn * 1.2)
+		frameCockpit["btnM" .. btnId].bgtexture:SetPoint("CENTER", frameCockpit["btnM" .. btnId], "CENTER", 0, 0)
+		frameCockpit["btnM" .. btnId].bgtexture:SetVertexColor(1, 1, 0, THBORDERALPHA)
+		frameCockpit["btnM" .. btnId].texture = frameCockpit["btnM" .. btnId]:CreateTexture(nil, "ARTWORK")
 
 		if btnId > 0 then
-			frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/wm " .. wms[btnId])
-			frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm " .. wms[btnId])
+			frameCockpit["btnM" .. btnId].texture:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
 		else
-			frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/cwm 0")
-			frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm 0")
+			frameCockpit["btnM" .. btnId].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
 		end
 
-		frameCockpit["btnRM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-		local btn = frameCockpit["btnRM" .. btnId]
+		frameCockpit["btnM" .. btnId].texture:SetSize(iconsize, iconsize)
+		frameCockpit["btnM" .. btnId].texture:SetPoint("CENTER", frameCockpit["btnM" .. btnId], "CENTER", 0, 0)
+		frameCockpit["btnM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
 
-		function btn.think()
-			local btn1 = frameCockpit["btnRM" .. btnId].texture
-			local btn2 = frameCockpit["btnRM" .. btnId].tBG
+		frameCockpit["btnM" .. btnId]:SetScript("OnClick", function(sel, btn, down)
+			if btn == "LeftButton" then
+				if btnId > 0 and GetRaidTargetIndex("TARGET") ~= btnId then
+					SetRaidTarget("TARGET", btnId)
+				else
+					SetRaidTarget("TARGET", 0)
+					TankHelper:UpdateRaidIcons()
+				end
+			elseif btn == "RightButton" and btnId > 0 then
+				TankHelper:ResetIcons1()
+
+				if TankHelper:GetConfig("autoselect", nil) ~= btnId then
+					if frameCockpit:IsShown() then
+						sel.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
+					end
+
+					THTAB["autoselect"] = btnId
+				else
+					THTAB["autoselect"] = nil
+				end
+			end
+		end)
+
+		table.insert(ricons1, frameCockpit["btnM" .. btnId])
+
+		if IsRaidMarkerActive then
+			frameCockpit["btnRM" .. btnId] = CreateFrame("Button", "btnRM" .. btnId, frameCockpit, "SecureActionButtonTemplate")
+			frameCockpit["btnRM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - iconbtn - cbr)
+			frameCockpit["btnRM" .. btnId]:SetSize(iconbtn, iconbtn)
+			frameCockpit["btnRM" .. btnId].texture = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
+			frameCockpit["btnRM" .. btnId].texture:SetTexture("Interface\\RaidFrame\\Raid-WorldPing")
+			frameCockpit["btnRM" .. btnId].texture:SetSize(iconsize, iconsize)
+			frameCockpit["btnRM" .. btnId].texture:SetPoint("CENTER", frameCockpit["btnRM" .. btnId], "CENTER", 0, 0)
+			frameCockpit["btnRM" .. btnId].texture:SetDrawLayer("ARTWORK", 1)
+			frameCockpit["btnRM" .. btnId].tBG = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
 
 			if btnId > 0 then
-				if IsRaidMarkerActive and frameCockpit["btnRM" .. btnId].status ~= IsRaidMarkerActive(wms[btnId]) then
-					frameCockpit["btnRM" .. btnId].status = IsRaidMarkerActive(wms[btnId])
-					updatewms = true
+				frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
+			else
+				frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+			end
 
-					if frameCockpit["btnRM" .. btnId].status == false then
+			frameCockpit["btnRM" .. btnId].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
+			frameCockpit["btnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", frameCockpit["btnRM" .. btnId], "BOTTOMLEFT", 0, 0)
+			frameCockpit["btnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
+			frameCockpit["btnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
+			frameCockpit["btnRM" .. btnId]:SetAttribute("type", "macro")
+
+			if btnId > 0 then
+				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/wm " .. wms[btnId])
+				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm " .. wms[btnId])
+			else
+				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/cwm 0")
+				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm 0")
+			end
+
+			frameCockpit["btnRM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+			local btn = frameCockpit["btnRM" .. btnId]
+
+			function btn.tk_think()
+				local btn1 = frameCockpit["btnRM" .. btnId].texture
+				local btn2 = frameCockpit["btnRM" .. btnId].tBG
+
+				if btnId > 0 then
+					if IsRaidMarkerActive and frameCockpit["btnRM" .. btnId].status ~= IsRaidMarkerActive(wms[btnId]) then
+						frameCockpit["btnRM" .. btnId].status = IsRaidMarkerActive(wms[btnId])
+						updatewms = true
+
+						if frameCockpit["btnRM" .. btnId].status == false then
+							btn1:SetDesaturated(true)
+							btn2:SetDesaturated(true)
+							btn1:SetAlpha(0.5)
+							btn2:SetAlpha(0.5)
+						else
+							btn1:SetDesaturated(false)
+							btn2:SetDesaturated(false)
+							btn1:SetAlpha(1)
+							btn2:SetAlpha(1)
+						end
+					end
+				elseif updatewms then
+					updatewms = false
+					local canremove = false
+
+					for rmId = 1, 8 do
+						if IsRaidMarkerActive and IsRaidMarkerActive(wms[rmId]) then
+							canremove = true
+							break
+						end
+					end
+
+					if canremove == false then
 						btn1:SetDesaturated(true)
 						btn2:SetDesaturated(true)
 						btn1:SetAlpha(0.5)
@@ -264,108 +328,179 @@ for btnId = 0, 8 do
 						btn2:SetAlpha(1)
 					end
 				end
-			elseif updatewms then
-				updatewms = false
-				local canremove = false
 
-				for rmId = 1, 8 do
-					if IsRaidMarkerActive and IsRaidMarkerActive(wms[rmId]) then
-						canremove = true
-						break
-					end
-				end
+				C_Timer.After(0.33, btn.tk_think)
+			end
 
-				if canremove == false then
-					btn1:SetDesaturated(true)
-					btn2:SetDesaturated(true)
-					btn1:SetAlpha(0.5)
-					btn2:SetAlpha(0.5)
+			btn:tk_think()
+			table.insert(ricons2, frameCockpit["btnRM" .. btnId])
+			Y = Y + 1
+		end
+
+		if btnId <= #pt then
+			local PullName = "btnPull" .. btnId
+			frameCockpit[PullName] = TankHelper:CreateButton(PullName, frameCockpit)
+			frameCockpit[PullName]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
+			frameCockpit[PullName]:SetSize(iconbtn, iconbtn)
+			frameCockpit[PullName]:SetText(pt[btnId])
+
+			frameCockpit[PullName]:SetScript("OnClick", function(sel, btn, down)
+				TankHelper:PullIn(pt[btnId])
+			end)
+		end
+	end
+
+	frameCockpit["btnReadycheck"] = TankHelper:CreateButton("btnReadycheck", frameCockpit)
+	frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
+
+	if IsRaidMarkerActive or InitiateRolePoll then
+		frameCockpit["btnReadycheck"]:SetSize(50, iconbtn)
+		frameCockpit["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 6))
+	else
+		frameCockpit["btnReadycheck"]:SetSize(100, iconbtn)
+		frameCockpit["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 12))
+	end
+
+	frameCockpit["btnReadycheck"]:SetScript("OnClick", function(sel, btn, down)
+		DoReadyCheck()
+	end)
+
+	if InitiateRolePoll then
+		frameCockpit["btnRolepoll"] = TankHelper:CreateButton("btnRolepoll", frameCockpit)
+		frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + 50, -obr - Y * (iconbtn + cbr))
+		frameCockpit["btnRolepoll"]:SetSize(50, iconbtn)
+		frameCockpit["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
+
+		frameCockpit["btnRolepoll"]:SetScript("OnClick", function(sel, btn, down)
+			InitiateRolePoll()
+		end)
+	end
+
+	frameCockpit["btnDiscord"] = TankHelper:CreateButton("btnDiscord", frameCockpit)
+	frameCockpit["btnDiscord"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
+	frameCockpit["btnDiscord"]:SetSize(iconbtn, iconbtn)
+	frameCockpit["btnDiscord"]:SetText("D")
+
+	frameCockpit["btnDiscord"]:SetScript("OnClick", function(sel, btn, down)
+		local s = CreateFrame("Frame", nil, UIParent)
+		s:SetSize(300, 2 * iconbtn + 2 * 10)
+		s:SetPoint("CENTER")
+		s.texture = s:CreateTexture(nil, "BACKGROUND")
+		s.texture:SetColorTexture(0, 0, 0, 0.5)
+		s.texture:SetAllPoints(s)
+		s.text = s:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		s.text:SetText("Feedback")
+		s.text:SetPoint("CENTER", s, "TOP", 0, -10)
+		local eb = CreateFrame("EditBox", "logEditBox", s, "InputBoxTemplate")
+		eb:SetFrameStrata("DIALOG")
+		eb:SetSize(280, iconbtn)
+		eb:SetAutoFocus(false)
+		eb:SetText("https://discord.gg/Ymv5MamPd5")
+		eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
+		s.close = TankHelper:CreateButton("closediscord", s)
+		s.close:SetFrameStrata("DIALOG")
+		s.close:SetPoint("TOPLEFT", 300 - 10 - iconbtn, -10)
+		s.close:SetSize(iconbtn, iconbtn)
+		s.close:SetText("X")
+
+		s.close:SetScript("OnClick", function(se, sbtn, sdown)
+			s:Hide()
+		end)
+	end)
+
+	C_Timer.After(4, TankHelper.UpdateTargetIcon)
+	frameCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
+	frameCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
+	frameCockpit:RegisterEvent("RAID_TARGET_UPDATE")
+	frameCockpit:RegisterEvent("UNIT_HEALTH")
+	frameCockpit:RegisterEvent("UNIT_POWER_UPDATE")
+	frameCockpit:RegisterEvent("GROUP_ROSTER_UPDATE")
+	frameCockpit:RegisterEvent("RAID_ROSTER_UPDATE")
+	frameCockpit:RegisterEvent("ADDON_LOADED")
+
+	frameCockpit:HookScript("OnEvent", function(sel, e, ...)
+		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", nil) ~= nil then
+			local btn = frameCockpit["btnM" .. TankHelper:GetConfig("autoselect", nil)]
+
+			if frameCockpit:IsShown() then
+				btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
+			end
+		end
+
+		if (e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE") and (not UnitExists("TARGET") or not UnitIsEnemy("TARGET", "PLAYER")) then
+			TankHelper:UpdateRaidIcons()
+		end
+
+		if e == "PLAYER_TARGET_CHANGED" then
+			TankHelper:TargetIconLogic()
+		end
+
+		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
+			TankHelper:SetStatusText()
+		end
+	end)
+
+	frameStatus:SetPoint("Center", UIParent, "Center")
+	frameStatus:SetSize(frameCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
+	frameStatus:SetClampedToScreen(true)
+	frameStatus:SetMovable(true)
+	frameStatus:EnableMouse(true)
+	frameStatus:RegisterForDrag("LeftButton")
+
+	frameStatus:SetScript("OnDragStart", function(sel)
+		frameStatus:StartMoving()
+	end)
+
+	frameStatus:SetScript("OnDragStop", function(sel)
+		frameStatus:StopMovingOrSizing()
+		local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+		THTAB["frameStatus" .. "point"] = point
+		THTAB["frameStatus" .. "parent"] = parent
+		THTAB["frameStatus" .. "relativePoint"] = relativePoint
+		THTAB["frameStatus" .. "ofsx"] = ofsx
+		THTAB["frameStatus" .. "ofsy"] = ofsy
+	end)
+
+	frameStatus.texture = frameStatus:CreateTexture(nil, "BACKGROUND")
+	frameStatus.texture:SetAllPoints(frameStatus)
+	frameStatus.text = frameStatus:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	frameStatus.text:SetText("")
+	frameStatus.text:SetPoint("CENTER", frameStatus, "CENTER", 0, 0)
+	frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
+
+	function TankHelper:DesignThink()
+		if not InCombatLockdown() then
+			if TankHelper:GetConfig("hidestatus", false) then
+				frameStatus:Hide()
+			else
+				if TankHelper:ShouldShow() then
+					frameStatus:Show()
 				else
-					btn1:SetDesaturated(false)
-					btn2:SetDesaturated(false)
-					btn1:SetAlpha(1)
-					btn2:SetAlpha(1)
+					frameStatus:Hide()
 				end
 			end
 
-			C_Timer.After(0.33, btn.think)
+			if TankHelper:GetConfig("showalways", false) then
+				frameCockpit:Show()
+			else
+				if TankHelper:ShouldShow() then
+					frameCockpit:Show()
+				else
+					frameCockpit:Hide()
+				end
+			end
+
+			frameCockpit:SetMovable(not TankHelper:GetConfig("fixposition", false))
+			frameCockpit:EnableMouse(not TankHelper:GetConfig("fixposition", false))
+			frameStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
+			frameStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
 		end
 
-		btn:think()
-		table.insert(ricons2, frameCockpit["btnRM" .. btnId])
-		Y = Y + 1
+		C_Timer.After(0.33, TankHelper.DesignThink)
 	end
 
-	if btnId <= #pt then
-		local PullName = "btnPull" .. btnId
-		frameCockpit[PullName] = TankHelper:CreateButton(PullName, frameCockpit)
-		frameCockpit[PullName]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
-		frameCockpit[PullName]:SetSize(iconbtn, iconbtn)
-		frameCockpit[PullName]:SetText(pt[btnId])
-
-		frameCockpit[PullName]:SetScript("OnClick", function(self, btn, down)
-			TankHelper:PullIn(pt[btnId])
-		end)
-	end
+	C_Timer.After(0.1, TankHelper.DesignThink)
 end
-
-frameCockpit["btnReadycheck"] = TankHelper:CreateButton("btnReadycheck", frameCockpit)
-frameCockpit["btnReadycheck"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr - Y * (iconbtn + cbr))
-
-if IsRaidMarkerActive or InitiateRolePoll then
-	frameCockpit["btnReadycheck"]:SetSize(50, iconbtn)
-	frameCockpit["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 6))
-else
-	frameCockpit["btnReadycheck"]:SetSize(100, iconbtn)
-	frameCockpit["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 12))
-end
-
-frameCockpit["btnReadycheck"]:SetScript("OnClick", function(self, btn, down)
-	DoReadyCheck()
-end)
-
-if InitiateRolePoll then
-	frameCockpit["btnRolepoll"] = TankHelper:CreateButton("btnRolepoll", frameCockpit)
-	frameCockpit["btnRolepoll"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + 50, -obr - Y * (iconbtn + cbr))
-	frameCockpit["btnRolepoll"]:SetSize(50, iconbtn)
-	frameCockpit["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
-
-	frameCockpit["btnRolepoll"]:SetScript("OnClick", function(self, btn, down)
-		InitiateRolePoll()
-	end)
-end
-
-frameCockpit["btnDiscord"] = TankHelper:CreateButton("btnDiscord", frameCockpit)
-frameCockpit["btnDiscord"]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
-frameCockpit["btnDiscord"]:SetSize(iconbtn, iconbtn)
-frameCockpit["btnDiscord"]:SetText("D")
-
-frameCockpit["btnDiscord"]:SetScript("OnClick", function(self, btn, down)
-	local s = CreateFrame("Frame", nil, UIParent)
-	s:SetSize(300, 2 * iconbtn + 2 * 10)
-	s:SetPoint("CENTER")
-	s.texture = s:CreateTexture(nil, "BACKGROUND")
-	s.texture:SetColorTexture(0, 0, 0, 0.5)
-	s.texture:SetAllPoints(s)
-	s.text = s:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	s.text:SetText("Feedback")
-	s.text:SetPoint("CENTER", s, "TOP", 0, -10)
-	local eb = CreateFrame("EditBox", "logEditBox", s, "InputBoxTemplate")
-	eb:SetFrameStrata("DIALOG")
-	eb:SetSize(280, iconbtn)
-	eb:SetAutoFocus(false)
-	eb:SetText("https://discord.gg/Ymv5MamPd5")
-	eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
-	s.close = TankHelper:CreateButton("closediscord", s)
-	s.close:SetFrameStrata("DIALOG")
-	s.close:SetPoint("TOPLEFT", 300 - 10 - iconbtn, -10)
-	s.close:SetSize(iconbtn, iconbtn)
-	s.close:SetText("X")
-
-	s.close:SetScript("OnClick", function(sel, sbtn, sdown)
-		s:Hide()
-	end)
-end)
 
 local ts = 0
 local setts = 0
@@ -418,140 +553,6 @@ end
 function TankHelper:UpdateTargetIcon()
 	TankHelper:TargetIconLogic()
 	C_Timer.After(0.1, TankHelper.UpdateTargetIcon)
-end
-
-C_Timer.After(4, TankHelper.UpdateTargetIcon)
-frameCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
-frameCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
-frameCockpit:RegisterEvent("RAID_TARGET_UPDATE")
-frameCockpit:RegisterEvent("UNIT_HEALTH")
-frameCockpit:RegisterEvent("UNIT_POWER_UPDATE")
-frameCockpit:RegisterEvent("GROUP_ROSTER_UPDATE")
-frameCockpit:RegisterEvent("RAID_ROSTER_UPDATE")
-frameCockpit:RegisterEvent("ADDON_LOADED")
-
-frameCockpit:HookScript("OnEvent", function(self, e, ...)
-	if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", nil) ~= nil then
-		local btn = frameCockpit["btnM" .. TankHelper:GetConfig("autoselect", nil)]
-
-		if frameCockpit:IsShown() then
-			btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-		end
-	end
-
-	if (e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE") and (not UnitExists("TARGET") or not UnitIsEnemy("TARGET", "PLAYER")) then
-		TankHelper:UpdateRaidIcons()
-	end
-
-	if e == "PLAYER_TARGET_CHANGED" then
-		TankHelper:TargetIconLogic()
-	end
-
-	if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
-		TankHelper:SetStatusText()
-	end
-end)
-
-frameStatus = CreateFrame("Frame", "frameStatus", UIParent)
-frameStatus:SetPoint("Center", UIParent, "Center")
-frameStatus:SetSize(frameCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
-frameStatus:SetClampedToScreen(true)
-frameStatus:SetMovable(true)
-frameStatus:EnableMouse(true)
-frameStatus:RegisterForDrag("LeftButton")
-
-frameStatus:SetScript("OnDragStart", function(self)
-	frameStatus:StartMoving()
-end)
-
-frameStatus:SetScript("OnDragStop", function(self)
-	frameStatus:StopMovingOrSizing()
-	local point, parent, relativePoint, ofsx, ofsy = self:GetPoint()
-	THTAB["frameStatus" .. "point"] = point
-	THTAB["frameStatus" .. "parent"] = parent
-	THTAB["frameStatus" .. "relativePoint"] = relativePoint
-	THTAB["frameStatus" .. "ofsx"] = ofsx
-	THTAB["frameStatus" .. "ofsy"] = ofsy
-end)
-
-frameStatus.texture = frameStatus:CreateTexture(nil, "BACKGROUND")
-frameStatus.texture:SetAllPoints(frameStatus)
-frameStatus.text = frameStatus:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-frameStatus.text:SetText("")
-frameStatus.text:SetPoint("CENTER", frameStatus, "CENTER", 0, 0)
-frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
-
-function TankHelper:DesignThink()
-	if not InCombatLockdown() then
-		if TankHelper:GetConfig("hidestatus", false) then
-			frameStatus:Hide()
-		else
-			if TankHelper:ShouldShow() then
-				frameStatus:Show()
-			else
-				frameStatus:Hide()
-			end
-		end
-
-		if TankHelper:GetConfig("showalways", false) then
-			frameCockpit:Show()
-		else
-			if TankHelper:ShouldShow() then
-				frameCockpit:Show()
-			else
-				frameCockpit:Hide()
-			end
-		end
-
-		frameCockpit:SetMovable(not TankHelper:GetConfig("fixposition", false))
-		frameCockpit:EnableMouse(not TankHelper:GetConfig("fixposition", false))
-		frameStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
-		frameStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
-	end
-
-	C_Timer.After(0.33, TankHelper.DesignThink)
-end
-
-C_Timer.After(0.1, TankHelper.DesignThink)
-
-local THStatusColor = {1, 1, 1, 1}
-
-function TankHelper:CheckUnit(unit, dead, health, power)
-	if UnitExists(unit) then
-		local can = true
-
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned then
-			local role = UnitGroupRolesAssigned(unit)
-
-			if role ~= "HEALER" then
-				can = false
-			end
-		end
-
-		if can then
-			local hpercent = UnitHealth(unit) / UnitHealthMax(unit)
-
-			if hpercent < health then
-				health = hpercent
-			end
-
-			local powertype = UnitPowerType(unit)
-
-			if powertype == 0 and UnitPower(unit) > 0 and UnitPowerMax(unit) > 0 then
-				local ppercent = UnitPower(unit) / UnitPowerMax(unit)
-
-				if ppercent < power then
-					power = ppercent
-				end
-			end
-		end
-
-		if UnitIsDead(unit) then
-			dead = true
-		end
-	end
-
-	return dead, health, power
 end
 
 function TankHelper:SetStatusText()
@@ -775,6 +776,7 @@ end
 
 function TankHelper:InitSetup()
 	if not InCombatLockdown() then
+		TankHelper:InitFrames()
 		TankHelper:UpdateDesign()
 		TankHelper:SetStatusText()
 	else
