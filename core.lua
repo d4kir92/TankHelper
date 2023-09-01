@@ -282,18 +282,20 @@ function TankHelper:InitFrames()
 				frameCockpit["THBtnRM" .. btnId]:SetAttribute("macrotext2", "/clearworldmarker 0")
 			end]]
 			frameCockpit["THBtnRM" .. btnId]:SetMouseClickEnabled(true)
-			frameCockpit["THBtnRM" .. btnId]:SetAttribute("type", "worldmarker")
-			frameCockpit["THBtnRM" .. btnId]:SetAttribute("marker", wms[btnId])
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("type1", "worldmarker")
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("type2", "worldmarker")
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("marker1", wms[btnId])
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("marker2", wms[btnId])
 
 			if btnId == 0 then
 				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action1", "clear")
 				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action2", "clear")
 			else
-				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action1", "toggle")
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action1", "set")
 				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action2", "clear")
 			end
 
-			frameCockpit["THBtnRM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+			frameCockpit["THBtnRM" .. btnId]:RegisterForClicks("AnyUp", "AnyDown")
 			local btn = frameCockpit["THBtnRM" .. btnId]
 
 			function btn.tk_think()
