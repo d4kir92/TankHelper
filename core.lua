@@ -251,50 +251,61 @@ function TankHelper:InitFrames()
 		table.insert(ricons1, frameCockpit["btnM" .. btnId])
 
 		if IsRaidMarkerActive then
-			frameCockpit["btnRM" .. btnId] = CreateFrame("Button", "btnRM" .. btnId, frameCockpit, "SecureActionButtonTemplate")
-			frameCockpit["btnRM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - iconbtn - cbr)
-			frameCockpit["btnRM" .. btnId]:SetSize(iconbtn, iconbtn)
-			frameCockpit["btnRM" .. btnId].texture = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
-			frameCockpit["btnRM" .. btnId].texture:SetTexture("Interface\\RaidFrame\\Raid-WorldPing")
-			frameCockpit["btnRM" .. btnId].texture:SetSize(iconsize, iconsize)
-			frameCockpit["btnRM" .. btnId].texture:SetPoint("CENTER", frameCockpit["btnRM" .. btnId], "CENTER", 0, 0)
-			frameCockpit["btnRM" .. btnId].texture:SetDrawLayer("ARTWORK", 1)
-			frameCockpit["btnRM" .. btnId].tBG = frameCockpit["btnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
+			frameCockpit["THBtnRM" .. btnId] = CreateFrame("Button", "THBtnRM" .. btnId, frameCockpit, "SecureActionButtonTemplate")
+			frameCockpit["THBtnRM" .. btnId]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr - iconbtn - cbr)
+			frameCockpit["THBtnRM" .. btnId]:SetSize(iconbtn, iconbtn)
+			frameCockpit["THBtnRM" .. btnId].texture = frameCockpit["THBtnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
+			frameCockpit["THBtnRM" .. btnId].texture:SetTexture("Interface\\RaidFrame\\Raid-WorldPing")
+			frameCockpit["THBtnRM" .. btnId].texture:SetSize(iconsize, iconsize)
+			frameCockpit["THBtnRM" .. btnId].texture:SetPoint("CENTER", frameCockpit["THBtnRM" .. btnId], "CENTER", 0, 0)
+			frameCockpit["THBtnRM" .. btnId].texture:SetDrawLayer("ARTWORK", 1)
+			frameCockpit["THBtnRM" .. btnId].tBG = frameCockpit["THBtnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
 
 			if btnId > 0 then
-				frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
+				frameCockpit["THBtnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
 			else
-				frameCockpit["btnRM" .. btnId].tBG:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+				frameCockpit["THBtnRM" .. btnId].tBG:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
 			end
 
-			frameCockpit["btnRM" .. btnId].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
-			frameCockpit["btnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", frameCockpit["btnRM" .. btnId], "BOTTOMLEFT", 0, 0)
-			frameCockpit["btnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
-			frameCockpit["btnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
-			frameCockpit["btnRM" .. btnId]:SetAttribute("type1", "macro")
-			frameCockpit["btnRM" .. btnId]:SetAttribute("type2", "macro")
+			frameCockpit["THBtnRM" .. btnId].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
+			frameCockpit["THBtnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", frameCockpit["THBtnRM" .. btnId], "BOTTOMLEFT", 0, 0)
+			frameCockpit["THBtnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
+			frameCockpit["THBtnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
+			--[[frameCockpit["THBtnRM" .. btnId]:SetAttribute("type1", "macro")
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("type2", "macro")
 
 			if btnId > 0 then
-				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/wm " .. wms[btnId])
-				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm " .. wms[btnId])
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("macrotext1", "/worldmarker " .. wms[btnId])
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("macrotext2", "/clearworldmarker " .. wms[btnId])
 			else
-				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext1", "/cwm 0")
-				frameCockpit["btnRM" .. btnId]:SetAttribute("macrotext2", "/cwm 0")
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("macrotext1", "/clearworldmarker 0")
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("macrotext2", "/clearworldmarker 0")
+			end]]
+			frameCockpit["THBtnRM" .. btnId]:SetMouseClickEnabled(true)
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("type", "worldmarker")
+			frameCockpit["THBtnRM" .. btnId]:SetAttribute("marker", wms[btnId])
+
+			if btnId == 0 then
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action1", "clear")
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action2", "clear")
+			else
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action1", "toggle")
+				frameCockpit["THBtnRM" .. btnId]:SetAttribute("action2", "clear")
 			end
 
-			frameCockpit["btnRM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-			local btn = frameCockpit["btnRM" .. btnId]
+			frameCockpit["THBtnRM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+			local btn = frameCockpit["THBtnRM" .. btnId]
 
 			function btn.tk_think()
-				local btn1 = frameCockpit["btnRM" .. btnId].texture
-				local btn2 = frameCockpit["btnRM" .. btnId].tBG
+				local btn1 = frameCockpit["THBtnRM" .. btnId].texture
+				local btn2 = frameCockpit["THBtnRM" .. btnId].tBG
 
 				if btnId > 0 then
-					if IsRaidMarkerActive and frameCockpit["btnRM" .. btnId].status ~= IsRaidMarkerActive(wms[btnId]) then
-						frameCockpit["btnRM" .. btnId].status = IsRaidMarkerActive(wms[btnId])
+					if IsRaidMarkerActive and frameCockpit["THBtnRM" .. btnId].status ~= IsRaidMarkerActive(wms[btnId]) then
+						frameCockpit["THBtnRM" .. btnId].status = IsRaidMarkerActive(wms[btnId])
 						updatewms = true
 
-						if frameCockpit["btnRM" .. btnId].status == false then
+						if frameCockpit["THBtnRM" .. btnId].status == false then
 							btn1:SetDesaturated(true)
 							btn2:SetDesaturated(true)
 							btn1:SetAlpha(0.5)
@@ -334,7 +345,7 @@ function TankHelper:InitFrames()
 			end
 
 			btn:tk_think()
-			table.insert(ricons2, frameCockpit["btnRM" .. btnId])
+			table.insert(ricons2, frameCockpit["THBtnRM" .. btnId])
 			Y = Y + 1
 		end
 
@@ -677,7 +688,7 @@ function TankHelper:UpdateDesign()
 		THROW = THROW + 1
 
 		for rmId = 0, 8 do
-			local RMName = "btnRM" .. 8 - rmId
+			local RMName = "THBtnRM" .. 8 - rmId
 			frameCockpit[RMName]:SetPoint("TOPLEFT", frameCockpit, "TOPLEFT", obr + rmId * (iconbtn + ibr), -obr - iconbtn - cbr)
 			frameCockpit[RMName]:SetSize(iconbtn, iconbtn)
 			frameCockpit[RMName].texture:SetPoint("CENTER", frameCockpit[RMName], "CENTER", 0, 0)
