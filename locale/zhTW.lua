@@ -1,6 +1,5 @@
 -- zhTW Traditional Chinese
 local _, TankHelper = ...
-
 function TankHelper:LangzhTW()
 	local thlang = TankHelper:GetLangTab()
 	-- Pulltimer

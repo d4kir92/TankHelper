@@ -1,6 +1,5 @@
 -- enUS English
 local _, TankHelper = ...
-
 function TankHelper:LangenUS()
 	local thlang = TankHelper:GetLangTab()
 	local ethlang = TankHelper:GetELangTab()
@@ -41,7 +40,6 @@ function TankHelper:LangenUS()
 	thlang.powermax = "Status - Warning till %0.1f%% Mana"
 	thlang.statusonlyhealers = "Status - Show Only Healers Info"
 	thlang.healer = "Healer"
-
 	for i, v in pairs(thlang) do
 		ethlang[i] = v
 	end

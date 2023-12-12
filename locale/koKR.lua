@@ -1,6 +1,5 @@
 -- deDE German Deutsch
 local _, TankHelper = ...
-
 function TankHelper:LangkoKR()
 	local thlang = TankHelper:GetLangTab()
 	-- Pulltimer

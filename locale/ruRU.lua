@@ -1,6 +1,5 @@
 -- ruRU Russian
 local _, TankHelper = ...
-
 function TankHelper:LangruRU()
 	local thlang = TankHelper:GetLangTab()
 	-- Pulltimer

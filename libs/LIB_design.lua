@@ -1,6 +1,5 @@
 -- LIB Design
 local _, TankHelper = ...
-
 function TankHelper:CreateText(tab)
 	tab.textsize = tab.textsize or 12
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
@@ -8,18 +7,19 @@ function TankHelper:CreateText(tab)
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 	text:SetText(TankHelper:GT(tab.text, true))
-
 	tab.color = tab.color or {1, 1, 1, 1}
-
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
 	tab.color[3] = tab.color[3] or 1
 	tab.color[4] = tab.color[4] or 1
 	text:SetTextColor(tab.color[1], tab.color[2], tab.color[3], tab.color[4])
-
-	hooksecurefunc(TankHelper, "UpdateLanguage", function()
-		text:SetText(TankHelper:GT(tab.text, true))
-	end)
+	hooksecurefunc(
+		TankHelper,
+		"UpdateLanguage",
+		function()
+			text:SetText(TankHelper:GT(tab.text, true))
+		end
+	)
 
 	return text
 end
@@ -34,23 +34,22 @@ function TankHelper:CreateCheckBox(tab)
 	CB:SetPoint("TOPLEFT", tab.x, tab.y)
 	CB.tooltip = tab.tooltip
 	CB:SetChecked(tab.checked)
-
-	CB:SetScript("OnClick", function(sel)
-		local status = CB:GetChecked()
-		sel:SetChecked(status)
-		THTAB[tab.dbvalue] = status
-
-		if tab.func ~= nil then
-			tab:func()
+	CB:SetScript(
+		"OnClick",
+		function(sel)
+			local status = CB:GetChecked()
+			sel:SetChecked(status)
+			THTAB[tab.dbvalue] = status
+			if tab.func ~= nil then
+				tab:func()
+			end
 		end
-	end)
+	)
 
 	tab.frame = CB
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
-
 	tab.color = tab.color or {1, 1, 1, 1}
-
 	CB.text = TankHelper:CreateText(tab)
 
 	return CB
@@ -69,7 +68,6 @@ function TankHelper:CreateSlider(tab)
 	SL.Low:SetText(tab.min)
 	SL.High:SetText(tab.max)
 	local v = tab.value
-
 	if percentage then
 		v = v * 100
 	end
@@ -82,38 +80,42 @@ function TankHelper:CreateSlider(tab)
 	tab.steps = tab.steps or 1
 	SL:SetValueStep(tab.steps)
 	SL.decimals = tab.decimals or 1
+	SL:SetScript(
+		"OnValueChanged",
+		function(sel, val)
+			val = TankHelper:MathR(val, sel.decimals)
+			val = val - val % tab.steps
+			val = TankHelper:MathR(val, sel.decimals)
+			THTAB[tab.dbvalue] = val
+			local valu = SL:GetValue()
+			if valu then
+				if percentage then
+					valu = valu * 100
+				end
 
-	SL:SetScript("OnValueChanged", function(sel, val)
-		val = TankHelper:MathR(val, sel.decimals)
-		val = val - val % tab.steps
-		val = TankHelper:MathR(val, sel.decimals)
-		THTAB[tab.dbvalue] = val
-		local valu = SL:GetValue()
-
-		if valu then
-			if percentage then
-				valu = valu * 100
+				SL.Text:SetText(format(TankHelper:GT(tab.text, true), valu))
 			end
 
-			SL.Text:SetText(format(TankHelper:GT(tab.text, true), valu))
+			if tab.func ~= nil then
+				tab:func()
+			end
 		end
+	)
 
-		if tab.func ~= nil then
-			tab:func()
-		end
-	end)
-
-	hooksecurefunc(TankHelper, "UpdateLanguage", function()
-		local val = SL:GetValue()
-
-		if val then
+	hooksecurefunc(
+		TankHelper,
+		"UpdateLanguage",
+		function()
+			local val = SL:GetValue()
 			if val then
-				val = val * 100
-			end
+				if val then
+					val = val * 100
+				end
 
-			SL.Text:SetText(format(TankHelper:GT(tab.text, true), val))
+				SL.Text:SetText(format(TankHelper:GT(tab.text, true), val))
+			end
 		end
-	end)
+	)
 
 	return EB
 end
@@ -123,7 +125,6 @@ function TankHelper:CTexture(frame, tab)
 	local texture = frame:CreateTexture(nil, tab.layer)
 	tab.texture = tab.texture or ""
 	tab.color = tab.color or {}
-
 	if tab.texture ~= "" then
 		tab.color.r = tab.color.r or 1
 		tab.color.g = tab.color.g or 1
@@ -173,7 +174,6 @@ function TankHelper:CreateF(tab)
 	frame.texture = TankHelper:CTexture(frame, tab)
 	tab.textlayer = tab.textlayer or "ARTWORK"
 	frame.text = frame:CreateFontString(nil, tab.textlayer)
-
 	if tab.framestrata ~= nil then
 		frame:SetFrameStrata(tab.framestrata)
 	else
@@ -185,13 +185,11 @@ function TankHelper:CreateF(tab)
 	frame.text:SetShadowOffset(1, -1)
 	frame.text:SetPoint(tab.textalign, 0, 0)
 	frame.text:SetText(tab.text)
-
 	function frame:SetText(text)
 		frame.text:SetText(text)
 	end
 
 	frame.oldSetSize = frame.SetSize
-
 	function frame:SetSize(w, h)
 		frame:oldSetSize(w, h)
 		self.texture:SetSize(w, h)
@@ -207,7 +205,6 @@ function TankHelper:CreateDropDown(tab)
 	tab.x = tab.x or 0
 	tab.y = tab.y or 0
 	local t = {}
-
 	for i, v in pairs(tab.tab) do
 		if v.Code then
 			tinsert(t, v.Code)
