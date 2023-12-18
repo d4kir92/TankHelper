@@ -118,7 +118,7 @@ end
 function TankHelper:CheckUnit(unit, dead, health, power)
 	if UnitExists(unit) then
 		local can = true
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned then
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 			local role = UnitGroupRolesAssigned(unit)
 			if role ~= "HEALER" then
 				can = false
@@ -523,7 +523,7 @@ local ts = 0
 local setts = 0
 local targetGUID = UnitGUID("TARGET")
 function TankHelper:TargetIconLogic()
-	if UnitGroupRolesAssigned then
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		local role = UnitGroupRolesAssigned("PLAYER")
 		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end -- Only Tank?
 	end
@@ -605,7 +605,7 @@ function TankHelper:SetStatusText()
 			end
 		end
 
-		if TankHelper:GetConfig("statusonlyhealers", true) then
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 			text = format("%s: %s", TankHelper:GT("healer"), text)
 		end
 

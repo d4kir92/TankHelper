@@ -116,7 +116,7 @@ local function InitSettings()
 	settings_header.textsize = 24
 	TankHelper:CreateText(settings_header)
 	Y = Y - BR
-	if UnitGroupRolesAssigned then
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		local settings_onlytank = {}
 		settings_onlytank.name = "onlytank"
 		settings_onlytank.parent = TH_Settings.panel
@@ -202,16 +202,19 @@ local function InitSettings()
 	settings_fixposition.dbvalue = "fixposition"
 	settings_fixposition.color = colgreen
 	TankHelper:CreateCheckBox(settings_fixposition)
-	local settings_statusonlyhealers = {}
-	settings_statusonlyhealers.name = "statusonlyhealers"
-	settings_statusonlyhealers.parent = TH_Settings.panel
-	settings_statusonlyhealers.checked = TankHelper:GetConfig("statusonlyhealers", true)
-	settings_statusonlyhealers.text = "statusonlyhealers"
-	settings_statusonlyhealers.x = 300
-	settings_statusonlyhealers.y = Y
-	settings_statusonlyhealers.dbvalue = "statusonlyhealers"
-	settings_statusonlyhealers.color = colgreen
-	TankHelper:CreateCheckBox(settings_statusonlyhealers)
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+		local settings_statusonlyhealers = {}
+		settings_statusonlyhealers.name = "statusonlyhealers"
+		settings_statusonlyhealers.parent = TH_Settings.panel
+		settings_statusonlyhealers.checked = TankHelper:GetConfig("statusonlyhealers", true)
+		settings_statusonlyhealers.text = "statusonlyhealers"
+		settings_statusonlyhealers.x = 300
+		settings_statusonlyhealers.y = Y
+		settings_statusonlyhealers.dbvalue = "statusonlyhealers"
+		settings_statusonlyhealers.color = colgreen
+		TankHelper:CreateCheckBox(settings_statusonlyhealers)
+	end
+
 	Y = Y - 24
 	local settings_hidelastrow = {}
 	settings_hidelastrow.name = "hidelastrow"
