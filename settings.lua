@@ -1,4 +1,4 @@
-local _, TankHelper = ...
+local AddonName, TankHelper = ...
 local BuildNr = select(4, GetBuildInfo())
 local Build = "CLASSIC"
 if BuildNr >= 100000 then
@@ -101,6 +101,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
+	D4:SetVersion(AddonName, 132362, "1.6.16")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
