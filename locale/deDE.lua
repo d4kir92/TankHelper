@@ -39,4 +39,5 @@ function TankHelper:LangdeDE()
 	thlang.powermax = "Status - Warnung bis %0.1f%% Mana"
 	thlang.statusonlyhealers = "Status - Nur Heiler info anzeigen"
 	thlang.healer = "Heiler"
+	thlang.combineall = "Alle Leisten verbinden"
 end

@@ -31,10 +31,13 @@ function TankHelper:SetColor(name, r, g, b, a)
 	THTAB[name .. "_g"] = g
 	THTAB[name .. "_b"] = b
 	THTAB[name .. "_a"] = a
-	TankHelper:UpdateColors()
+	TankHelper:UpdateColors(frameCockpit)
+	TankHelper:UpdateColors(frameWorldMarkers)
+	TankHelper:UpdateColors(frameTargetMarkers)
+	TankHelper:UpdateColors(frameExtras)
 end
 
-function TankHelper:UpdateColors()
+function TankHelper:UpdateColors(frame)
 	if TankHelper:GetColor("BGColor") == nil then
 		TankHelper:SetColor("BGColor", 0, 0, 0, 0.4)
 	end
@@ -45,17 +48,17 @@ function TankHelper:UpdateColors()
 
 	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor")
 	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor")
-	if frameCockpit then
-		if MouseIsOver(frameCockpit) and a1 < 0.15 then
+	if frame then
+		if MouseIsOver(frame) and a1 < 0.15 then
 			a1 = 0.15
 		end
 
-		frameCockpit.tBRl:SetColorTexture(r1, g1, b1, a1)
-		frameCockpit.tBRr:SetColorTexture(r1, g1, b1, a1)
-		frameCockpit.tBRt:SetColorTexture(r1, g1, b1, a1)
-		frameCockpit.tBRb:SetColorTexture(r1, g1, b1, a1)
-		--frameCockpit.texture:SetColorTexture( r1, g1, b1, a1 )
-		frameCockpit.tBG:SetColorTexture(r2, g2, b2, a2)
+		frame.tBRl:SetColorTexture(r1, g1, b1, a1)
+		frame.tBRr:SetColorTexture(r1, g1, b1, a1)
+		frame.tBRt:SetColorTexture(r1, g1, b1, a1)
+		frame.tBRb:SetColorTexture(r1, g1, b1, a1)
+		--frame.texture:SetColorTexture( r1, g1, b1, a1 )
+		frame.tBG:SetColorTexture(r2, g2, b2, a2)
 	end
 end
 
@@ -101,7 +104,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.6.18")
+	D4:SetVersion(AddonName, 132362, "1.7.0")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -131,6 +134,18 @@ local function InitSettings()
 		Y = Y - 24
 	end
 
+	local settings_combineall = {}
+	settings_combineall.name = "combineall"
+	settings_combineall.parent = TH_Settings.panel
+	settings_combineall.checked = TankHelper:GetConfig("combineall", false)
+	settings_combineall.text = "combineall"
+	settings_combineall.x = 10
+	settings_combineall.y = Y
+	settings_combineall.dbvalue = "combineall"
+	settings_combineall.color = colgreen
+	settings_combineall.func = TankHelper.UpdateDesign
+	TankHelper:CreateCheckBox(settings_combineall)
+	Y = Y - 24
 	local settings_showalways = {}
 	settings_showalways.name = "showalways"
 	settings_showalways.parent = TH_Settings.panel
@@ -185,7 +200,7 @@ local function InitSettings()
 	local settings_hidestatus = {}
 	settings_hidestatus.name = "hidestatus"
 	settings_hidestatus.parent = TH_Settings.panel
-	settings_hidestatus.checked = TankHelper:GetConfig("hidestatus", false)
+	settings_hidestatus.checked = TankHelper:GetConfig("hidestatus", true)
 	settings_hidestatus.text = "hidestatus"
 	settings_hidestatus.x = 300
 	settings_hidestatus.y = Y
