@@ -104,7 +104,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.2")
+	D4:SetVersion(AddonName, 132362, "1.7.3")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -243,13 +243,14 @@ local function InitSettings()
 	settings_hidelastrow.color = colgreen
 	settings_hidelastrow.func = TankHelper.UpdateDesign
 	TankHelper:CreateCheckBox(settings_hidelastrow)
+	Y = Y - 24
 	local settings_healthmax = {}
 	settings_healthmax.name = "healthmax"
 	settings_healthmax.parent = TH_Settings.panel
 	settings_healthmax.value = TankHelper:GetConfig("healthmax", 0.9)
 	settings_healthmax.text = "healthmax"
 	settings_healthmax.x = 300
-	settings_healthmax.y = -200
+	settings_healthmax.y = Y
 	settings_healthmax.min = 0.1
 	settings_healthmax.max = 1.0
 	settings_healthmax.steps = 0.1
@@ -259,7 +260,8 @@ local function InitSettings()
 	settings_healthmax.w = 300
 	settings_healthmax.color = {0, 1, 0, 1}
 	TankHelper:CreateSlider(settings_healthmax)
-	Y = Y - 24
+	Y = Y - H
+	Y = Y - BR
 	local settings_nameplatethreat = {}
 	settings_nameplatethreat.name = "nameplatethreat"
 	settings_nameplatethreat.parent = TH_Settings.panel
@@ -280,7 +282,7 @@ local function InitSettings()
 	settings_powermax.value = TankHelper:GetConfig("powermax", 0.9)
 	settings_powermax.text = "powermax"
 	settings_powermax.x = 300
-	settings_powermax.y = -230
+	settings_powermax.y = Y
 	settings_powermax.min = 0.1
 	settings_powermax.max = 1.0
 	settings_powermax.steps = 0.1
@@ -298,7 +300,7 @@ local function InitSettings()
 	settings_scalestatus.value = TankHelper:GetConfig("scalestatus", 1)
 	settings_scalestatus.text = "scalestatus"
 	settings_scalestatus.x = 300
-	settings_scalestatus.y = -260
+	settings_scalestatus.y = Y
 	settings_scalestatus.min = 0.1
 	settings_scalestatus.max = 2.0
 	settings_scalestatus.steps = 0.1
@@ -309,6 +311,8 @@ local function InitSettings()
 	settings_scalestatus.func = TankHelper.UpdateDesign
 	TankHelper:CreateSlider(settings_scalestatus)
 	Y = -320
+	Y = Y - H
+	Y = Y - BR
 	local settings_targettingdelay = {}
 	settings_targettingdelay.name = "targettingdelay"
 	settings_targettingdelay.parent = TH_Settings.panel
