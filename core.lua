@@ -489,20 +489,21 @@ function TankHelper:InitFrames()
 	frameStatus.text:SetText("")
 	frameStatus.text:SetPoint("CENTER", frameStatus, "CENTER", 0, 0)
 	frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
+	frameStatus:Hide()
 	function TankHelper:DesignThink()
-		if not InCombatLockdown() then
-			frameStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
-			frameStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
-			if TankHelper:GetConfig("hidestatus", true) then
-				frameStatus:Hide()
+		frameStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
+		frameStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
+		if TankHelper:GetConfig("hidestatus", true) then
+			frameStatus:Hide()
+		else
+			if TankHelper:ShouldShow() then
+				frameStatus:Show()
 			else
-				if TankHelper:ShouldShow() then
-					frameStatus:Show()
-				else
-					frameStatus:Hide()
-				end
+				frameStatus:Hide()
 			end
+		end
 
+		if not InCombatLockdown() then
 			frameCockpit:SetMovable(not TankHelper:GetConfig("fixposition", false))
 			frameCockpit:EnableMouse(not TankHelper:GetConfig("fixposition", false))
 			if TankHelper:GetConfig("combineall", false) then
