@@ -31,10 +31,10 @@ function TankHelper:SetColor(name, r, g, b, a)
 	THTAB[name .. "_g"] = g
 	THTAB[name .. "_b"] = b
 	THTAB[name .. "_a"] = a
-	TankHelper:UpdateColors(frameCockpit)
-	TankHelper:UpdateColors(frameWorldMarkers)
-	TankHelper:UpdateColors(frameTargetMarkers)
-	TankHelper:UpdateColors(frameExtras)
+	TankHelper:UpdateColors(THCockpit)
+	TankHelper:UpdateColors(THWorldMarkers)
+	TankHelper:UpdateColors(THTargetMarkers)
+	TankHelper:UpdateColors(THExtras)
 end
 
 function TankHelper:UpdateColors(frame)
