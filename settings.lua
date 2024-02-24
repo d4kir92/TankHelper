@@ -53,12 +53,16 @@ function TankHelper:UpdateColors(frame)
 			a1 = 0.15
 		end
 
-		frame.tBRl:SetColorTexture(r1, g1, b1, a1)
-		frame.tBRr:SetColorTexture(r1, g1, b1, a1)
-		frame.tBRt:SetColorTexture(r1, g1, b1, a1)
-		frame.tBRb:SetColorTexture(r1, g1, b1, a1)
-		--frame.texture:SetColorTexture( r1, g1, b1, a1 )
-		frame.tBG:SetColorTexture(r2, g2, b2, a2)
+		if framne.tBRl and framne.tBRr and framne.tBRt and framne.tBRb then
+			frame.tBRl:SetColorTexture(r1, g1, b1, a1)
+			frame.tBRr:SetColorTexture(r1, g1, b1, a1)
+			frame.tBRt:SetColorTexture(r1, g1, b1, a1)
+			frame.tBRb:SetColorTexture(r1, g1, b1, a1)
+		end
+
+		if framne.tBG then
+			frame.tBG:SetColorTexture(r2, g2, b2, a2)
+		end
 	end
 end
 
@@ -104,7 +108,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.8")
+	D4:SetVersion(AddonName, 132362, "1.7.9")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
