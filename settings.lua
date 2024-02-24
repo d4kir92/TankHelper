@@ -104,7 +104,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.7")
+	D4:SetVersion(AddonName, 132362, "1.7.8")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -156,6 +156,18 @@ local function InitSettings()
 	settings_showalways.dbvalue = "showalways"
 	settings_showalways.color = colgreen
 	TankHelper:CreateCheckBox(settings_showalways)
+	Y = Y - 24
+	local settings_hidelastrow = {}
+	settings_hidelastrow.name = "hidelastrow"
+	settings_hidelastrow.parent = TH_Settings.panel
+	settings_hidelastrow.checked = TankHelper:GetConfig("hidelastrow", false)
+	settings_hidelastrow.text = "hidelastrow"
+	settings_hidelastrow.x = 10
+	settings_hidelastrow.y = Y
+	settings_hidelastrow.dbvalue = "hidelastrow"
+	settings_hidelastrow.color = colgreen
+	settings_hidelastrow.func = TankHelper.UpdateDesign
+	TankHelper:CreateCheckBox(settings_hidelastrow)
 	Y = Y - 24
 	Y = Y - 10
 	local settings_channel = {}
@@ -232,17 +244,19 @@ local function InitSettings()
 	end
 
 	Y = Y - 24
-	local settings_hidelastrow = {}
-	settings_hidelastrow.name = "hidelastrow"
-	settings_hidelastrow.parent = TH_Settings.panel
-	settings_hidelastrow.checked = TankHelper:GetConfig("hidelastrow", false)
-	settings_hidelastrow.text = "hidelastrow"
-	settings_hidelastrow.x = 10
-	settings_hidelastrow.y = Y
-	settings_hidelastrow.dbvalue = "hidelastrow"
-	settings_hidelastrow.color = colgreen
-	settings_hidelastrow.func = TankHelper.UpdateDesign
-	TankHelper:CreateCheckBox(settings_hidelastrow)
+	local settings_nameplatethreat = {}
+	settings_nameplatethreat.name = "nameplatethreat"
+	settings_nameplatethreat.parent = TH_Settings.panel
+	settings_nameplatethreat.checked = TankHelper:GetConfig("nameplatethreat", true)
+	settings_nameplatethreat.text = "nameplatethreat"
+	settings_nameplatethreat.x = 10
+	settings_nameplatethreat.y = Y
+	settings_nameplatethreat.dbvalue = "nameplatethreat"
+	settings_nameplatethreat.color = colgreen
+	settings_nameplatethreat.func = function()
+		TankHelper:ThinkNameplates(true)
+	end
+
 	Y = Y - 24
 	local settings_healthmax = {}
 	settings_healthmax.name = "healthmax"
@@ -262,19 +276,6 @@ local function InitSettings()
 	TankHelper:CreateSlider(settings_healthmax)
 	Y = Y - H
 	Y = Y - BR
-	local settings_nameplatethreat = {}
-	settings_nameplatethreat.name = "nameplatethreat"
-	settings_nameplatethreat.parent = TH_Settings.panel
-	settings_nameplatethreat.checked = TankHelper:GetConfig("nameplatethreat", true)
-	settings_nameplatethreat.text = "nameplatethreat"
-	settings_nameplatethreat.x = 10
-	settings_nameplatethreat.y = Y
-	settings_nameplatethreat.dbvalue = "nameplatethreat"
-	settings_nameplatethreat.color = colgreen
-	settings_nameplatethreat.func = function()
-		TankHelper:ThinkNameplates(true)
-	end
-
 	TankHelper:CreateCheckBox(settings_nameplatethreat)
 	local settings_powermax = {}
 	settings_powermax.name = "powermax"
@@ -316,7 +317,7 @@ local function InitSettings()
 	local settings_targettingdelay = {}
 	settings_targettingdelay.name = "targettingdelay"
 	settings_targettingdelay.parent = TH_Settings.panel
-	settings_targettingdelay.value = TankHelper:GetConfig("targettingdelay", 0.8)
+	settings_targettingdelay.value = TankHelper:GetConfig("targettingdelay", 0.0)
 	settings_targettingdelay.text = "targettingdelay"
 	settings_targettingdelay.x = 10
 	settings_targettingdelay.y = Y

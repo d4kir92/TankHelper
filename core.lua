@@ -195,6 +195,38 @@ function TankHelper:InitFrame(frame, px, py)
 	TankHelper:UpdateColors(frame)
 end
 
+function TankHelper:ShowCombinedAll()
+	THCockpit:Show()
+	if IsRaidMarkerActive then
+		THWorldMarkers:Show()
+	else
+		THWorldMarkers:Hide()
+	end
+
+	THTargetMarkers:Show()
+	THExtras:Show()
+	THCockpit:EnableMouse(true)
+	THWorldMarkers:EnableMouse(false)
+	THTargetMarkers:EnableMouse(false)
+	THExtras:EnableMouse(false)
+end
+
+function TankHelper:HideCombinedAll()
+	THCockpit:Hide()
+	if IsRaidMarkerActive then
+		THWorldMarkers:Show()
+	else
+		THWorldMarkers:Hide()
+	end
+
+	THTargetMarkers:Hide()
+	THExtras:Hide()
+	THCockpit:EnableMouse(true)
+	THWorldMarkers:EnableMouse(false)
+	THTargetMarkers:EnableMouse(false)
+	THExtras:EnableMouse(false)
+end
+
 function TankHelper:InitFrames()
 	THCockpit = CreateFrame("Frame", "THCockpit", UIParent)
 	THWorldMarkers = CreateFrame("Frame", "THWorldMarkers", UIParent)
@@ -508,27 +540,14 @@ function TankHelper:InitFrames()
 			THCockpit:EnableMouse(not TankHelper:GetConfig("fixposition", false))
 			if TankHelper:GetConfig("combineall", false) then
 				if TankHelper:GetConfig("showalways", false) then
-					THCockpit:Show()
+					TankHelper:ShowCombinedAll()
 				else
 					if TankHelper:ShouldShow() then
-						THCockpit:Show()
+						TankHelper:ShowCombinedAll()
 					else
-						THCockpit:Hide()
+						TankHelper:HideCombinedAll()
 					end
 				end
-
-				if IsRaidMarkerActive then
-					THWorldMarkers:Show()
-				else
-					THWorldMarkers:Hide()
-				end
-
-				THTargetMarkers:Show()
-				THExtras:Show()
-				THCockpit:EnableMouse(true)
-				THWorldMarkers:EnableMouse(false)
-				THTargetMarkers:EnableMouse(false)
-				THExtras:EnableMouse(false)
 			else
 				if TankHelper:GetConfig("showalways", false) then
 					if IsRaidMarkerActive then
@@ -605,7 +624,7 @@ function TankHelper:TargetIconLogic()
 	else
 		-- switch from enemy to enemy, then add delay
 		if targetGUID and UnitGUID("TARGET") ~= targetGUID then
-			ts = GetTime() + TankHelper:GetConfig("targettingdelay", 0.8)
+			ts = GetTime() + TankHelper:GetConfig("targettingdelay", 0.0)
 		end
 
 		targetGUID = UnitGUID("TARGET")
@@ -783,7 +802,7 @@ function TankHelper:UpdateDesign()
 	for pId = 0, 8 do
 		if pId <= #pt then
 			local PullName = "btnPull" .. pId
-			if TankHelper:GetConfig("hidelastrow", false) then
+			if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
 				THExtras[PullName]:Hide()
 			else
 				THExtras[PullName]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (pId - 1) * (iconbtn + ibr), -obr)
@@ -801,7 +820,7 @@ function TankHelper:UpdateDesign()
 		bsw = bsw / 2
 	end
 
-	if TankHelper:GetConfig("hidelastrow", false) then
+	if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnReadycheck"]:Hide()
 	else
 		THExtras["btnReadycheck"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr)
@@ -810,7 +829,7 @@ function TankHelper:UpdateDesign()
 	end
 
 	if InitiateRolePoll then
-		if TankHelper:GetConfig("hidelastrow", false) then
+		if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
 			THExtras["btnRolepoll"]:Hide()
 		else
 			THExtras["btnRolepoll"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr)
@@ -819,7 +838,7 @@ function TankHelper:UpdateDesign()
 		end
 	end
 
-	if TankHelper:GetConfig("hidelastrow", false) then
+	if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnDiscord"]:Hide()
 	else
 		THExtras["btnDiscord"]:ClearAllPoints()
@@ -842,15 +861,19 @@ function TankHelper:UpdateDesign()
 		end
 	)
 
+	local point, parent, relativePoint, ofsx, ofsy = nil
 	if TankHelper:GetConfig("combineall", false) then
-		local point = THTAB["THCockpit" .. "point"]
-		local parent = THTAB["THCockpit" .. "parent"]
-		local relativePoint = THTAB["THCockpit" .. "relativePoint"]
-		local ofsx = THTAB["THCockpit" .. "ofsx"]
-		local ofsy = THTAB["THCockpit" .. "ofsy"]
+		point = THTAB["THCockpit" .. "point"]
+		parent = THTAB["THCockpit" .. "parent"]
+		relativePoint = THTAB["THCockpit" .. "relativePoint"]
+		ofsx = THTAB["THCockpit" .. "ofsx"]
+		ofsy = THTAB["THCockpit" .. "ofsy"]
 		if point and THCockpit then
 			THCockpit:ClearAllPoints()
 			THCockpit:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+		else
+			THCockpit:ClearAllPoints()
+			THCockpit:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
 		if THWorldMarkers then
@@ -876,6 +899,9 @@ function TankHelper:UpdateDesign()
 		if point and THWorldMarkers then
 			THWorldMarkers:ClearAllPoints()
 			THWorldMarkers:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+		else
+			THWorldMarkers:ClearAllPoints()
+			THWorldMarkers:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
 		point = THTAB["THTargetMarkers" .. "point"]
@@ -886,6 +912,9 @@ function TankHelper:UpdateDesign()
 		if point and THTargetMarkers then
 			THTargetMarkers:ClearAllPoints()
 			THTargetMarkers:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+		else
+			THTargetMarkers:ClearAllPoints()
+			THTargetMarkers:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
 		point = THTAB["THExtras" .. "point"]
@@ -896,6 +925,9 @@ function TankHelper:UpdateDesign()
 		if point and THExtras then
 			THExtras:ClearAllPoints()
 			THExtras:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+		else
+			THExtras:ClearAllPoints()
+			THExtras:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 	end
 
@@ -907,6 +939,9 @@ function TankHelper:UpdateDesign()
 	if point and THStatus then
 		THStatus:ClearAllPoints()
 		THStatus:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+	else
+		THStatus:ClearAllPoints()
+		THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	end
 end
 
