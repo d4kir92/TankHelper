@@ -40,4 +40,5 @@ function TankHelper:LangdeDE()
 	thlang.statusonlyhealers = "Status - Nur Heiler info anzeigen"
 	thlang.healer = "Heiler"
 	thlang.combineall = "Alle Leisten verbinden"
+	thlang.fixedpositionisenabled = "Fixierte Position ist aktiviert"
 end

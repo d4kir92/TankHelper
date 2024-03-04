@@ -157,20 +157,28 @@ function TankHelper:InitFrame(frame, px, py)
 	frame:SetScript(
 		"OnDragStart",
 		function(sel)
-			frame:StartMoving()
+			if not TankHelper:GetConfig("fixposition", false) then
+				frame:StartMoving()
+			else
+				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+			end
 		end
 	)
 
 	frame:SetScript(
 		"OnDragStop",
 		function(sel)
-			frame:StopMovingOrSizing()
-			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
-			THTAB[frame:GetName() .. "point"] = point
-			THTAB[frame:GetName() .. "parent"] = parent
-			THTAB[frame:GetName() .. "relativePoint"] = relativePoint
-			THTAB[frame:GetName() .. "ofsx"] = ofsx
-			THTAB[frame:GetName() .. "ofsy"] = ofsy
+			if not TankHelper:GetConfig("fixposition", false) then
+				frame:StopMovingOrSizing()
+				local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+				THTAB[frame:GetName() .. "point"] = point
+				THTAB[frame:GetName() .. "parent"] = parent
+				THTAB[frame:GetName() .. "relativePoint"] = relativePoint
+				THTAB[frame:GetName() .. "ofsx"] = ofsx
+				THTAB[frame:GetName() .. "ofsy"] = ofsy
+			else
+				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+			end
 		end
 	)
 
@@ -498,20 +506,28 @@ function TankHelper:InitFrames()
 	THStatus:SetScript(
 		"OnDragStart",
 		function(sel)
-			THStatus:StartMoving()
+			if not TankHelper:GetConfig("fixposition", false) then
+				THStatus:StartMoving()
+			else
+				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+			end
 		end
 	)
 
 	THStatus:SetScript(
 		"OnDragStop",
 		function(sel)
-			THStatus:StopMovingOrSizing()
-			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
-			THTAB["THStatus" .. "point"] = point
-			THTAB["THStatus" .. "parent"] = parent
-			THTAB["THStatus" .. "relativePoint"] = relativePoint
-			THTAB["THStatus" .. "ofsx"] = ofsx
-			THTAB["THStatus" .. "ofsy"] = ofsy
+			if not TankHelper:GetConfig("fixposition", false) then
+				THStatus:StopMovingOrSizing()
+				local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+				THTAB["THStatus" .. "point"] = point
+				THTAB["THStatus" .. "parent"] = parent
+				THTAB["THStatus" .. "relativePoint"] = relativePoint
+				THTAB["THStatus" .. "ofsx"] = ofsx
+				THTAB["THStatus" .. "ofsy"] = ofsy
+			else
+				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+			end
 		end
 	)
 

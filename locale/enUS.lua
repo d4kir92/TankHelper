@@ -41,6 +41,7 @@ function TankHelper:LangenUS()
 	thlang.statusonlyhealers = "Status - Show Only Healers Info"
 	thlang.healer = "Healer"
 	thlang.combineall = "Combine All Bars"
+	thlang.fixedpositionisenabled = "Fixed Position is enabled"
 	for i, v in pairs(thlang) do
 		ethlang[i] = v
 	end
