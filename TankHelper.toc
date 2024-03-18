@@ -1,9 +1,10 @@
 ## Interface-Classic: 11501
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30403
+## Interface-Wrath: 40400
 ## Interface: 100205
 
-## Version: 1.7.12
+## Version: 1.7.13
 ## Title: TankHelper by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
@@ -21,17 +22,17 @@ libs\LibDropDown\embed.xml
 
 config.lua
 
-libs/LIB_output.lua
-libs/LIB_math.lua
-libs/LIB_design.lua
-libs/dropdown.lua
+libs\LIB_output.lua
+libs\LIB_math.lua
+libs\LIB_design.lua
+libs\dropdown.lua
 
-locale/enUS.lua
-locale/deDE.lua
-locale/koKR.lua
-locale/ruRU.lua
-locale/zhTW.lua
-libs/LIB_lang.lua
+locale\enUS.lua
+locale\deDE.lua
+locale\koKR.lua
+locale\ruRU.lua
+locale\zhTW.lua
+libs\LIB_lang.lua
 
 settings.lua
 

@@ -33,7 +33,7 @@ function TankHelper:ShouldShow()
 end
 
 function TankHelper:RW(msg)
-	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
+	if D4:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	elseif not InCombatLockdown() then
 		if TankHelper:ShouldShow() then
@@ -117,7 +117,7 @@ end
 function TankHelper:CheckUnit(unit, dead, health, power)
 	if UnitExists(unit) then
 		local can = true
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 			local role = UnitGroupRolesAssigned(unit)
 			if role ~= "HEALER" then
 				can = false
@@ -608,7 +608,7 @@ local ts = 0
 local setts = 0
 local targetGUID = UnitGUID("TARGET")
 function TankHelper:TargetIconLogic()
-	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 		local role = UnitGroupRolesAssigned("PLAYER")
 		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end -- Only Tank?
 	end
@@ -690,7 +690,7 @@ function TankHelper:SetStatusText()
 			end
 		end
 
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 			text = format("%s: %s", TankHelper:GT("healer"), text)
 		end
 

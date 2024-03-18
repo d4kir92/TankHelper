@@ -1,22 +1,4 @@
 local AddonName, TankHelper = ...
-local BuildNr = select(4, GetBuildInfo())
-local Build = "CLASSIC"
-if BuildNr >= 100000 then
-	Build = "RETAIL"
-elseif BuildNr > 29999 then
-	Build = "WRATH"
-elseif BuildNr > 19999 then
-	Build = "TBC"
-end
-
-function TankHelper:GetWoWBuildNr()
-	return BuildNr
-end
-
-function TankHelper:GetWoWBuild()
-	return Build
-end
-
 function TankHelper:GetColor(name)
 	local r = THTAB[name .. "_r"]
 	local g = THTAB[name .. "_g"]
@@ -108,7 +90,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.12")
+	D4:SetVersion(AddonName, 132362, "1.7.13")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -124,7 +106,7 @@ local function InitSettings()
 	settings_header.textsize = 24
 	TankHelper:CreateText(settings_header)
 	Y = Y - BR
-	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 		local settings_onlytank = {}
 		settings_onlytank.name = "onlytank"
 		settings_onlytank.parent = TH_Settings.panel
@@ -234,7 +216,7 @@ local function InitSettings()
 	settings_fixposition.dbvalue = "fixposition"
 	settings_fixposition.color = colgreen
 	TankHelper:CreateCheckBox(settings_fixposition)
-	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 		local settings_statusonlyhealers = {}
 		settings_statusonlyhealers.name = "statusonlyhealers"
 		settings_statusonlyhealers.parent = TH_Settings.panel
