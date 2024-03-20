@@ -2,9 +2,9 @@
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30403
 ## Interface-Cata: 40400
-## Interface: 100205
+## Interface: 100206
 
-## Version: 1.7.15
+## Version: 1.7.16
 ## Title: TankHelper by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
