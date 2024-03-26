@@ -204,20 +204,11 @@ function TankHelper:CreateDropDown(tab)
 	tab.tooltip = tab.tooltip or ""
 	tab.x = tab.x or 0
 	tab.y = tab.y or 0
-	local t = {}
-	for i, v in pairs(tab.tab) do
-		if v.Code then
-			tinsert(t, v.Code)
-		else
-			tinsert(t, v)
-		end
-	end
-
 	local rows = {
 		["name"] = tab.name,
 		["parent"] = tab.parent,
 		["title"] = tab.text,
-		["items"] = t,
+		["items"] = tab.tab,
 		["defaultVal"] = tab.value,
 		["changeFunc"] = function(dropdown_frame, dropdown_val)
 			--dropdown_val = tonumber( dropdown_val )

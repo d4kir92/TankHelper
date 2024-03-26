@@ -6,8 +6,8 @@ function TankHelper:LangdeDE()
 	thlang.pullinx = "Angriff in %0.1f"
 	thlang.go = "LOS"
 	thlang.auto = "Automatisch"
-	thlang.onlythirdparty = "Countdown von anderen Addons verwenden"
-	thlang.onlyth = "Countdown von Tank Helper verwenden"
+	thlang.onlythirdparty = "Von anderen Addons den Countdown verwenden"
+	thlang.onlyth = "Von Tank Helper den Countdown verwenden"
 	thlang.both = "Beide verwenden"
 	-- Status
 	thlang.ready = "Bereit"

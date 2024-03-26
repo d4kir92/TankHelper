@@ -90,7 +90,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.17")
+	D4:SetVersion(AddonName, 132362, "1.7.18")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -160,25 +160,25 @@ local function InitSettings()
 	settings_channel.name = "PULLTIMERMODE"
 	settings_channel.parent = TH_Settings.panel
 	settings_channel.text = "PULLTIMERMODE"
-	settings_channel.value = TankHelper:GetConfig("PULLTIMERMODE", "AUTO")
+	settings_channel.value = TankHelper:GT(TankHelper:GetConfig("PULLTIMERMODE", "AUTO"))
 	settings_channel.x = 0
 	settings_channel.y = Y
 	settings_channel.dbvalue = "PULLTIMERMODE"
 	settings_channel.tab = {
 		{
-			Name = "AUTO",
+			Name = TankHelper:GT("auto"),
 			Code = "AUTO"
 		},
 		{
-			Name = "ONLYTHIRDPARTY",
+			Name = TankHelper:GT("onlythirdparty"),
 			Code = "ONLYTHIRDPARTY"
 		},
 		{
-			Name = "ONLYTH",
+			Name = TankHelper:GT("onlyth"),
 			Code = "ONLYTH"
 		},
 		{
-			Name = "BOTH",
+			Name = TankHelper:GT("both"),
 			Code = "BOTH"
 		},
 	}

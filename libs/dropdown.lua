@@ -8,11 +8,11 @@ function TankHelper:CreateDropdown(opts)
 	for i, v in pairs(opts.items) do
 		Menu:Add(
 			{
-				text = v,
-				args = {i, v},
+				text = v.Name,
+				args = {i, v.Code},
 				func = function(sel, button, key, value)
 					opts.changeFunc(Menu, value)
-					Menu:SetText(value)
+					Menu:SetText(TankHelper:GT(value))
 				end
 			}
 		)
