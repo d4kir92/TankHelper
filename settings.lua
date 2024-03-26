@@ -49,13 +49,30 @@ function TankHelper:UpdateColors(frame)
 end
 
 function TankHelper:ShowColorPicker(r, g, b, a, changedCallback)
-	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-	ColorPickerFrame.previousValues = {r, g, b, a}
-	ColorPickerFrame:SetColorRGB(r, g, b)
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-	ColorPickerFrame:Hide() -- Need to run the OnShow handler.
-	ColorPickerFrame:Show()
+	if ColorPickerFrame.SetupColorPickerAndShow then
+		local info = {}
+		info.swatchFunc = changedCallback
+		info.hasOpacity = true
+		info.opacityFunc = changedCallback
+		info.cancelFunc = changedCallback
+		info.extraInfo = "TEST"
+		info.r = r
+		info.g = g
+		info.b = b
+		info.opacity = a
+		ColorPickerFrame:SetupColorPickerAndShow(info)
+	else
+		ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.swatchFunc = changedCallback, changedCallback, changedCallback
+		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
+		ColorPickerFrame.previousValues = {r, g, b, a}
+		if ColorPickerFrame.SetColorRGB then
+			ColorPickerFrame:SetColorRGB(r, g, b)
+		end
+
+		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
+		ColorPickerFrame:Hide() -- Need to run the OnShow handler.
+		ColorPickerFrame:Show()
+	end
 end
 
 function TankHelper:AddColorPicker(name, parent, x, y)
@@ -77,7 +94,18 @@ function TankHelper:AddColorPicker(name, parent, x, y)
 					if restore then
 						newR, newG, newB, newA = unpack(restore)
 					else
-						newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+						local alpha = 1
+						if ColorPickerFrame.GetColorAlpha then
+							alpha = ColorPickerFrame:GetColorAlpha()
+						else
+							alpha = OpacitySliderFrame:GetValue()
+						end
+
+						if D4:GetWoWBuild() ~= "RETAIL" then
+							alpha = 1 - alpha
+						end
+
+						newA, newR, newG, newB = alpha, ColorPickerFrame:GetColorRGB()
 					end
 
 					TankHelper:SetColor(name, newR, newG, newB, newA)
@@ -90,7 +118,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.18")
+	D4:SetVersion(AddonName, 132362, "1.7.19")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
