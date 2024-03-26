@@ -36,6 +36,8 @@ function TankHelper:UpdateLanguage()
 		TankHelper:LangkoKR()
 	elseif GetLocale() == "ruRU" then
 		TankHelper:LangruRU()
+	elseif GetLocale() == "zhCN" then
+		TankHelper:LangzhCN()
 	elseif GetLocale() == "zhTW" then
 		TankHelper:LangzhTW()
 	end

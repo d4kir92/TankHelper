@@ -1,3 +1,4 @@
+-- zhCN Simplified Chinese
 local _, TankHelper = ...
 function TankHelper:LangzhCN()
 	local thlang = TankHelper:GetLangTab()
