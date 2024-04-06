@@ -32,6 +32,8 @@ function TankHelper:UpdateLanguage()
 		TankHelper:LangenUS()
 	elseif GetLocale() == "deDE" then
 		TankHelper:LangdeDE()
+	elseif GetLocale() == "itIT" then
+		TankHelper:LangitIT()
 	elseif GetLocale() == "koKR" then
 		TankHelper:LangkoKR()
 	elseif GetLocale() == "ruRU" then
