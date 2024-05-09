@@ -73,10 +73,14 @@ function TankHelper:PullIn(t)
 				C_Timer.After(
 					cou,
 					function()
-						if t - cou == 0 then
-							TankHelper:RW(TankHelper:GT("go") .. "!")
+						if C_PartyInfo and C_PartyInfo.DoCountdown then
+							C_PartyInfo.DoCountdown(t)
 						else
-							TankHelper:RW(t - cou)
+							if t - cou == 0 then
+								TankHelper:RW(TankHelper:GT("go") .. "!")
+							else
+								TankHelper:RW(t - cou)
+							end
 						end
 					end
 				)
