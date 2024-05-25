@@ -32,7 +32,6 @@ function TankHelper:LangitIT()
     thlang.nameplatethreat = "Mostra minaccia sulla barra del bersaglio"
     thlang.pulltimermode = "Modalità Pulltimer"
     thlang.onlytank = "Marcatura automatica solo come Tank"
-    thlang.hidelastrow = "Nascondi l'ultima riga"
     thlang.brcolor = "Colore del bordo"
     thlang.bgcolor = "Colore di sfondo"
     thlang.healthmax = "Stato - Avvertimento fino a %0.1f%% Salute"

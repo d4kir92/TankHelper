@@ -118,7 +118,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.7.28")
+	D4:SetVersion(AddonName, 132362, "1.8.0")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -171,17 +171,44 @@ local function InitSettings()
 	settings_showalways.color = colgreen
 	TankHelper:CreateCheckBox(settings_showalways)
 	Y = Y - 24
-	local settings_hidelastrow = {}
-	settings_hidelastrow.name = "hidelastrow"
-	settings_hidelastrow.parent = TH_Settings.panel
-	settings_hidelastrow.checked = TankHelper:GetConfig("hidelastrow", false)
-	settings_hidelastrow.text = "hidelastrow"
-	settings_hidelastrow.x = 10
-	settings_hidelastrow.y = Y
-	settings_hidelastrow.dbvalue = "hidelastrow"
-	settings_hidelastrow.color = colgreen
-	settings_hidelastrow.func = TankHelper.UpdateDesign
-	TankHelper:CreateCheckBox(settings_hidelastrow)
+	if IsRaidMarkerActive then
+		local settings_hideworldmarks = {}
+		settings_hideworldmarks.name = "hideworldmarks"
+		settings_hideworldmarks.parent = TH_Settings.panel
+		settings_hideworldmarks.checked = TankHelper:GetConfig("hideworldmarks", false)
+		settings_hideworldmarks.text = "hideworldmarks"
+		settings_hideworldmarks.x = 10
+		settings_hideworldmarks.y = Y
+		settings_hideworldmarks.dbvalue = "hideworldmarks"
+		settings_hideworldmarks.color = colgreen
+		settings_hideworldmarks.func = TankHelper.UpdateDesign
+		TankHelper:CreateCheckBox(settings_hideworldmarks)
+		Y = Y - 24
+	end
+
+	local settings_hidetargetmarks = {}
+	settings_hidetargetmarks.name = "hidetargetmarks"
+	settings_hidetargetmarks.parent = TH_Settings.panel
+	settings_hidetargetmarks.checked = TankHelper:GetConfig("hidetargetmarks", false)
+	settings_hidetargetmarks.text = "hidetargetmarks"
+	settings_hidetargetmarks.x = 10
+	settings_hidetargetmarks.y = Y
+	settings_hidetargetmarks.dbvalue = "hidetargetmarks"
+	settings_hidetargetmarks.color = colgreen
+	settings_hidetargetmarks.func = TankHelper.UpdateDesign
+	TankHelper:CreateCheckBox(settings_hidetargetmarks)
+	Y = Y - 24
+	local settings_hidespecialbar = {}
+	settings_hidespecialbar.name = "hidespecialbar"
+	settings_hidespecialbar.parent = TH_Settings.panel
+	settings_hidespecialbar.checked = TankHelper:GetConfig("hidespecialbar", false)
+	settings_hidespecialbar.text = "hidespecialbar"
+	settings_hidespecialbar.x = 10
+	settings_hidespecialbar.y = Y
+	settings_hidespecialbar.dbvalue = "hidespecialbar"
+	settings_hidespecialbar.color = colgreen
+	settings_hidespecialbar.func = TankHelper.UpdateDesign
+	TankHelper:CreateCheckBox(settings_hidespecialbar)
 	Y = Y - 24
 	Y = Y - 10
 	local settings_channel = {}

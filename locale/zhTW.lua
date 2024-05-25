@@ -32,7 +32,6 @@ function TankHelper:LangzhTW()
 	thlang.nameplatethreat = "在名條上顯示威脅值"
 	thlang.pulltimermode = "開怪倒數模式"
 	thlang.onlytank = "只在擔任坦克時啟用自動標記"
-	thlang.hidelastrow = "隱藏倒數欄"
 	thlang.brcolor = "邊框顏色"
 	thlang.bgcolor = "背景顏色"
 	thlang.healthmax = "生命值低於 %0.1f%% 時警示狀態"

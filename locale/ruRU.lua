@@ -32,7 +32,6 @@ function TankHelper:LangruRU()
 	thlang.nameplatethreat = "Показать угрозу для таблички"
 	thlang.pulltimermode = "Режим тянучки"
 	thlang.onlytank = "Автоматическая маркировка как только танк"
-	thlang.hidelastrow = "Скрыть последний ряд"
 	thlang.brcolor = "Цвет границы"
 	thlang.bgcolor = "Цвет фона"
 	thlang.healthmax = "Статус - Предупреждение до %0.1f%% здоровья"

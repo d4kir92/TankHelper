@@ -209,14 +209,24 @@ end
 
 function TankHelper:ShowCombinedAll()
 	THCockpit:Show()
-	if IsRaidMarkerActive then
+	if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then
 		THWorldMarkers:Show()
 	else
 		THWorldMarkers:Hide()
 	end
 
-	THTargetMarkers:Show()
-	THExtras:Show()
+	if TankHelper:GetConfig("hidetargetmarks", false) == false then
+		THTargetMarkers:Show()
+	else
+		THTargetMarkers:Hide()
+	end
+
+	if TankHelper:GetConfig("hidespecialbar", false) == false then
+		THExtras:Show()
+	else
+		THExtras:Hide()
+	end
+
 	THCockpit:EnableMouse(true)
 	THWorldMarkers:EnableMouse(false)
 	THTargetMarkers:EnableMouse(false)
@@ -225,7 +235,7 @@ end
 
 function TankHelper:HideCombinedAll()
 	THCockpit:Hide()
-	if IsRaidMarkerActive then
+	if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then
 		THWorldMarkers:Show()
 	else
 		THWorldMarkers:Hide()
@@ -245,10 +255,6 @@ function TankHelper:InitFrames()
 	THTargetMarkers = CreateFrame("Frame", "THTargetMarkers", UIParent)
 	THExtras = CreateFrame("Frame", "THExtras", UIParent)
 	THStatus = CreateFrame("Frame", "THStatus", UIParent)
-	if not IsRaidMarkerActive then
-		rows = 2
-	end
-
 	TankHelper:InitFrame(THCockpit, 0, 0)
 	TankHelper:InitFrame(THWorldMarkers, 0, 0)
 	TankHelper:InitFrame(THTargetMarkers, 0, -40)
@@ -570,24 +576,42 @@ function TankHelper:InitFrames()
 				end
 			else
 				if TankHelper:GetConfig("showalways", false) then
-					if IsRaidMarkerActive then
+					if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then
 						THWorldMarkers:Show()
 					else
 						THWorldMarkers:Hide()
 					end
 
-					THTargetMarkers:Show()
-					THExtras:Show()
+					if TankHelper:GetConfig("hidetargetmarks", false) == false then
+						THTargetMarkers:Show()
+					else
+						THTargetMarkers:Hide()
+					end
+
+					if TankHelper:GetConfig("hidespecialbar", false) == false then
+						THExtras:Show()
+					else
+						THExtras:Hide()
+					end
 				else
 					if TankHelper:ShouldShow() then
-						if IsRaidMarkerActive then
+						if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then
 							THWorldMarkers:Show()
 						else
 							THWorldMarkers:Hide()
 						end
 
-						THTargetMarkers:Show()
-						THExtras:Show()
+						if TankHelper:GetConfig("hidetargetmarks", false) == false then
+							THTargetMarkers:Show()
+						else
+							THTargetMarkers:Hide()
+						end
+
+						if TankHelper:GetConfig("hidespecialbar", false) == false then
+							THExtras:Show()
+						else
+							THExtras:Hide()
+						end
 					else
 						THWorldMarkers:Hide()
 						THTargetMarkers:Hide()
@@ -784,13 +808,6 @@ function TankHelper:UpdateDesign()
 	THCockpit:SetScale(scalecockpit)
 	THStatus:SetScale(scalestatus)
 	local THROW = 1
-	local c_rows = rows
-	if TankHelper:GetConfig("hidelastrow", false) then
-		c_rows = c_rows - 1
-	end
-
-	THCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, c_rows * iconbtn + (c_rows - 1) * cbr + 2 * obr)
-	TankHelper:UpdateFrameDesign(THCockpit)
 	THTargetMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
 	TankHelper:UpdateFrameDesign(THTargetMarkers)
 	THWorldMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
@@ -822,7 +839,7 @@ function TankHelper:UpdateDesign()
 	for pId = 0, 8 do
 		if pId <= #pt then
 			local PullName = "btnPull" .. pId
-			if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
+			if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 				THExtras[PullName]:Hide()
 			else
 				THExtras[PullName]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (pId - 1) * (iconbtn + ibr), -obr)
@@ -840,7 +857,7 @@ function TankHelper:UpdateDesign()
 		bsw = bsw / 2
 	end
 
-	if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
+	if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnReadycheck"]:Hide()
 	else
 		THExtras["btnReadycheck"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr)
@@ -849,7 +866,7 @@ function TankHelper:UpdateDesign()
 	end
 
 	if InitiateRolePoll then
-		if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
+		if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 			THExtras["btnRolepoll"]:Hide()
 		else
 			THExtras["btnRolepoll"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr)
@@ -858,7 +875,7 @@ function TankHelper:UpdateDesign()
 		end
 	end
 
-	if TankHelper:GetConfig("hidelastrow", false) and TankHelper:GetConfig("combineall", false) then
+	if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnDiscord"]:Hide()
 	else
 		THExtras["btnDiscord"]:ClearAllPoints()
@@ -963,6 +980,22 @@ function TankHelper:UpdateDesign()
 		THStatus:ClearAllPoints()
 		THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	end
+
+	local cl_rows = 0
+	if TankHelper:GetConfig("hideworldmarks", false) == false then
+		cl_rows = cl_rows + 1
+	end
+
+	if TankHelper:GetConfig("hidetargetmarks", false) == false then
+		cl_rows = cl_rows + 1
+	end
+
+	if TankHelper:GetConfig("hidespecialbar", false) == false then
+		cl_rows = cl_rows + 1
+	end
+
+	THCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, cl_rows * iconbtn + (cl_rows - 1) * cbr + 2 * obr)
+	TankHelper:UpdateFrameDesign(THCockpit)
 end
 
 function TankHelper:InitSetup()

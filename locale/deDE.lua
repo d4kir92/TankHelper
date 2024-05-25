@@ -32,7 +32,7 @@ function TankHelper:LangdeDE()
 	thlang.nameplatethreat = "Zeige Namenschild Bedrohung"
 	thlang.pulltimermode = "Pulltimer Modus"
 	thlang.onlytank = "Automatische Kennzeichnung nur als Tank"
-	thlang.hidelastrow = "Letzte Reihe ausblenden"
+	thlang.hidespecialbar = "Letzte Reihe ausblenden"
 	thlang.brcolor = "Randfarbe"
 	thlang.bgcolor = "Hintergrundfarbe"
 	thlang.healthmax = "Status - Warnung bis %0.1f%% Gesundheit"
@@ -41,4 +41,7 @@ function TankHelper:LangdeDE()
 	thlang.healer = "Heiler"
 	thlang.combineall = "Alle Leisten verbinden"
 	thlang.fixedpositionisenabled = "Fixierte Position ist aktiviert"
+	thlang.hidetargetmarks = "Verstecke Zielmakierungsleiste"
+	thlang.hideworldmarks = "Verstecke Weltmakierungsleiste"
+	thlang.hidespecialbar = "Verstecke Spezialleiste"
 end

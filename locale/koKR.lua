@@ -32,7 +32,6 @@ function TankHelper:LangkoKR()
 	thlang.nameplatethreat = "명판 위협 표시"
 	thlang.pulltimermode = "풀타이머 모드"
 	thlang.onlytank = "탱크 전용으로 자동 표시"
-	thlang.hidelastrow = "마지막 행 숨기기"
 	thlang.brcolor = "테두리 색상"
 	thlang.bgcolor = "배경색"
 	thlang.healthmax = "상태 - %0.1f%% 건강까지 경고"

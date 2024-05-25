@@ -33,7 +33,6 @@ function TankHelper:LangenUS()
 	thlang.nameplatethreat = "Show Nameplate Threat"
 	thlang.pulltimermode = "Pulltimer Mode"
 	thlang.onlytank = "Automatic marking as tank only"
-	thlang.hidelastrow = "Hide last row"
 	thlang.brcolor = "Border Color"
 	thlang.bgcolor = "Background Color"
 	thlang.healthmax = "Status - Warning till %0.1f%% Health"
@@ -42,6 +41,9 @@ function TankHelper:LangenUS()
 	thlang.healer = "Healer"
 	thlang.combineall = "Combine All Bars"
 	thlang.fixedpositionisenabled = "Fixed Position is enabled"
+	thlang.hidetargetmarks = "Hide Target Marks Bar"
+	thlang.hideworldmarks = "Hide World Marks Bar"
+	thlang.hidespecialbar = "Hide Special Bar"
 	for i, v in pairs(thlang) do
 		ethlang[i] = v
 	end
