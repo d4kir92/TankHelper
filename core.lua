@@ -7,7 +7,6 @@ local iconsize = 16
 local iconbr = 4
 local iconbtn = iconsize + 2 * iconbr
 local pt = {3, 5, 10, 20}
-local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 local THStatusColor = {1, 1, 1, 1}
 local updatewms = true
 local ricons1 = {}
@@ -15,6 +14,9 @@ local ricons2 = {}
 local rows = 3
 local cols = 9
 local markScale = 2
+local WMN = 8
+local WMIds = {}
+local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 function TankHelper:CreateButton(name, parent)
 	local btn = CreateFrame("Button", name, parent)
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -250,6 +252,31 @@ function TankHelper:HideCombinedAll()
 end
 
 function TankHelper:InitFrames()
+	if D4:GetWoWBuild() == "RETAIL" then
+		WMN = 8
+		wms = {5, 6, 3, 2, 7, 1, 4, 8}
+		WMIds = {
+			[1] = 1,
+			[2] = 2,
+			[3] = 3,
+			[4] = 4,
+			[5] = 5,
+			[6] = 6,
+			[7] = 7,
+			[8] = 8,
+		}
+	else
+		WMN = 5
+		wms = {5, 3, 2, 1, 4}
+		WMIds = {
+			[1] = 1,
+			[2] = 3,
+			[3] = 4,
+			[4] = 6,
+			[5] = 7,
+		}
+	end
+
 	THCockpit = CreateFrame("Frame", "THCockpit", UIParent)
 	THWorldMarkers = CreateFrame("Frame", "THWorldMarkers", UIParent)
 	THTargetMarkers = CreateFrame("Frame", "THTargetMarkers", UIParent)
@@ -306,7 +333,7 @@ function TankHelper:InitFrames()
 		)
 
 		table.insert(ricons1, THTargetMarkers["btnM" .. btnId])
-		if IsRaidMarkerActive then
+		if IsRaidMarkerActive and btnId <= WMN then
 			THWorldMarkers["THBtnRM" .. btnId] = CreateFrame("Button", "THBtnRM" .. btnId, THWorldMarkers, "SecureActionButtonTemplate")
 			THWorldMarkers["THBtnRM" .. btnId]:SetPoint("TOPLEFT", THWorldMarkers, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
 			THWorldMarkers["THBtnRM" .. btnId]:SetSize(iconbtn, iconbtn)
@@ -317,7 +344,7 @@ function TankHelper:InitFrames()
 			THWorldMarkers["THBtnRM" .. btnId].texture:SetDrawLayer("ARTWORK", 1)
 			THWorldMarkers["THBtnRM" .. btnId].tBG = THWorldMarkers["THBtnRM" .. btnId]:CreateTexture(nil, "ARTWORK")
 			if btnId > 0 then
-				THWorldMarkers["THBtnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. btnId)
+				THWorldMarkers["THBtnRM" .. btnId].tBG:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. WMIds[btnId])
 			else
 				THWorldMarkers["THBtnRM" .. btnId].tBG:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
 			end
@@ -363,7 +390,7 @@ function TankHelper:InitFrames()
 				elseif updatewms then
 					updatewms = false
 					local canremove = false
-					for rmId = 1, 8 do
+					for rmId = 1, WMN do
 						if IsRaidMarkerActive and IsRaidMarkerActive(wms[rmId]) then
 							canremove = true
 							break
@@ -810,7 +837,7 @@ function TankHelper:UpdateDesign()
 	local THROW = 1
 	THTargetMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
 	TankHelper:UpdateFrameDesign(THTargetMarkers)
-	THWorldMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
+	THWorldMarkers:SetSize((WMN + 1) * iconbtn + ((WMN + 1) - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
 	TankHelper:UpdateFrameDesign(THWorldMarkers)
 	THExtras:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
 	TankHelper:UpdateFrameDesign(THExtras)
@@ -825,14 +852,16 @@ function TankHelper:UpdateDesign()
 
 	if IsRaidMarkerActive then
 		THROW = THROW + 1
-		for rmId = 0, 8 do
-			local RMName = "THBtnRM" .. 8 - rmId
-			THWorldMarkers[RMName]:SetPoint("TOPLEFT", THWorldMarkers, "TOPLEFT", obr + rmId * (iconbtn + ibr), -obr)
-			THWorldMarkers[RMName]:SetSize(iconbtn, iconbtn)
-			THWorldMarkers[RMName].texture:SetPoint("CENTER", THWorldMarkers[RMName], "CENTER", 0, 0)
-			THWorldMarkers[RMName].texture:SetSize(iconsize, iconsize)
-			THWorldMarkers[RMName].tBG:SetPoint("BOTTOMLEFT", THWorldMarkers[RMName], "BOTTOMLEFT", 0, 0)
-			THWorldMarkers[RMName].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
+		for rmId = 0, WMN do
+			local RMName = "THBtnRM" .. WMN - rmId
+			if THWorldMarkers[RMName] then
+				THWorldMarkers[RMName]:SetPoint("TOPLEFT", THWorldMarkers, "TOPLEFT", obr + rmId * (iconbtn + ibr), -obr)
+				THWorldMarkers[RMName]:SetSize(iconbtn, iconbtn)
+				THWorldMarkers[RMName].texture:SetPoint("CENTER", THWorldMarkers[RMName], "CENTER", 0, 0)
+				THWorldMarkers[RMName].texture:SetSize(iconsize, iconsize)
+				THWorldMarkers[RMName].tBG:SetPoint("BOTTOMLEFT", THWorldMarkers[RMName], "BOTTOMLEFT", 0, 0)
+				THWorldMarkers[RMName].tBG:SetSize(iconsize / 1.2, iconsize / 1.2)
+			end
 		end
 	end
 
