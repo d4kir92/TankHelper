@@ -51,7 +51,7 @@ function TankHelper:PullIn(t)
 		if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" then
 			if SlashCmdList["DEADLYBOSSMODS"] then
 				SlashCmdList["DEADLYBOSSMODS"]("pull " .. t)
-			elseif IsAddOnLoaded("BigWigs") then
+			elseif D4:IsAddOnLoaded("BigWigs") then
 				DEFAULT_CHAT_FRAME.editBox:SetText("/pull " .. t)
 				ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 			else
@@ -65,8 +65,8 @@ function TankHelper:PullIn(t)
 			end
 		end
 
-		if (TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not IsAddOnLoaded("DBM-Core") and not IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not IsAddOnLoaded("DBM-Core") and not IsAddOnLoaded("BigWigs") then
-			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not IsAddOnLoaded("DBM-Core") and not IsAddOnLoaded("BigWigs") then
+		if (TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs") then
+			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs") then
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
 

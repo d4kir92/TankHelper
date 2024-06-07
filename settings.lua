@@ -118,7 +118,7 @@ end
 local function InitSettings()
 	local colgreen = {0, 1, 0, 1}
 	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.8.2")
+	D4:SetVersion(AddonName, 132362, "1.8.3")
 	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
 	TH_Settings.panel.name = settingname
@@ -457,7 +457,11 @@ local function InitSettings()
 	TankHelper:CreateSlider(settings_iconsize)
 	TankHelper:AddColorPicker("BRColor", TH_Settings.panel, 450, -50)
 	TankHelper:AddColorPicker("BGColor", TH_Settings.panel, 450, -75)
-	InterfaceOptions_AddCategory(TH_Settings.panel)
+	if InterfaceOptions_AddCategory then
+		InterfaceOptions_AddCategory(TH_Settings.panel)
+	else
+		print("TankHelper InterfaceOptions_AddCategory MISSING")
+	end
 end
 
 local THloaded = false
