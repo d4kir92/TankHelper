@@ -1,4 +1,6 @@
 local AddonName, TankHelper = ...
+local thset = nil
+local Y = 0
 function TankHelper:GetColor(name)
 	local r = THTAB[name .. "_r"]
 	local g = THTAB[name .. "_g"]
@@ -70,16 +72,16 @@ function TankHelper:ShowColorPicker(r, g, b, a, changedCallback)
 		end
 
 		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-		ColorPickerFrame:Hide() -- Need to run the OnShow handler.
+		ColorPickerFrame:Hide()
 		ColorPickerFrame:Show()
 	end
 end
 
-function TankHelper:AddColorPicker(name, parent, x, y)
+function TankHelper:AddColorPicker(name, parent, x)
 	local btn = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
 	btn:SetSize(140, 25)
-	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-	btn:SetText(TankHelper:GT(name))
+	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, Y)
+	btn:SetText(D4:Trans(name))
 	btn:SetScript(
 		"OnClick",
 		function()
@@ -113,355 +115,224 @@ function TankHelper:AddColorPicker(name, parent, x, y)
 			)
 		end
 	)
+
+	Y = Y - 30
 end
 
-local function InitSettings()
-	local colgreen = {0, 1, 0, 1}
-	TH_Settings = {}
-	D4:SetVersion(AddonName, 132362, "1.8.4")
-	local settingname = "TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
-	TH_Settings.panel = CreateFrame("Frame", settingname, UIParent)
-	TH_Settings.panel.name = settingname
-	local Y = -14
-	local H = 14
-	local BR = 24
-	local settings_header = {}
-	settings_header.frame = TH_Settings.panel
-	settings_header.parent = TH_Settings.panel
-	settings_header.x = 10
-	settings_header.y = Y
-	settings_header.text = settingname
-	settings_header.textsize = 24
-	TankHelper:CreateText(settings_header)
-	Y = Y - BR
-	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
-		local settings_onlytank = {}
-		settings_onlytank.name = "onlytank"
-		settings_onlytank.parent = TH_Settings.panel
-		settings_onlytank.checked = TankHelper:GetConfig("onlytank", false)
-		settings_onlytank.text = "onlytank"
-		settings_onlytank.x = 10
-		settings_onlytank.y = Y
-		settings_onlytank.dbvalue = "onlytank"
-		settings_onlytank.color = colgreen
-		TankHelper:CreateCheckBox(settings_onlytank)
-		Y = Y - 24
+function TankHelper:ToggleSettings()
+	if thset then
+		if thset:IsShown() then
+			thset:Hide()
+		else
+			thset:Show()
+		end
 	end
+end
 
-	local settings_combineall = {}
-	settings_combineall.name = "combineall"
-	settings_combineall.parent = TH_Settings.panel
-	settings_combineall.checked = TankHelper:GetConfig("combineall", false)
-	settings_combineall.text = "combineall"
-	settings_combineall.x = 10
-	settings_combineall.y = Y
-	settings_combineall.dbvalue = "combineall"
-	settings_combineall.color = colgreen
-	settings_combineall.func = TankHelper.UpdateDesign
-	TankHelper:CreateCheckBox(settings_combineall)
-	Y = Y - 24
-	local settings_showalways = {}
-	settings_showalways.name = "showalways"
-	settings_showalways.parent = TH_Settings.panel
-	settings_showalways.checked = TankHelper:GetConfig("showalways", false)
-	settings_showalways.text = "showalways"
-	settings_showalways.x = 10
-	settings_showalways.y = Y
-	settings_showalways.dbvalue = "showalways"
-	settings_showalways.color = colgreen
-	TankHelper:CreateCheckBox(settings_showalways)
-	Y = Y - 24
-	if IsRaidMarkerActive then
-		local settings_hideworldmarks = {}
-		settings_hideworldmarks.name = "hideworldmarks"
-		settings_hideworldmarks.parent = TH_Settings.panel
-		settings_hideworldmarks.checked = TankHelper:GetConfig("hideworldmarks", false)
-		settings_hideworldmarks.text = "hideworldmarks"
-		settings_hideworldmarks.x = 10
-		settings_hideworldmarks.y = Y
-		settings_hideworldmarks.dbvalue = "hideworldmarks"
-		settings_hideworldmarks.color = colgreen
-		settings_hideworldmarks.func = TankHelper.UpdateDesign
-		TankHelper:CreateCheckBox(settings_hideworldmarks)
-		Y = Y - 24
-	end
-
-	local settings_hidetargetmarks = {}
-	settings_hidetargetmarks.name = "hidetargetmarks"
-	settings_hidetargetmarks.parent = TH_Settings.panel
-	settings_hidetargetmarks.checked = TankHelper:GetConfig("hidetargetmarks", false)
-	settings_hidetargetmarks.text = "hidetargetmarks"
-	settings_hidetargetmarks.x = 10
-	settings_hidetargetmarks.y = Y
-	settings_hidetargetmarks.dbvalue = "hidetargetmarks"
-	settings_hidetargetmarks.color = colgreen
-	settings_hidetargetmarks.func = TankHelper.UpdateDesign
-	TankHelper:CreateCheckBox(settings_hidetargetmarks)
-	Y = Y - 24
-	local settings_hidespecialbar = {}
-	settings_hidespecialbar.name = "hidespecialbar"
-	settings_hidespecialbar.parent = TH_Settings.panel
-	settings_hidespecialbar.checked = TankHelper:GetConfig("hidespecialbar", false)
-	settings_hidespecialbar.text = "hidespecialbar"
-	settings_hidespecialbar.x = 10
-	settings_hidespecialbar.y = Y
-	settings_hidespecialbar.dbvalue = "hidespecialbar"
-	settings_hidespecialbar.color = colgreen
-	settings_hidespecialbar.func = TankHelper.UpdateDesign
-	TankHelper:CreateCheckBox(settings_hidespecialbar)
-	Y = Y - 24
-	Y = Y - 10
-	local settings_channel = {}
-	settings_channel.name = "PULLTIMERMODE"
-	settings_channel.parent = TH_Settings.panel
-	settings_channel.text = "PULLTIMERMODE"
-	settings_channel.value = TankHelper:GT(TankHelper:GetConfig("PULLTIMERMODE", "AUTO"))
-	settings_channel.x = 0
-	settings_channel.y = Y
-	settings_channel.dbvalue = "PULLTIMERMODE"
-	settings_channel.tab = {
-		{
-			Name = TankHelper:GT("auto"),
-			Code = "AUTO"
-		},
-		{
-			Name = TankHelper:GT("onlythirdparty"),
-			Code = "ONLYTHIRDPARTY"
-		},
-		{
-			Name = TankHelper:GT("onlyth"),
-			Code = "ONLYTH"
-		},
-		{
-			Name = TankHelper:GT("both"),
-			Code = "BOTH"
-		},
-	}
-
-	TankHelper:CreateDropDown(settings_channel)
-	Y = Y - 40
-	local settings_showtranslation = {}
-	settings_showtranslation.name = "showtranslation"
-	settings_showtranslation.parent = TH_Settings.panel
-	settings_showtranslation.checked = TankHelper:GetConfig("showtranslation", true)
-	settings_showtranslation.text = "showtranslation"
-	settings_showtranslation.x = 10
-	settings_showtranslation.y = Y
-	settings_showtranslation.dbvalue = "showtranslation"
-	settings_showtranslation.color = colgreen
-	TankHelper:CreateCheckBox(settings_showtranslation)
-	local settings_hidestatus = {}
-	settings_hidestatus.name = "hidestatus"
-	settings_hidestatus.parent = TH_Settings.panel
-	settings_hidestatus.checked = TankHelper:GetConfig("hidestatus", true)
-	settings_hidestatus.text = "hidestatus"
-	settings_hidestatus.x = 300
-	settings_hidestatus.y = Y
-	settings_hidestatus.dbvalue = "hidestatus"
-	settings_hidestatus.color = colgreen
-	TankHelper:CreateCheckBox(settings_hidestatus)
-	Y = Y - 24
-	local settings_fixposition = {}
-	settings_fixposition.name = "fixposition"
-	settings_fixposition.parent = TH_Settings.panel
-	settings_fixposition.checked = TankHelper:GetConfig("fixposition", false)
-	settings_fixposition.text = "fixposition"
-	settings_fixposition.x = 10
-	settings_fixposition.y = Y
-	settings_fixposition.dbvalue = "fixposition"
-	settings_fixposition.color = colgreen
-	TankHelper:CreateCheckBox(settings_fixposition)
-	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
-		local settings_statusonlyhealers = {}
-		settings_statusonlyhealers.name = "statusonlyhealers"
-		settings_statusonlyhealers.parent = TH_Settings.panel
-		settings_statusonlyhealers.checked = TankHelper:GetConfig("statusonlyhealers", true)
-		settings_statusonlyhealers.text = "statusonlyhealers"
-		settings_statusonlyhealers.x = 300
-		settings_statusonlyhealers.y = Y
-		settings_statusonlyhealers.dbvalue = "statusonlyhealers"
-		settings_statusonlyhealers.color = colgreen
-		TankHelper:CreateCheckBox(settings_statusonlyhealers)
-	end
-
-	Y = Y - 24
-	local settings_nameplatethreat = {}
-	settings_nameplatethreat.name = "nameplatethreat"
-	settings_nameplatethreat.parent = TH_Settings.panel
-	settings_nameplatethreat.checked = TankHelper:GetConfig("nameplatethreat", true)
-	settings_nameplatethreat.text = "nameplatethreat"
-	settings_nameplatethreat.x = 10
-	settings_nameplatethreat.y = Y
-	settings_nameplatethreat.dbvalue = "nameplatethreat"
-	settings_nameplatethreat.color = colgreen
-	settings_nameplatethreat.func = function()
-		TankHelper:ThinkNameplates(true)
-	end
-
-	Y = Y - 24
-	local settings_healthmax = {}
-	settings_healthmax.name = "healthmax"
-	settings_healthmax.parent = TH_Settings.panel
-	settings_healthmax.value = TankHelper:GetConfig("healthmax", 0.9)
-	settings_healthmax.text = "healthmax"
-	settings_healthmax.x = 300
-	settings_healthmax.y = Y
-	settings_healthmax.min = 0.1
-	settings_healthmax.max = 1.0
-	settings_healthmax.steps = 0.1
-	settings_healthmax.decimals = 1
-	settings_healthmax.dbvalue = "healthmax"
-	settings_healthmax.percentage = true
-	settings_healthmax.w = 300
-	settings_healthmax.color = {0, 1, 0, 1}
-	TankHelper:CreateSlider(settings_healthmax)
-	Y = Y - H
-	Y = Y - BR
-	TankHelper:CreateCheckBox(settings_nameplatethreat)
-	local settings_powermax = {}
-	settings_powermax.name = "powermax"
-	settings_powermax.parent = TH_Settings.panel
-	settings_powermax.value = TankHelper:GetConfig("powermax", 0.9)
-	settings_powermax.text = "powermax"
-	settings_powermax.x = 300
-	settings_powermax.y = Y
-	settings_powermax.min = 0.1
-	settings_powermax.max = 1.0
-	settings_powermax.steps = 0.1
-	settings_powermax.decimals = 1
-	settings_powermax.dbvalue = "powermax"
-	settings_powermax.percentage = true
-	settings_powermax.w = 300
-	settings_powermax.color = {0, 1, 0, 1}
-	TankHelper:CreateSlider(settings_powermax)
-	Y = Y - H
-	Y = Y - BR
-	local settings_scalestatus = {}
-	settings_scalestatus.name = "scalestatus"
-	settings_scalestatus.parent = TH_Settings.panel
-	settings_scalestatus.value = TankHelper:GetConfig("scalestatus", 1)
-	settings_scalestatus.text = "scalestatus"
-	settings_scalestatus.x = 300
-	settings_scalestatus.y = Y
-	settings_scalestatus.min = 0.1
-	settings_scalestatus.max = 2.0
-	settings_scalestatus.steps = 0.1
-	settings_scalestatus.decimals = 1
-	settings_scalestatus.dbvalue = "scalestatus"
-	settings_scalestatus.w = 300
-	settings_scalestatus.color = {0, 1, 0, 1}
-	settings_scalestatus.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_scalestatus)
-	Y = -320
-	Y = Y - H
-	Y = Y - BR
-	local settings_targettingdelay = {}
-	settings_targettingdelay.name = "targettingdelay"
-	settings_targettingdelay.parent = TH_Settings.panel
-	settings_targettingdelay.value = TankHelper:GetConfig("targettingdelay", 0.0)
-	settings_targettingdelay.text = "targettingdelay"
-	settings_targettingdelay.x = 10
-	settings_targettingdelay.y = Y
-	settings_targettingdelay.min = 0.0
-	settings_targettingdelay.max = 5.0
-	settings_targettingdelay.steps = 0.1
-	settings_targettingdelay.decimals = 1
-	settings_targettingdelay.dbvalue = "targettingdelay"
-	settings_targettingdelay.color = {0, 1, 0, 1}
-	settings_targettingdelay.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_targettingdelay)
-	Y = Y - H
-	Y = Y - BR
-	local settings_scalecockpit = {}
-	settings_scalecockpit.name = "scalecockpit"
-	settings_scalecockpit.parent = TH_Settings.panel
-	settings_scalecockpit.value = TankHelper:GetConfig("scalecockpit", 1)
-	settings_scalecockpit.text = "scalecockpit"
-	settings_scalecockpit.x = 10
-	settings_scalecockpit.y = Y
-	settings_scalecockpit.min = 0.1
-	settings_scalecockpit.max = 2.0
-	settings_scalecockpit.steps = 0.1
-	settings_scalecockpit.decimals = 1
-	settings_scalecockpit.dbvalue = "scalecockpit"
-	settings_scalecockpit.color = {0, 1, 0, 1}
-	settings_scalecockpit.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_scalecockpit)
-	Y = Y - H
-	Y = Y - BR
-	local settings_obr = {}
-	settings_obr.name = "obr"
-	settings_obr.parent = TH_Settings.panel
-	settings_obr.value = TankHelper:GetConfig("obr", 6)
-	settings_obr.text = "obr"
-	settings_obr.x = 10
-	settings_obr.y = Y
-	settings_obr.min = 0
-	settings_obr.max = 12
-	settings_obr.steps = 1
-	settings_obr.decimals = 0
-	settings_obr.dbvalue = "obr"
-	settings_obr.color = {0, 1, 0, 1}
-	settings_obr.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_obr)
-	Y = Y - H
-	Y = Y - BR
-	local settings_ibr = {}
-	settings_ibr.name = "ibr"
-	settings_ibr.parent = TH_Settings.panel
-	settings_ibr.value = TankHelper:GetConfig("ibr", 1)
-	settings_ibr.text = "ibr"
-	settings_ibr.x = 10
-	settings_ibr.y = Y
-	settings_ibr.min = 0
-	settings_ibr.max = 12
-	settings_ibr.steps = 1
-	settings_ibr.decimals = 0
-	settings_ibr.dbvalue = "ibr"
-	settings_ibr.color = {0, 1, 0, 1}
-	settings_ibr.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_ibr)
-	Y = Y - H
-	Y = Y - BR
-	local settings_cbr = {}
-	settings_cbr.name = "cbr"
-	settings_cbr.parent = TH_Settings.panel
-	settings_cbr.value = TankHelper:GetConfig("cbr", 3)
-	settings_cbr.text = "cbr"
-	settings_cbr.x = 10
-	settings_cbr.y = Y
-	settings_cbr.min = 0
-	settings_cbr.max = 12
-	settings_cbr.steps = 1
-	settings_cbr.decimals = 0
-	settings_cbr.dbvalue = "cbr"
-	settings_cbr.color = {0, 1, 0, 1}
-	settings_cbr.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_cbr)
-	Y = Y - H
-	Y = Y - BR
-	local settings_iconsize = {}
-	settings_iconsize.name = "iconsize"
-	settings_iconsize.parent = TH_Settings.panel
-	settings_iconsize.value = TankHelper:GetConfig("iconsize", 16)
-	settings_iconsize.text = "iconsize"
-	settings_iconsize.x = 10
-	settings_iconsize.y = Y
-	settings_iconsize.min = 8
-	settings_iconsize.max = 64
-	settings_iconsize.steps = 2
-	settings_iconsize.decimals = 0
-	settings_iconsize.dbvalue = "iconsize"
-	settings_iconsize.color = {0, 1, 0, 1}
-	settings_iconsize.func = TankHelper.UpdateDesign
-	TankHelper:CreateSlider(settings_iconsize)
-	TankHelper:AddColorPicker("BRColor", TH_Settings.panel, 450, -50)
-	TankHelper:AddColorPicker("BGColor", TH_Settings.panel, 450, -75)
-	if InterfaceOptions_AddCategory then
-		InterfaceOptions_AddCategory(TH_Settings.panel)
+function TankHelper:CreateCategory(name)
+	if Y == 0 then
+		Y = Y - 5
 	else
-		print("TankHelper InterfaceOptions_AddCategory MISSING")
+		Y = Y - 30
 	end
+
+	D4:AddCategory(
+		{
+			["name"] = name,
+			["parent"] = thset.SC,
+			["pTab"] = {"TOPLEFT", 5, Y},
+		}
+	)
+
+	Y = Y - 20
+end
+
+function TankHelper:CreateCheckBox(key, lstr, x, value, func)
+	value = value or false
+	x = x or 5
+	D4:CreateCheckbox(
+		{
+			["name"] = key,
+			["parent"] = thset.SC,
+			["pTab"] = {"TOPLEFT", x, Y},
+			["value"] = THTAB[key] or value,
+			["funcV"] = function(sel, checked)
+				THTAB[key] = checked
+				if func then
+					func()
+				end
+			end
+		}
+	)
+
+	Y = Y - 20
+end
+
+function TankHelper:AddComboBox(key, lstr, value, tab)
+	Y = Y - 10
+	local comboBox = {}
+	comboBox.name = key
+	comboBox.parent = thset.SC
+	comboBox.text = D4:Trans(lstr)
+	comboBox.value = D4:Trans(TankHelper:GetConfig(key, value))
+	comboBox.x = 0
+	comboBox.y = Y
+	comboBox.dbvalue = key
+	comboBox.tab = tab
+	TankHelper:CreateDropDown(comboBox)
+	Y = Y - 30
+end
+
+function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, percentage, func)
+	Y = Y - 15
+	local slider = {}
+	slider.name = key
+	slider.parent = thset.SC
+	slider.value = TankHelper:GetConfig(key, value)
+	slider.text = lstr
+	slider.x = 10
+	slider.y = Y
+	slider.min = min
+	slider.max = max
+	slider.steps = steps
+	slider.decimals = decimals
+	slider.dbvalue = "powermax"
+	slider.percentage = percentage
+	slider.w = 460
+	slider.color = {0, 1, 0, 1}
+	slider.func = func
+	TankHelper:CreateSlider(slider)
+	Y = Y - 30
+end
+
+function TankHelper:InitSettings()
+	D4:SetVersion(AddonName, 132362, "1.9.0")
+	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
+	if THTAB["MMBTN"] == nil then
+		THTAB["MMBTN"] = true
+	end
+
+	D4:CreateMinimapButton(
+		{
+			["name"] = "TankHelper",
+			["icon"] = 132362,
+			["dbtab"] = THTAB,
+			["vTT"] = {"TankHelper", "Leftclick: Options"},
+			["funcL"] = function()
+				TankHelper:ToggleSettings()
+			end
+		}
+	)
+
+	if THTAB["MMBTN"] then
+		D4:GetLibDBIcon():Show("TankHelper")
+	else
+		D4:GetLibDBIcon():Hide("TankHelper")
+	end
+
+	D4:AddSlash("th", TankHelper.ToggleSettings)
+	D4:AddSlash("tankhelper", TankHelper.ToggleSettings)
+	thset = D4:CreateFrame(
+		{
+			["name"] = "TankHelper Settings Frame",
+			["pTab"] = {"CENTER"},
+			["sw"] = 520,
+			["sh"] = 520,
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.0")
+		}
+	)
+
+	thset:SetFrameLevel(110)
+	thset.SF = CreateFrame("ScrollFrame", "thset_SF", thset, "UIPanelScrollFrameTemplate")
+	thset.SF:SetPoint("TOPLEFT", thset, 8, -26)
+	thset.SF:SetPoint("BOTTOMRIGHT", thset, -32, 8)
+	thset.SC = CreateFrame("Frame", "thset_SC", thset.SF)
+	thset.SC:SetSize(thset.SF:GetSize())
+	thset.SC:SetPoint("TOPLEFT", thset.SF, "TOPLEFT", 0, 0)
+	thset.SF:SetScrollChild(thset.SC)
+	Y = 0
+	TankHelper:CreateCategory("general")
+	TankHelper:CreateCheckBox(
+		"showMinimapButton",
+		"showMinimapButton",
+		5,
+		true,
+		function()
+			if THTAB[key] then
+				D4:GetLibDBIcon():Show("TankHelper")
+			else
+				D4:GetLibDBIcon():Hide("TankHelper")
+			end
+		end
+	)
+
+	TankHelper:CreateCheckBox("showtranslation", "showtranslation", 5, true)
+	TankHelper:CreateCategory("design")
+	TankHelper:CreateCheckBox("showalways", "showalways", 5, false)
+	TankHelper:CreateCheckBox("combineall", "combineall", 5, false, TankHelper.UpdateDesign)
+	TankHelper:CreateCheckBox("fixposition", "fixposition", 5, false)
+	TankHelper:AddSlider("obr", "obr", 6.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("ibr", "ibr", 1.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("cbr", "cbr", 3.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("iconsize", "iconsize", 16.0, 8.0, 64.0, 2, 0, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("scalestatus", "scalestatus", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("scalecockpit", "scalecockpit", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
+	TankHelper:AddColorPicker("BRColor", thset.SC, 5, Y)
+	TankHelper:AddColorPicker("BGColor", thset.SC, 5, Y)
+	if IsRaidMarkerActive then
+		TankHelper:CreateCategory("worldmarks")
+		TankHelper:CreateCheckBox("hideworldmarks", "hideworldmarks", 5, false, TankHelper.UpdateDesign)
+	end
+
+	TankHelper:CreateCategory("targetmarks")
+	TankHelper:CreateCheckBox("hidetargetmarks", "hidetargetmarks", 5, false, TankHelper.UpdateDesign)
+	TankHelper:CreateCheckBox("onlytank", "onlytank", 5, false)
+	TankHelper:CreateCategory("specialbar")
+	TankHelper:CreateCheckBox("hidespecialbar", "hidespecialbar", 5, false, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("targettingdelay", "targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, nil, TankHelper.UpdateDesign)
+	TankHelper:AddComboBox(
+		"PULLTIMERMODE",
+		"pulltimermode",
+		"AUTO",
+		{
+			{
+				Name = D4:Trans("auto"),
+				Code = "AUTO"
+			},
+			{
+				Name = D4:Trans("onlythirdparty"),
+				Code = "ONLYTHIRDPARTY"
+			},
+			{
+				Name = D4:Trans("onlyth"),
+				Code = "ONLYTH"
+			},
+			{
+				Name = D4:Trans("both"),
+				Code = "BOTH"
+			},
+		}
+	)
+
+	TankHelper:CreateCategory("nameplate")
+	TankHelper:CreateCheckBox(
+		"nameplatethreat",
+		"nameplatethreat",
+		5,
+		true,
+		function()
+			TankHelper:ThinkNameplates(true)
+		end
+	)
+
+	TankHelper:CreateCategory("status")
+	TankHelper:CreateCheckBox("hidestatus", "hidestatus", 5, true)
+	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
+		TankHelper:CreateCheckBox("statusonlyhealers", "statusonlyhealers", 5, true)
+	end
+
+	TankHelper:AddSlider("healthmax", "healthmax", 0.9, 0.1, 1.0, 0.1, 1, true)
+	TankHelper:AddSlider("powermax", "powermax", 0.9, 0.1, 1.0, 0.1, 1, true)
 end
 
 local THloaded = false
@@ -470,7 +341,7 @@ frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
-		InitSettings()
+		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
 end

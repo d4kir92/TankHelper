@@ -1,47 +1,46 @@
 -- deDE German Deutsch
-local _, TankHelper = ...
-function TankHelper:LangdeDE()
-	local thlang = TankHelper:GetLangTab()
-	-- Pulltimer
-	thlang.pullinx = "Angriff in %0.1f"
-	thlang.go = "LOS"
-	thlang.auto = "Automatisch"
-	thlang.onlythirdparty = "Von anderen Addons den Countdown verwenden"
-	thlang.onlyth = "Von Tank Helper den Countdown verwenden"
-	thlang.both = "Beide verwenden"
-	-- Status
-	thlang.ready = "Bereit"
-	thlang.youmustbeinaninstance = "Du musst in einer Instanz sein"
-	thlang.youmustbeinagrouporaraid = "Du musst in einer Gruppe oder einem Schlachtzug sein"
-	thlang.playerdead = "Spieler tot"
-	thlang.playerlowhp = "Spieler mit wenig Gesundheit"
-	thlang.playernotfull = "Spieler ist nicht voll"
-	thlang.playerhavenotenoughpower = "Spieler hat nicht genug Kraft"
-	--Settings
-	thlang.showalways = "Immer anzeigen"
-	thlang.showtranslation = "Übersetzung anzeigen"
-	thlang.targettingdelay = "Verzögerung bei der Zielerfassung: %0.1f"
-	thlang.scalecockpit = "Skalierung Cockpit: %0.1f"
-	thlang.scalestatus = "Skalierung Status: %0.1f"
-	thlang.ibr = "Spaltenabstand: %0.1f"
-	thlang.cbr = "Zeilenabstand: %0.1f"
-	thlang.obr = "Äußere Grenze: %0.1f"
-	thlang.iconsize = "Symbolgröße: %0.1f"
-	thlang.fixposition = "Fixierte Position"
-	thlang.hidestatus = "Statusfenster verstecken"
-	thlang.nameplatethreat = "Zeige Namenschild Bedrohung"
-	thlang.pulltimermode = "Pulltimer Modus"
-	thlang.onlytank = "Automatische Kennzeichnung nur als Tank"
-	thlang.hidespecialbar = "Letzte Reihe ausblenden"
-	thlang.brcolor = "Randfarbe"
-	thlang.bgcolor = "Hintergrundfarbe"
-	thlang.healthmax = "Status - Warnung bis %0.1f%% Gesundheit"
-	thlang.powermax = "Status - Warnung bis %0.1f%% Mana"
-	thlang.statusonlyhealers = "Status - Nur Heiler info anzeigen"
-	thlang.healer = "Heiler"
-	thlang.combineall = "Alle Leisten verbinden"
-	thlang.fixedpositionisenabled = "Fixierte Position ist aktiviert"
-	thlang.hidetargetmarks = "Verstecke Zielmakierungsleiste"
-	thlang.hideworldmarks = "Verstecke Weltmakierungsleiste"
-	thlang.hidespecialbar = "Verstecke Spezialleiste"
-end
+D4:AddTrans("deDE", "pullinx", "Angriff in %0.1f")
+D4:AddTrans("deDE", "go", "LOS")
+D4:AddTrans("deDE", "auto", "Automatisch")
+D4:AddTrans("deDE", "onlythirdparty", "Von anderen Addons den Countdown verwenden")
+D4:AddTrans("deDE", "onlyth", "Von Tank Helper den Countdown verwenden")
+D4:AddTrans("deDE", "both", "Beide verwenden")
+D4:AddTrans("deDE", "ready", "Bereit")
+D4:AddTrans("deDE", "youmustbeinaninstance", "Du musst in einer Instanz sein")
+D4:AddTrans("deDE", "youmustbeinagrouporaraid", "Du musst in einer Gruppe oder einem Schlachtzug sein")
+D4:AddTrans("deDE", "playerdead", "Spieler tot")
+D4:AddTrans("deDE", "playerlowhp", "Spieler mit wenig Gesundheit")
+D4:AddTrans("deDE", "playernotfull", "Spieler ist nicht voll")
+D4:AddTrans("deDE", "playerhavenotenoughpower", "Spieler hat nicht genug Kraft")
+D4:AddTrans("deDE", "showalways", "Immer anzeigen")
+D4:AddTrans("deDE", "showtranslation", "Übersetzung anzeigen")
+D4:AddTrans("deDE", "targettingdelay", "Verzögerung bei der Zielerfassung: %0.1f")
+D4:AddTrans("deDE", "scalecockpit", "Skalierung Cockpit: %0.1f")
+D4:AddTrans("deDE", "scalestatus", "Skalierung Status: %0.1f")
+D4:AddTrans("deDE", "ibr", "Spaltenabstand: %0.1f")
+D4:AddTrans("deDE", "cbr", "Zeilenabstand: %0.1f")
+D4:AddTrans("deDE", "obr", "Äußere Grenze: %0.1f")
+D4:AddTrans("deDE", "iconsize", "Symbolgröße: %0.1f")
+D4:AddTrans("deDE", "fixposition", "Fixierte Position")
+D4:AddTrans("deDE", "hidestatus", "Statusfenster verstecken")
+D4:AddTrans("deDE", "nameplatethreat", "Zeige Namenschild Bedrohung")
+D4:AddTrans("deDE", "pulltimermode", "Pulltimer Modus")
+D4:AddTrans("deDE", "onlytank", "Automatische Kennzeichnung nur als Tank")
+D4:AddTrans("deDE", "brcolor", "Randfarbe")
+D4:AddTrans("deDE", "bgcolor", "Hintergrundfarbe")
+D4:AddTrans("deDE", "healthmax", "Status - Warnung bis %0.1f%% Gesundheit")
+D4:AddTrans("deDE", "powermax", "Status - Warnung bis %0.1f%% Mana")
+D4:AddTrans("deDE", "statusonlyhealers", "Status - Nur Heiler info anzeigen")
+D4:AddTrans("deDE", "healer", "Heiler")
+D4:AddTrans("deDE", "combineall", "Alle Leisten verbinden")
+D4:AddTrans("deDE", "fixedpositionisenabled", "Fixierte Position ist aktiviert")
+D4:AddTrans("deDE", "hidetargetmarks", "Verstecke Zielmakierungsleiste")
+D4:AddTrans("deDE", "hideworldmarks", "Verstecke Weltmakierungsleiste")
+D4:AddTrans("deDE", "hidespecialbar", "Verstecke Spezialleiste")
+D4:AddTrans("deDE", "general", "General")
+D4:AddTrans("deDE", "design", "Design")
+D4:AddTrans("deDE", "worldmarks", "World Marks")
+D4:AddTrans("deDE", "targetmarks", "Target Marks")
+D4:AddTrans("deDE", "specialbar", "Specialbar (Pulltimer, Readycheck, Rolecheck)")
+D4:AddTrans("deDE", "nameplate", "Nameplate")
+D4:AddTrans("deDE", "status", "Status")

@@ -41,7 +41,7 @@ function TankHelper:RW(msg)
 		if TankHelper:ShouldShow() then
 			SendChatMessage(msg, "PARTY")
 		else
-			TankHelper:MSG(TankHelper:GT("youmustbeinagrouporaraid", true) .. "!")
+			TankHelper:MSG(D4:Trans("youmustbeinagrouporaraid", true) .. "!")
 		end
 	end
 end
@@ -70,7 +70,7 @@ function TankHelper:PullIn(t)
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
 
-			TankHelper:RW(format(TankHelper:GT("pullinx"), t))
+			TankHelper:RW(format(D4:Trans("pullinx"), t))
 			for cou = 1, t do
 				C_Timer.After(
 					cou,
@@ -79,7 +79,7 @@ function TankHelper:PullIn(t)
 							C_PartyInfo.DoCountdown(t)
 						else
 							if t - cou == 0 then
-								TankHelper:RW(TankHelper:GT("go") .. "!")
+								TankHelper:RW(D4:Trans("go") .. "!")
 							else
 								TankHelper:RW(t - cou)
 							end
@@ -89,7 +89,7 @@ function TankHelper:PullIn(t)
 			end
 		end
 	else
-		TankHelper:MSG(TankHelper:GT("youmustbeinagrouporaraid", true) .. "!")
+		TankHelper:MSG(D4:Trans("youmustbeinagrouporaraid", true) .. "!")
 	end
 end
 
@@ -166,7 +166,7 @@ function TankHelper:InitFrame(frame, px, py)
 			if not TankHelper:GetConfig("fixposition", false) then
 				frame:StartMoving()
 			else
-				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+				TankHelper:MSG(D4:Trans("fixedpositionisenabled", true) .. "!")
 			end
 		end
 	)
@@ -183,7 +183,7 @@ function TankHelper:InitFrame(frame, px, py)
 				THTAB[frame:GetName() .. "ofsx"] = ofsx
 				THTAB[frame:GetName() .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+				TankHelper:MSG(D4:Trans("fixedpositionisenabled", true) .. "!")
 			end
 		end
 	)
@@ -546,7 +546,7 @@ function TankHelper:InitFrames()
 			if not TankHelper:GetConfig("fixposition", false) then
 				THStatus:StartMoving()
 			else
-				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+				TankHelper:MSG(D4:Trans("fixedpositionisenabled", true) .. "!")
 			end
 		end
 	)
@@ -563,7 +563,7 @@ function TankHelper:InitFrames()
 				THTAB["THStatus" .. "ofsx"] = ofsx
 				THTAB["THStatus" .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(TankHelper:GT("fixedpositionisenabled", true) .. "!")
+				TankHelper:MSG(D4:Trans("fixedpositionisenabled", true) .. "!")
 			end
 		end
 	)
@@ -712,7 +712,7 @@ end
 function TankHelper:SetStatusText()
 	if THCockpit == nil or THStatus == nil then return end
 	if not TankHelper:GetConfig("hidestatus", true) then
-		local text = TankHelper:GT("ready", true) .. "!"
+		local text = D4:Trans("ready", true) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
 		if InCombatLockdown() then
 			text = GARRISON_LANDING_STATUS_MISSION_COMBAT .. "!"
@@ -731,22 +731,22 @@ function TankHelper:SetStatusText()
 			end
 
 			if dead then
-				text = TankHelper:GT("playerdead", true) .. "!"
+				text = D4:Trans("playerdead", true) .. "!"
 				THStatusColor = {0, 0, 0, 1}
 			elseif health < 0.3 then
-				text = TankHelper:GT("playerlowhp", true) .. "!"
+				text = D4:Trans("playerlowhp", true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif health < TankHelper:GetConfig("healthmax", 0.9) then
-				text = TankHelper:GT("playernotfull", true) .. "!"
+				text = D4:Trans("playernotfull", true) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif power < TankHelper:GetConfig("powermax", 0.9) then
-				text = TankHelper:GT("playerhavenotenoughpower", true) .. "!"
+				text = D4:Trans("playerhavenotenoughpower", true) .. "!"
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
 
 		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
-			text = format("%s: %s", TankHelper:GT("healer"), text)
+			text = format("%s: %s", D4:Trans("healer"), text)
 		end
 
 		THStatus.text:SetText(text)

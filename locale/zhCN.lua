@@ -1,43 +1,46 @@
 -- zhCN Simplified Chinese
-local _, TankHelper = ...
-function TankHelper:LangzhCN()
-	local thlang = TankHelper:GetLangTab()
-	-- Pulltimer
-	thlang.pullinx = "%0.1f 秒后开怪"
-	thlang.go = "上"
-	thlang.auto = "自动"
-	thlang.onlythirdparty = "使用其他插件的倒计时"
-	thlang.onlyth = "使用坦克助手倒计时"
-	thlang.both = "同时使用两者"
-	-- Status
-	thlang.ready = "就位"
-	thlang.youmustbeinaninstance = "你必须在一个副本中"
-	thlang.youmustbeinagrouporaraid = "你必须在一个小队或团队中"
-	thlang.playerdead = "玩家死亡"
-	thlang.playerlowhp = "玩家低血量"
-	thlang.playernotfull = "玩家血量未满"
-	thlang.playerhavenotenoughpower = "玩家法力不足"
-	--Settings
-	thlang.showalways = "总是显示"
-	thlang.showtranslation = "显示翻译"
-	thlang.targettingdelay = "目标标记延迟：%0.1f"
-	thlang.scalecockpit = "框体缩放：%0.1f"
-	thlang.scalestatus = "状态提示缩放：%0.1f"
-	thlang.ibr = "水平间距：%0.1f"
-	thlang.cbr = "垂直间距：%0.1f"
-	thlang.obr = "外边框：%0.1f"
-	thlang.iconsize = "图标大小: %0.1f"
-	thlang.fixposition = "锁定位置"
-	thlang.hidestatus = "隐藏状态框"
-	thlang.nameplatethreat = "在姓名上显示威胁值"
-	thlang.pulltimermode = "开怪倒数模式"
-	thlang.onlytank = "只在担任坦克时自动标记"
-	thlang.brcolor = "边框颜色"
-	thlang.bgcolor = "背景颜色"
-	thlang.healthmax = "生命值低于 %0.1f%% 时警示状态"
-	thlang.powermax = "法力值低于 %0.1f%% 时警示状态"
-	thlang.statusonlyhealers = "只显示治疗的状态"
-	thlang.healer = "治疗"
-	thlang.combineall = "合并工具栏"
-	thlang.fixedpositionisenabled = "位置已锁定"
-end
+D4:AddTrans("zhCN", "pullinx", "%0.1f 秒后开怪")
+D4:AddTrans("zhCN", "go", "上")
+D4:AddTrans("zhCN", "auto", "自动")
+D4:AddTrans("zhCN", "onlythirdparty", "使用其他插件的倒计时")
+D4:AddTrans("zhCN", "onlyth", "使用坦克助手倒计时")
+D4:AddTrans("zhCN", "both", "同时使用两者")
+D4:AddTrans("zhCN", "ready", "就位")
+D4:AddTrans("zhCN", "youmustbeinaninstance", "你必须在一个副本中")
+D4:AddTrans("zhCN", "youmustbeinagrouporaraid", "你必须在一个小队或团队中")
+D4:AddTrans("zhCN", "playerdead", "玩家死亡")
+D4:AddTrans("zhCN", "playerlowhp", "玩家低血量")
+D4:AddTrans("zhCN", "playernotfull", "玩家血量未满")
+D4:AddTrans("zhCN", "playerhavenotenoughpower", "玩家法力不足")
+D4:AddTrans("zhCN", "showalways", "总是显示")
+D4:AddTrans("zhCN", "showtranslation", "显示翻译")
+D4:AddTrans("zhCN", "targettingdelay", "目标标记延迟：%0.1f")
+D4:AddTrans("zhCN", "scalecockpit", "框体缩放：%0.1f")
+D4:AddTrans("zhCN", "scalestatus", "状态提示缩放：%0.1f")
+D4:AddTrans("zhCN", "ibr", "水平间距：%0.1f")
+D4:AddTrans("zhCN", "cbr", "垂直间距：%0.1f")
+D4:AddTrans("zhCN", "obr", "外边框：%0.1f")
+D4:AddTrans("zhCN", "iconsize", "图标大小: %0.1f")
+D4:AddTrans("zhCN", "fixposition", "锁定位置")
+D4:AddTrans("zhCN", "hidestatus", "隐藏状态框")
+D4:AddTrans("zhCN", "nameplatethreat", "在姓名上显示威胁值")
+D4:AddTrans("zhCN", "pulltimermode", "开怪倒数模式")
+D4:AddTrans("zhCN", "onlytank", "只在担任坦克时自动标记")
+D4:AddTrans("zhCN", "brcolor", "边框颜色")
+D4:AddTrans("zhCN", "bgcolor", "背景颜色")
+D4:AddTrans("zhCN", "healthmax", "生命值低于 %0.1f%% 时警示状态")
+D4:AddTrans("zhCN", "powermax", "法力值低于 %0.1f%% 时警示状态")
+D4:AddTrans("zhCN", "statusonlyhealers", "只显示治疗的状态")
+D4:AddTrans("zhCN", "healer", "治疗")
+D4:AddTrans("zhCN", "combineall", "合并工具栏")
+D4:AddTrans("zhCN", "fixedpositionisenabled", "位置已锁定")
+D4:AddTrans("zhCN", "hidetargetmarks", "Hide Target Marks Bar")
+D4:AddTrans("zhCN", "hideworldmarks", "Hide World Marks Bar")
+D4:AddTrans("zhCN", "hidespecialbar", "Hide Special Bar")
+D4:AddTrans("zhCN", "general", "General")
+D4:AddTrans("zhCN", "design", "Design")
+D4:AddTrans("zhCN", "worldmarks", "World Marks")
+D4:AddTrans("zhCN", "targetmarks", "Target Marks")
+D4:AddTrans("zhCN", "specialbar", "Specialbar (Pulltimer, Readycheck, Rolecheck)")
+D4:AddTrans("zhCN", "nameplate", "Nameplate")
+D4:AddTrans("zhCN", "status", "Status")

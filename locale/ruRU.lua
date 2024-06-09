@@ -1,43 +1,46 @@
 -- ruRU Russian
-local _, TankHelper = ...
-function TankHelper:LangruRU()
-	local thlang = TankHelper:GetLangTab()
-	-- Pulltimer
-	thlang.pullinx = "Атакуйте %0.1f"
-	thlang.go = "Идти"
-	thlang.auto = "Автоматически"
-	thlang.onlythirdparty = "Использовать обратный отсчет из других аддонов"
-	thlang.onlyth = "Использовать обратный отсчет от Tank Helper"
-	thlang.both = "Использовать оба"
-	-- Status
-	thlang.ready = "Готовность"
-	thlang.youmustbeinaninstance = "Вы должны быть в подземелье"
-	thlang.youmustbeinagrouporaraid = "Вы должны быть в группе или рейде"
-	thlang.playerdead = "Игрок мертв"
-	thlang.playerlowhp = "Игрок с низким здоровьем"
-	thlang.playernotfull = "Игрок не с полным здоровьем"
-	thlang.playerhavenotenoughpower = "Игроку не хватает силы"
-	--Settings
-	thlang.showalways = "Показывать всегда"
-	thlang.showtranslation = "Показать Перевод"
-	thlang.targettingdelay = "Задержка наведения на цель: %0.1f"
-	thlang.scalecockpit = "Кабина масштаба: %0.1f"
-	thlang.scalestatus = "Статус масштаба: %0.1f"
-	thlang.ibr = "Расстояние между столбцами: %0.1f"
-	thlang.cbr = "Расстояние между рядами: %0.1f"
-	thlang.obr = "Внешняя граница: %0.1f"
-	thlang.iconsize = "Размер значка: %0.1f"
-	thlang.fixposition = "исправить положение"
-	thlang.hidestatus = "Скрыть рамку состояния"
-	thlang.nameplatethreat = "Показать угрозу для таблички"
-	thlang.pulltimermode = "Режим тянучки"
-	thlang.onlytank = "Автоматическая маркировка как только танк"
-	thlang.brcolor = "Цвет границы"
-	thlang.bgcolor = "Цвет фона"
-	thlang.healthmax = "Статус - Предупреждение до %0.1f%% здоровья"
-	thlang.powermax = "Статус - предупреждение до %0.1f%% маны"
-	thlang.statusonlyhealers = "Статус - показывать информацию только о лекарях"
-	thlang.healer = "Целитель"
-	thlang.combineall = "Объединить все бары"
-	thlang.fixedpositionisenabled = "Фиксированная позиция включена"
-end
+D4:AddTrans("ruRU", "pullinx", "Атакуйте %0.1f")
+D4:AddTrans("ruRU", "go", "Идти")
+D4:AddTrans("ruRU", "auto", "Автоматически")
+D4:AddTrans("ruRU", "onlythirdparty", "Использовать обратный отсчет из других аддонов")
+D4:AddTrans("ruRU", "onlyth", "Использовать обратный отсчет от Tank Helper")
+D4:AddTrans("ruRU", "both", "Использовать оба")
+D4:AddTrans("ruRU", "ready", "Готовность")
+D4:AddTrans("ruRU", "youmustbeinaninstance", "Вы должны быть в подземелье")
+D4:AddTrans("ruRU", "youmustbeinagrouporaraid", "Вы должны быть в группе или рейде")
+D4:AddTrans("ruRU", "playerdead", "Игрок мертв")
+D4:AddTrans("ruRU", "playerlowhp", "Игрок с низким здоровьем")
+D4:AddTrans("ruRU", "playernotfull", "Игрок не с полным здоровьем")
+D4:AddTrans("ruRU", "playerhavenotenoughpower", "Игроку не хватает силы")
+D4:AddTrans("ruRU", "showalways", "Показывать всегда")
+D4:AddTrans("ruRU", "showtranslation", "Показать Перевод")
+D4:AddTrans("ruRU", "targettingdelay", "Задержка наведения на цель: %0.1f")
+D4:AddTrans("ruRU", "scalecockpit", "Кабина масштаба: %0.1f")
+D4:AddTrans("ruRU", "scalestatus", "Статус масштаба: %0.1f")
+D4:AddTrans("ruRU", "ibr", "Расстояние между столбцами: %0.1f")
+D4:AddTrans("ruRU", "cbr", "Расстояние между рядами: %0.1f")
+D4:AddTrans("ruRU", "obr", "Внешняя граница: %0.1f")
+D4:AddTrans("ruRU", "iconsize", "Размер значка: %0.1f")
+D4:AddTrans("ruRU", "fixposition", "исправить положение")
+D4:AddTrans("ruRU", "hidestatus", "Скрыть рамку состояния")
+D4:AddTrans("ruRU", "nameplatethreat", "Показать угрозу для таблички")
+D4:AddTrans("ruRU", "pulltimermode", "Режим тянучки")
+D4:AddTrans("ruRU", "onlytank", "Автоматическая маркировка как только танк")
+D4:AddTrans("ruRU", "brcolor", "Цвет границы")
+D4:AddTrans("ruRU", "bgcolor", "Цвет фона")
+D4:AddTrans("ruRU", "healthmax", "Статус - Предупреждение до %0.1f%% здоровья")
+D4:AddTrans("ruRU", "powermax", "Статус - предупреждение до %0.1f%% маны")
+D4:AddTrans("ruRU", "statusonlyhealers", "Статус - показывать информацию только о лекарях")
+D4:AddTrans("ruRU", "healer", "Целитель")
+D4:AddTrans("ruRU", "combineall", "Объединить все бары")
+D4:AddTrans("ruRU", "fixedpositionisenabled", "Фиксированная позиция включена")
+D4:AddTrans("ruRU", "hidetargetmarks", "Hide Target Marks Bar")
+D4:AddTrans("ruRU", "hideworldmarks", "Hide World Marks Bar")
+D4:AddTrans("ruRU", "hidespecialbar", "Hide Special Bar")
+D4:AddTrans("ruRU", "general", "General")
+D4:AddTrans("ruRU", "design", "Design")
+D4:AddTrans("ruRU", "worldmarks", "World Marks")
+D4:AddTrans("ruRU", "targetmarks", "Target Marks")
+D4:AddTrans("ruRU", "specialbar", "Specialbar (Pulltimer, Readycheck, Rolecheck)")
+D4:AddTrans("ruRU", "nameplate", "Nameplate")
+D4:AddTrans("ruRU", "status", "Status")

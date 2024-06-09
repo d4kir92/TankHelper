@@ -12,7 +12,7 @@ function TankHelper:CreateDropdown(opts)
 				args = {i, v.Code},
 				func = function(sel, button, key, value)
 					opts.changeFunc(Menu, value)
-					Menu:SetText(TankHelper:GT(value))
+					Menu:SetText(D4:Trans(value))
 				end
 			}
 		)
@@ -21,7 +21,7 @@ function TankHelper:CreateDropdown(opts)
 	local text = Menu:CreateFontString(nil, "ARTWORK")
 	text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
 	text:SetPoint("LEFT", Menu, "RIGHT", 0, 4)
-	text:SetText(TankHelper:GT(opts.title))
+	text:SetText(D4:Trans(opts.title))
 
 	return Menu
 end
