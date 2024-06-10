@@ -1,5 +1,5 @@
 ## Interface: 11502
-## Version: 1.9.1
+## Version: 1.9.2
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
