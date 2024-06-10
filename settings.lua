@@ -179,8 +179,13 @@ function TankHelper:AddComboBox(key, lstr, value, tab)
 	local comboBox = {}
 	comboBox.name = key
 	comboBox.parent = thset.SC
-	comboBox.text = D4:Trans(lstr)
-	comboBox.value = D4:Trans(TankHelper:GetConfig(key, value))
+	comboBox.text = lstr
+	if TankHelper:GetConfig(key, value) ~= nil then
+		comboBox.value = D4:Trans(TankHelper:GetConfig(key, value))
+	else
+		comboBox.value = value
+	end
+
 	comboBox.x = 50
 	comboBox.y = Y
 	comboBox.dbvalue = key
@@ -212,7 +217,7 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	D4:SetVersion(AddonName, 132362, "1.9.2")
+	D4:SetVersion(AddonName, 132362, "1.9.3")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = true
@@ -244,7 +249,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.2")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.3")
 		}
 	)
 
@@ -298,23 +303,23 @@ function TankHelper:InitSettings()
 	TankHelper:AddSlider("targettingdelay", "targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, nil, TankHelper.UpdateDesign)
 	TankHelper:AddComboBox(
 		"PULLTIMERMODE",
-		"pulltimermode",
+		"PULLTIMERMODE",
 		"AUTO",
 		{
 			{
-				Name = D4:Trans("auto"),
+				Name = D4:Trans("AUTO"),
 				Code = "AUTO"
 			},
 			{
-				Name = D4:Trans("onlythirdparty"),
+				Name = D4:Trans("ONLYTHIRDPARTY"),
 				Code = "ONLYTHIRDPARTY"
 			},
 			{
-				Name = D4:Trans("onlyth"),
+				Name = D4:Trans("ONLYTH"),
 				Code = "ONLYTH"
 			},
 			{
-				Name = D4:Trans("both"),
+				Name = D4:Trans("BOTH"),
 				Code = "BOTH"
 			},
 		}

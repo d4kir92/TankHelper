@@ -21,7 +21,9 @@ function TankHelper:CreateDropdown(opts)
 	local text = Menu:CreateFontString(nil, "ARTWORK")
 	text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
 	text:SetPoint("LEFT", Menu, "RIGHT", 0, 4)
-	text:SetText(D4:Trans(opts.title))
+	if opts.title then
+		text:SetText(D4:Trans(opts.title))
+	end
 
 	return Menu
 end

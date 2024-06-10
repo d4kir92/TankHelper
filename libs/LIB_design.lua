@@ -65,7 +65,10 @@ function TankHelper:CreateSlider(tab)
 		v = v * 100
 	end
 
-	SL.Text:SetText(format(D4:Trans(tab.text), v))
+	if tab.text then
+		SL.Text:SetText(format(D4:Trans(tab.text), v))
+	end
+
 	SL:SetMinMaxValues(tab.min, tab.max)
 	SL:SetValue(tab.value)
 	SL:SetWidth(tab.w)
@@ -86,7 +89,9 @@ function TankHelper:CreateSlider(tab)
 					valu = valu * 100
 				end
 
-				SL.Text:SetText(format(D4:Trans(tab.text), valu))
+				if tab.text then
+					SL.Text:SetText(format(D4:Trans(tab.text), valu))
+				end
 			end
 
 			if tab.func ~= nil then
