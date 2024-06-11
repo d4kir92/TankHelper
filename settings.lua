@@ -217,7 +217,7 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	D4:SetVersion(AddonName, 132362, "1.9.3")
+	D4:SetVersion(AddonName, 132362, "1.9.4")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = true
@@ -249,7 +249,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.3")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.4")
 		}
 	)
 
