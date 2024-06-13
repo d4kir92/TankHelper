@@ -155,13 +155,18 @@ end
 
 function TankHelper:CreateCheckBox(key, lstr, x, value, func)
 	value = value or false
+	local val = THTAB[key]
+	if val == nil then
+		val = value
+	end
+
 	x = x or 5
 	D4:CreateCheckbox(
 		{
 			["name"] = key,
 			["parent"] = thset.SC,
 			["pTab"] = {"TOPLEFT", x, Y},
-			["value"] = THTAB[key] or value,
+			["value"] = val,
 			["funcV"] = function(sel, checked)
 				THTAB[key] = checked
 				if func then
@@ -217,7 +222,7 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	D4:SetVersion(AddonName, 132362, "1.9.5")
+	D4:SetVersion(AddonName, 132362, "1.9.6")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = true
@@ -249,7 +254,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.5")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.6")
 		}
 	)
 
@@ -264,8 +269,8 @@ function TankHelper:InitSettings()
 	Y = 0
 	TankHelper:CreateCategory("general")
 	TankHelper:CreateCheckBox(
-		"showMinimapButton",
-		"showMinimapButton",
+		"MMBTN",
+		"MMBTN",
 		5,
 		true,
 		function()
