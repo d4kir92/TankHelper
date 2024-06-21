@@ -4,7 +4,7 @@
 ## Interface-Cata: 40400
 ## Interface: 100207, 110000
 
-## Version: 1.9.11
+## Version: 1.9.12
 ## Title: TankHelper by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
@@ -22,7 +22,6 @@ libs\LibDropDown\embed.xml
 
 config.lua
 
-libs\LIB_output.lua
 libs\LIB_math.lua
 libs\LIB_design.lua
 libs\dropdown.lua

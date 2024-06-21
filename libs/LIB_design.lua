@@ -6,7 +6,7 @@ function TankHelper:CreateText(tab)
 	tab.frame:SetFrameStrata("HIGH")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(D4:Trans(tab.text))
+	text:SetText(TankHelper:Trans(tab.text))
 	tab.color = tab.color or {1, 1, 1, 1}
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
@@ -66,7 +66,7 @@ function TankHelper:CreateSlider(tab)
 	end
 
 	if tab.text then
-		SL.Text:SetText(format(D4:Trans(tab.text), v))
+		SL.Text:SetText(format(TankHelper:Trans(tab.text), v))
 	end
 
 	SL:SetMinMaxValues(tab.min, tab.max)
@@ -90,7 +90,7 @@ function TankHelper:CreateSlider(tab)
 				end
 
 				if tab.text then
-					SL.Text:SetText(format(D4:Trans(tab.text), valu))
+					SL.Text:SetText(format(TankHelper:Trans(tab.text), valu))
 				end
 			end
 

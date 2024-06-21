@@ -35,13 +35,13 @@ function TankHelper:ShouldShow()
 end
 
 function TankHelper:RW(msg)
-	if D4:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
+	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	elseif not InCombatLockdown() then
 		if TankHelper:ShouldShow() then
 			SendChatMessage(msg, "PARTY")
 		else
-			TankHelper:MSG(D4:Trans("youmustbeinagrouporaraid", true) .. "!")
+			TankHelper:MSG(TankHelper:Trans("youmustbeinagrouporaraid", true) .. "!")
 		end
 	end
 end
@@ -51,7 +51,7 @@ function TankHelper:PullIn(t)
 		if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" then
 			if SlashCmdList["DEADLYBOSSMODS"] then
 				SlashCmdList["DEADLYBOSSMODS"]("pull " .. t)
-			elseif D4:IsAddOnLoaded("BigWigs") then
+			elseif TankHelper:IsAddOnLoaded("BigWigs") then
 				DEFAULT_CHAT_FRAME.editBox:SetText("/pull " .. t)
 				ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 			else
@@ -65,19 +65,19 @@ function TankHelper:PullIn(t)
 			end
 		end
 
-		if (TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs") then
-			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not D4:IsAddOnLoaded("DBM-Core") and not D4:IsAddOnLoaded("BigWigs") then
+		if (TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
+			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
 
-			TankHelper:RW(format(D4:Trans("pullinx", TankHelper:GetLang()), t))
+			TankHelper:RW(format(TankHelper:Trans("pullinx", TankHelper:GetLang()), t))
 			for cou = 1, t do
 				C_Timer.After(
 					cou,
 					function()
 						local leftT = t - cou
 						if leftT == 0 then
-							TankHelper:RW(D4:Trans("go", TankHelper:GetLang()) .. "!")
+							TankHelper:RW(TankHelper:Trans("go", TankHelper:GetLang()) .. "!")
 						else
 							TankHelper:RW(leftT)
 						end
@@ -86,7 +86,7 @@ function TankHelper:PullIn(t)
 			end
 		end
 	else
-		TankHelper:MSG(D4:Trans("youmustbeinagrouporaraid", TankHelper:GetLang()) .. "!")
+		TankHelper:MSG(TankHelper:Trans("youmustbeinagrouporaraid", TankHelper:GetLang()) .. "!")
 	end
 end
 
@@ -120,7 +120,7 @@ end
 function TankHelper:CheckUnit(unit, dead, health, power)
 	if UnitExists(unit) then
 		local can = true
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 			local role = UnitGroupRolesAssigned(unit)
 			if role ~= "HEALER" then
 				can = false
@@ -163,7 +163,7 @@ function TankHelper:InitFrame(frame, px, py)
 			if not TankHelper:GetConfig("fixposition", false) then
 				frame:StartMoving()
 			else
-				TankHelper:MSG(D4:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -180,7 +180,7 @@ function TankHelper:InitFrame(frame, px, py)
 				THTAB[frame:GetName() .. "ofsx"] = ofsx
 				THTAB[frame:GetName() .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(D4:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -249,7 +249,7 @@ function TankHelper:HideCombinedAll()
 end
 
 function TankHelper:InitFrames()
-	if D4:GetWoWBuild() == "RETAIL" then
+	if TankHelper:GetWoWBuild() == "RETAIL" then
 		WMN = 8
 		wms = {5, 6, 3, 2, 7, 1, 4, 8}
 		WMIds = {
@@ -543,7 +543,7 @@ function TankHelper:InitFrames()
 			if not TankHelper:GetConfig("fixposition", false) then
 				THStatus:StartMoving()
 			else
-				TankHelper:MSG(D4:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -560,7 +560,7 @@ function TankHelper:InitFrames()
 				THTAB["THStatus" .. "ofsx"] = ofsx
 				THTAB["THStatus" .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(D4:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -660,7 +660,7 @@ local ts = 0
 local setts = 0
 local targetGUID = UnitGUID("TARGET")
 function TankHelper:TargetIconLogic()
-	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		local role = UnitGroupRolesAssigned("PLAYER")
 		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end -- Only Tank?
 	end
@@ -709,7 +709,7 @@ end
 function TankHelper:SetStatusText()
 	if THCockpit == nil or THStatus == nil then return end
 	if not TankHelper:GetConfig("hidestatus", true) then
-		local text = D4:Trans("ready", TankHelper:GetLang()) .. "!"
+		local text = TankHelper:Trans("ready", TankHelper:GetLang()) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
 		if InCombatLockdown() then
 			text = GARRISON_LANDING_STATUS_MISSION_COMBAT .. "!"
@@ -728,22 +728,22 @@ function TankHelper:SetStatusText()
 			end
 
 			if dead then
-				text = D4:Trans("playerdead", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("playerdead", TankHelper:GetLang()) .. "!"
 				THStatusColor = {0, 0, 0, 1}
 			elseif health < 0.3 then
-				text = D4:Trans("playerlowhp", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("playerlowhp", TankHelper:GetLang()) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif health < TankHelper:GetConfig("healthmax", 0.9) then
-				text = D4:Trans("playernotfull", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("playernotfull", TankHelper:GetLang()) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif power < TankHelper:GetConfig("powermax", 0.9) then
-				text = D4:Trans("playerhavenotenoughpower", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("playerhavenotenoughpower", TankHelper:GetLang()) .. "!"
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
 
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
-			text = format("%s: %s", D4:Trans("healer", TankHelper:GetLang()), text)
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+			text = format("%s: %s", TankHelper:Trans("healer", TankHelper:GetLang()), text)
 		end
 
 		THStatus.text:SetText(text)

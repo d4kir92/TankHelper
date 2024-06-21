@@ -87,7 +87,7 @@ function TankHelper:AddColorPicker(name, parent, x)
 	local btn = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
 	btn:SetSize(140, 25)
 	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, Y)
-	btn:SetText(D4:Trans(name))
+	btn:SetText(TankHelper:Trans(name))
 	btn:SetScript(
 		"OnClick",
 		function()
@@ -109,7 +109,7 @@ function TankHelper:AddColorPicker(name, parent, x)
 							alpha = OpacitySliderFrame:GetValue()
 						end
 
-						if D4:GetWoWBuild() ~= "RETAIL" then
+						if TankHelper:GetWoWBuild() ~= "RETAIL" then
 							alpha = 1 - alpha
 						end
 
@@ -142,7 +142,7 @@ function TankHelper:CreateCategory(name)
 		Y = Y - 30
 	end
 
-	D4:AddCategory(
+	TankHelper:AddCategory(
 		{
 			["name"] = name,
 			["parent"] = thset.SC,
@@ -161,7 +161,7 @@ function TankHelper:CreateCheckBox(key, lstr, x, value, func)
 	end
 
 	x = x or 5
-	D4:CreateCheckbox(
+	TankHelper:CreateCheckbox(
 		{
 			["name"] = key,
 			["parent"] = thset.SC,
@@ -186,7 +186,7 @@ function TankHelper:AddComboBox(key, lstr, value, tab)
 	comboBox.parent = thset.SC
 	comboBox.text = lstr
 	if TankHelper:GetConfig(key, value) ~= nil then
-		comboBox.value = D4:Trans(TankHelper:GetConfig(key, value))
+		comboBox.value = TankHelper:Trans(TankHelper:GetConfig(key, value))
 	else
 		comboBox.value = value
 	end
@@ -222,13 +222,13 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	D4:SetVersion(AddonName, 132362, "1.9.11")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.12")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = true
 	end
 
-	D4:CreateMinimapButton(
+	TankHelper:CreateMinimapButton(
 		{
 			["name"] = "TankHelper",
 			["icon"] = 132362,
@@ -241,20 +241,20 @@ function TankHelper:InitSettings()
 	)
 
 	if THTAB["MMBTN"] then
-		D4:GetLibDBIcon():Show("TankHelper")
+		TankHelper:GetLibDBIcon():Show("TankHelper")
 	else
-		D4:GetLibDBIcon():Hide("TankHelper")
+		TankHelper:GetLibDBIcon():Hide("TankHelper")
 	end
 
-	D4:AddSlash("th", TankHelper.ToggleSettings)
-	D4:AddSlash("tankhelper", TankHelper.ToggleSettings)
-	thset = D4:CreateFrame(
+	TankHelper:AddSlash("th", TankHelper.ToggleSettings)
+	TankHelper:AddSlash("tankhelper", TankHelper.ToggleSettings)
+	thset = TankHelper:CreateFrame(
 		{
 			["name"] = "TankHelper Settings Frame",
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.11")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.12")
 		}
 	)
 
@@ -275,9 +275,9 @@ function TankHelper:InitSettings()
 		true,
 		function()
 			if THTAB[key] then
-				D4:GetLibDBIcon():Show("TankHelper")
+				TankHelper:GetLibDBIcon():Show("TankHelper")
 			else
-				D4:GetLibDBIcon():Hide("TankHelper")
+				TankHelper:GetLibDBIcon():Hide("TankHelper")
 			end
 		end
 	)
@@ -312,19 +312,19 @@ function TankHelper:InitSettings()
 		"AUTO",
 		{
 			{
-				Name = D4:Trans("AUTO"),
+				Name = TankHelper:Trans("AUTO"),
 				Code = "AUTO"
 			},
 			{
-				Name = D4:Trans("ONLYTHIRDPARTY"),
+				Name = TankHelper:Trans("ONLYTHIRDPARTY"),
 				Code = "ONLYTHIRDPARTY"
 			},
 			{
-				Name = D4:Trans("ONLYTH"),
+				Name = TankHelper:Trans("ONLYTH"),
 				Code = "ONLYTH"
 			},
 			{
-				Name = D4:Trans("BOTH"),
+				Name = TankHelper:Trans("BOTH"),
 				Code = "BOTH"
 			},
 		}
@@ -343,7 +343,7 @@ function TankHelper:InitSettings()
 
 	TankHelper:CreateCategory("status")
 	TankHelper:CreateCheckBox("hidestatus", "hidestatus", 5, true)
-	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		TankHelper:CreateCheckBox("statusonlyhealers", "statusonlyhealers", 5, true)
 	end
 
