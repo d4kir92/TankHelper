@@ -572,7 +572,6 @@ function TankHelper:InitFrames()
 	THStatus.text:SetPoint("CENTER", THStatus, "CENTER", 0, 0)
 	frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
 	THStatus:Hide()
-	THCockpit:Hide()
 	function TankHelper:DesignThink()
 		THStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
 		THStatus:EnableMouse(not TankHelper:GetConfig("fixposition", false))
@@ -654,7 +653,7 @@ function TankHelper:InitFrames()
 		C_Timer.After(0.33, TankHelper.DesignThink)
 	end
 
-	C_Timer.After(0.1, TankHelper.DesignThink)
+	TankHelper:DesignThink()
 end
 
 local ts = 0
@@ -810,6 +809,12 @@ function TankHelper:UpdateFrameDesign(frame)
 end
 
 function TankHelper:UpdateDesign()
+	if InCombatLockdown() then
+		C_Timer.After(0.1, TankHelper.UpdateDesign)
+
+		return
+	end
+
 	local scalecockpit = TankHelper:GetConfig("scalecockpit", 1)
 	local scalestatus = TankHelper:GetConfig("scalestatus", 1)
 	if THTAB["obr"] ~= nil and THTAB["obr"] >= 16 then
