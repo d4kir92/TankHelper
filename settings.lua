@@ -2,6 +2,7 @@ local AddonName, TankHelper = ...
 local thset = nil
 local Y = 0
 function TankHelper:GetColor(name)
+	THTAB = THTAB or {}
 	local r = THTAB[name .. "_r"]
 	local g = THTAB[name .. "_g"]
 	local b = THTAB[name .. "_b"]
@@ -11,6 +12,7 @@ function TankHelper:GetColor(name)
 end
 
 function TankHelper:SetColor(name, r, g, b, a)
+	THTAB = THTAB or {}
 	THTAB[name .. "_r"] = r
 	THTAB[name .. "_g"] = g
 	THTAB[name .. "_b"] = b
@@ -154,6 +156,7 @@ function TankHelper:CreateCategory(name)
 end
 
 function TankHelper:CreateCheckBox(key, lstr, x, value, func)
+	THTAB = THTAB or {}
 	value = value or false
 	local val = THTAB[key]
 	if val == nil then
@@ -222,7 +225,8 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	TankHelper:SetVersion(AddonName, 132362, "1.9.15")
+	THTAB = THTAB or {}
+	TankHelper:SetVersion(AddonName, 132362, "1.9.16")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = true
@@ -254,7 +258,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.15")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.16")
 		}
 	)
 
