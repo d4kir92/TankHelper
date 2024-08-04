@@ -226,29 +226,42 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.16")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.17")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
-	if THTAB["MMBTN"] == nil then
-		THTAB["MMBTN"] = true
-	end
-
-	TankHelper:CreateMinimapButton(
-		{
-			["name"] = "TankHelper",
-			["icon"] = 132362,
-			["dbtab"] = THTAB,
-			["vTT"] = {"TankHelper", "Leftclick: Options"},
-			["funcL"] = function()
-				TankHelper:ToggleSettings()
+	C_Timer.After(
+		0,
+		function()
+			if THTAB["MMBTN"] == nil then
+				THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 			end
-		}
-	)
 
-	if THTAB["MMBTN"] then
-		TankHelper:GetLibDBIcon():Show("TankHelper")
-	else
-		TankHelper:GetLibDBIcon():Hide("TankHelper")
-	end
+			TankHelper:CreateMinimapButton(
+				{
+					["name"] = "TankHelper",
+					["icon"] = 132362,
+					["dbtab"] = THTAB,
+					["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.17"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+					["funcL"] = function()
+						TankHelper:ToggleSettings()
+					end,
+					["funcR"] = function()
+						THTAB["MMBTN"] = not THTAB["MMBTN"]
+						if THTAB["MMBTN"] then
+							TankHelper:ShowMMBtn("TankHelper")
+						else
+							TankHelper:HideMMBtn("TankHelper")
+						end
+					end
+				}
+			)
+
+			if THTAB["MMBTN"] then
+				TankHelper:ShowMMBtn("TankHelper")
+			else
+				TankHelper:HideMMBtn("TankHelper")
+			end
+		end
+	)
 
 	TankHelper:AddSlash("th", TankHelper.ToggleSettings)
 	TankHelper:AddSlash("tankhelper", TankHelper.ToggleSettings)
@@ -258,7 +271,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.16")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.17")
 		}
 	)
 
@@ -276,12 +289,12 @@ function TankHelper:InitSettings()
 		"MMBTN",
 		"MMBTN",
 		5,
-		true,
+		TankHelper:GetWoWBuild() ~= "RETAIL",
 		function()
-			if THTAB[key] then
-				TankHelper:GetLibDBIcon():Show("TankHelper")
+			if THTAB["MMBTN"] then
+				TankHelper:ShowMMBtn("TankHelper")
 			else
-				TankHelper:GetLibDBIcon():Hide("TankHelper")
+				TankHelper:HideMMBtn("TankHelper")
 			end
 		end
 	)
