@@ -226,7 +226,7 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.18")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.19")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	C_Timer.After(
 		0,
@@ -240,7 +240,7 @@ function TankHelper:InitSettings()
 					["name"] = "TankHelper",
 					["icon"] = 132362,
 					["dbtab"] = THTAB,
-					["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.18"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+					["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.19"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
 					["funcL"] = function()
 						TankHelper:ToggleSettings()
 					end,
@@ -271,7 +271,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.18")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.19")
 		}
 	)
 
