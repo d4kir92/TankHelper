@@ -1058,7 +1058,7 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	end
 
 	local _, _, scaledPercentage, _, _ = UnitDetailedThreatSituation("PLAYER", unit)
-	if TankHelper:GetConfig("nameplatethreat", true) and scaledPercentage and not reset then
+	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
 		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage))
 		np.th_threat.text:SetText(scaledPercentage .. "%")
 		if scaledPercentage > 100 then
@@ -1093,7 +1093,7 @@ end
 
 local nps = {}
 function TankHelper:ThinkNameplates(force)
-	if TankHelper:GetConfig("nameplatethreat", true) or force then
+	if TankHelper:GetConfig("nameplatethreat", false) or force then
 		for btnId, np in pairs(nps) do
 			TankHelper:UpdateThreatStatus(np)
 		end
