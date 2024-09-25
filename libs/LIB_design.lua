@@ -48,61 +48,6 @@ function TankHelper:CreateCheckBox(tab)
 	return CB
 end
 
-function TankHelper:CreateSlider(tab)
-	tab = tab or {}
-	tab.parent = tab.parent or UIParent
-	tab.x = tab.x or 0
-	tab.y = tab.y or 0
-	tab.w = tab.w or 600
-	tab.value = tab.value or 0
-	local percentage = tab.percentage or false
-	local SL = CreateFrame("Slider", tab.name, tab.parent, "OptionsSliderTemplate")
-	SL:SetPoint("TOPLEFT", tab.x, tab.y)
-	SL.Low:SetText(tab.min)
-	SL.High:SetText(tab.max)
-	local v = tab.value
-	if percentage then
-		v = v * 100
-	end
-
-	if tab.text then
-		SL.Text:SetText(format(TankHelper:Trans(tab.text), v))
-	end
-
-	SL:SetMinMaxValues(tab.min, tab.max)
-	SL:SetValue(tab.value)
-	SL:SetWidth(tab.w)
-	SL:SetObeyStepOnDrag(tab.steps)
-	tab.steps = tab.steps or 1
-	SL:SetValueStep(tab.steps)
-	SL.decimals = tab.decimals or 1
-	SL:SetScript(
-		"OnValueChanged",
-		function(sel, val)
-			val = TankHelper:MathR(val, sel.decimals)
-			val = val - val % tab.steps
-			val = TankHelper:MathR(val, sel.decimals)
-			THTAB[tab.dbvalue] = val
-			local valu = SL:GetValue()
-			if valu then
-				if percentage then
-					valu = valu * 100
-				end
-
-				if tab.text then
-					SL.Text:SetText(format(TankHelper:Trans(tab.text), valu))
-				end
-			end
-
-			if tab.func ~= nil then
-				tab:func()
-			end
-		end
-	)
-
-	return EB
-end
-
 function TankHelper:CTexture(frame, tab)
 	tab.layer = tab.layer or "BACKGROUND"
 	local texture = frame:CreateTexture(nil, tab.layer)

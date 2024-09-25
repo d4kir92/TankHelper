@@ -205,19 +205,17 @@ end
 function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, percentage, func)
 	Y = Y - 15
 	local slider = {}
-	slider.name = key
+	slider.key = key
 	slider.parent = thset.SC
 	slider.value = TankHelper:GetConfig(key, value)
 	slider.text = lstr
-	slider.x = 10
-	slider.y = Y
-	slider.min = min
-	slider.max = max
+	slider.pTab = {"TOPLEFT", 10, Y}
+	slider.vmin = min
+	slider.vmax = max
 	slider.steps = steps
 	slider.decimals = decimals
-	slider.dbvalue = "powermax"
 	slider.percentage = percentage
-	slider.w = 460
+	slider.sw = 460
 	slider.color = {0, 1, 0, 1}
 	slider.func = func
 	TankHelper:CreateSlider(slider)
@@ -226,7 +224,7 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.20")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.21")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	C_Timer.After(
 		0,
@@ -240,7 +238,7 @@ function TankHelper:InitSettings()
 					["name"] = "TankHelper",
 					["icon"] = 132362,
 					["dbtab"] = THTAB,
-					["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.20"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+					["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.21"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
 					["funcL"] = function()
 						TankHelper:ToggleSettings()
 					end,
@@ -271,7 +269,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.20")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.21")
 		}
 	)
 
