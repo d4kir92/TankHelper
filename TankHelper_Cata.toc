@@ -1,5 +1,5 @@
 ## Interface: 40400
-## Version: 1.9.21
+## Version: 1.9.22
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
