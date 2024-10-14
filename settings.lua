@@ -224,7 +224,7 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.24")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.25")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
@@ -235,7 +235,7 @@ function TankHelper:InitSettings()
 			["name"] = "TankHelper",
 			["icon"] = 132362,
 			["dbtab"] = THTAB,
-			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.24"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.25"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
 			["funcL"] = function()
 				TankHelper:ToggleSettings()
 			end,
@@ -264,7 +264,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.24")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.25")
 		}
 	)
 
@@ -368,12 +368,7 @@ function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
 		TankHelper:InitSetup()
-		C_Timer.After(
-			1,
-			function()
-				TankHelper:InitSettings()
-			end
-		)
+		TankHelper:InitSettings()
 	end
 end
 
