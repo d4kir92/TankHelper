@@ -1120,7 +1120,7 @@ frame:SetScript(
 				np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
 				np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 				--np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
-				np.th_threat.text:SetText("Created by TankHelper -> if you see this tell the Dev.")
+				np.th_threat.text:SetText("Created by TankHelper -> if you see this tell the Dev. You have custom nameplates?")
 				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
 				C_Timer.After(
 					0.04,
