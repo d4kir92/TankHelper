@@ -1,39 +1,17 @@
 local AddonName, TankHelper = ...
 local thset = nil
 local Y = 0
-function TankHelper:GetColor(name)
-	THTAB = THTAB or {}
-	local r = THTAB[name .. "_r"]
-	local g = THTAB[name .. "_g"]
-	local b = THTAB[name .. "_b"]
-	local a = THTAB[name .. "_a"]
-
-	return r, g, b, a
-end
-
-function TankHelper:SetColor(name, r, g, b, a)
-	THTAB = THTAB or {}
-	THTAB[name .. "_r"] = r
-	THTAB[name .. "_g"] = g
-	THTAB[name .. "_b"] = b
-	THTAB[name .. "_a"] = a
-	TankHelper:UpdateColors(THCockpit)
-	TankHelper:UpdateColors(THWorldMarkers)
-	TankHelper:UpdateColors(THTargetMarkers)
-	TankHelper:UpdateColors(THExtras)
-end
-
 function TankHelper:UpdateColors(frame)
-	if TankHelper:GetColor("BGColor") == nil then
+	if TankHelper:GetColor("BGColor", "UpdateColors") == nil then
 		TankHelper:SetColor("BGColor", 0, 0, 0, 0.4)
 	end
 
-	if TankHelper:GetColor("BRColor") == nil then
+	if TankHelper:GetColor("BRColor", "UpdateColors") == nil then
 		TankHelper:SetColor("BRColor", 0, 0, 0, 0.2)
 	end
 
-	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor")
-	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor")
+	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor", "UpdateColors")
+	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor", "UpdateColors")
 	if frame then
 		if MouseIsOver(frame) and a1 < 0.15 then
 			a1 = 0.15
@@ -56,75 +34,6 @@ function TankHelper:GetLang()
 	if TankHelper:GetConfig("showtranslation", true) then return nil end
 
 	return "enUS"
-end
-
-function TankHelper:ShowColorPicker(r, g, b, a, changedCallback)
-	if ColorPickerFrame.SetupColorPickerAndShow then
-		local info = {}
-		info.swatchFunc = changedCallback
-		info.hasOpacity = true
-		info.opacityFunc = changedCallback
-		info.cancelFunc = changedCallback
-		info.extraInfo = "TEST"
-		info.r = r
-		info.g = g
-		info.b = b
-		info.opacity = a
-		ColorPickerFrame:SetupColorPickerAndShow(info)
-	else
-		ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.swatchFunc = changedCallback, changedCallback, changedCallback
-		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-		ColorPickerFrame.previousValues = {r, g, b, a}
-		if ColorPickerFrame.SetColorRGB then
-			ColorPickerFrame:SetColorRGB(r, g, b)
-		end
-
-		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-		ColorPickerFrame:Hide()
-		ColorPickerFrame:Show()
-	end
-end
-
-function TankHelper:AddColorPicker(name, parent, x)
-	local btn = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
-	btn:SetSize(140, 25)
-	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, Y)
-	btn:SetText(TankHelper:Trans(name))
-	btn:SetScript(
-		"OnClick",
-		function()
-			local r, g, b, a = TankHelper:GetColor(name)
-			TankHelper:ShowColorPicker(
-				r,
-				g,
-				b,
-				a,
-				function(restore)
-					local newR, newG, newB, newA
-					if restore then
-						newR, newG, newB, newA = unpack(restore)
-					else
-						local alpha = 1
-						if ColorPickerFrame.GetColorAlpha then
-							alpha = ColorPickerFrame:GetColorAlpha()
-						else
-							alpha = OpacitySliderFrame:GetValue()
-						end
-
-						if TankHelper:GetWoWBuild() ~= "RETAIL" then
-							alpha = 1 - alpha
-						end
-
-						newA, newR, newG, newB = alpha, ColorPickerFrame:GetColorRGB()
-					end
-
-					TankHelper:SetColor(name, newR, newG, newB, newA)
-				end
-			)
-		end
-	)
-
-	Y = Y - 30
 end
 
 function TankHelper:ToggleSettings()
@@ -224,7 +133,7 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.29")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.30")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
@@ -235,7 +144,7 @@ function TankHelper:InitSettings()
 			["name"] = "TankHelper",
 			["icon"] = 132362,
 			["dbtab"] = THTAB,
-			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.29"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.30"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
 			["funcL"] = function()
 				TankHelper:ToggleSettings()
 			end,
@@ -264,7 +173,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.29")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.30")
 		}
 	)
 
@@ -277,6 +186,8 @@ function TankHelper:InitSettings()
 	thset.SC:SetPoint("TOPLEFT", thset.SF, "TOPLEFT", 0, 0)
 	thset.SF:SetScrollChild(thset.SC)
 	Y = 0
+	TankHelper:SetAppendParent(thset.SC)
+	TankHelper:SetAppendTab(THTAB)
 	TankHelper:CreateCategory("general")
 	TankHelper:CreateCheckBox(
 		"MMBTN",
@@ -303,8 +214,41 @@ function TankHelper:InitSettings()
 	TankHelper:AddSlider("iconsize", "iconsize", 16.0, 8.0, 64.0, 2, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("scalestatus", "scalestatus", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("scalecockpit", "scalecockpit", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:AddColorPicker("BRColor", thset.SC, 5, Y)
-	TankHelper:AddColorPicker("BGColor", thset.SC, 5, Y)
+	TankHelper:SetAppendY(Y)
+	TankHelper:AppendColorPicker(
+		"BRColor",
+		{
+			["R"] = 0,
+			["G"] = 0,
+			["B"] = 0,
+			["A"] = 0
+		},
+		function()
+			TankHelper:UpdateColors(THCockpit)
+			TankHelper:UpdateColors(THWorldMarkers)
+			TankHelper:UpdateColors(THTargetMarkers)
+			TankHelper:UpdateColors(THExtras)
+		end, 5
+	)
+
+	Y = Y - 30
+	TankHelper:AppendColorPicker(
+		"BGColor",
+		{
+			["R"] = 0,
+			["G"] = 0,
+			["B"] = 0,
+			["A"] = 0
+		},
+		function()
+			TankHelper:UpdateColors(THCockpit)
+			TankHelper:UpdateColors(THWorldMarkers)
+			TankHelper:UpdateColors(THTargetMarkers)
+			TankHelper:UpdateColors(THExtras)
+		end, 5
+	)
+
+	Y = Y - 30
 	if IsRaidMarkerActive then
 		TankHelper:CreateCategory("worldmarks")
 		TankHelper:CreateCheckBox("hideworldmarks", "hideworldmarks", 5, false, TankHelper.UpdateDesign)
@@ -367,8 +311,8 @@ frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
-		TankHelper:InitSetup()
 		TankHelper:InitSettings()
+		TankHelper:InitSetup()
 	end
 end
 
