@@ -433,7 +433,6 @@ function TankHelper:InitFrames()
 	end
 
 	THExtras["btnReadycheck"] = TankHelper:CreateButton("btnReadycheck", THExtras)
-	THExtras["btnReadycheck"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr)
 	if IsRaidMarkerActive or InitiateRolePoll then
 		THExtras["btnReadycheck"]:SetSize(50, iconbtn)
 		THExtras["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 6))
@@ -451,7 +450,6 @@ function TankHelper:InitFrames()
 
 	if InitiateRolePoll then
 		THExtras["btnRolepoll"] = TankHelper:CreateButton("btnRolepoll", THExtras)
-		THExtras["btnRolepoll"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + 50, -obr)
 		THExtras["btnRolepoll"]:SetSize(50, iconbtn)
 		THExtras["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
 		THExtras["btnRolepoll"]:SetScript(
@@ -836,6 +834,9 @@ function TankHelper:UpdateDesign()
 	iconbr = iconsize / 4
 	iconbtn = iconsize + 2 * iconbr
 	THCockpit:SetScale(scalecockpit)
+	THTargetMarkers:SetScale(scalecockpit)
+	THWorldMarkers:SetScale(scalecockpit)
+	THExtras:SetScale(scalecockpit)
 	THStatus:SetScale(scalestatus)
 	local THROW = 1
 	THTargetMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
@@ -882,17 +883,16 @@ function TankHelper:UpdateDesign()
 	end
 
 	local bw = obr + (5 - 1) * (iconbtn + ibr)
-	local aw = obr + iconbtn + ibr
-	local bsw = THCockpit:GetWidth() - bw - aw
+	local bsw = THExtras:GetWidth() - bw - obr - iconsize - ibr
 	if IsRaidMarkerActive or InitiateRolePoll then
-		bsw = bsw - ibr
 		bsw = bsw / 2
 	end
 
 	if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnReadycheck"]:Hide()
 	else
-		THExtras["btnReadycheck"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr), -obr)
+		THExtras["btnReadycheck"]:ClearAllPoints()
+		THExtras["btnReadycheck"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + iconbtn + bsw), obr)
 		THExtras["btnReadycheck"]:SetSize(bsw, iconbtn)
 		THExtras["btnReadycheck"]:Show()
 	end
@@ -901,7 +901,8 @@ function TankHelper:UpdateDesign()
 		if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 			THExtras["btnRolepoll"]:Hide()
 		else
-			THExtras["btnRolepoll"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (5 - 1) * (iconbtn + ibr) + ibr + bsw, -obr)
+			THExtras["btnRolepoll"]:ClearAllPoints()
+			THExtras["btnRolepoll"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + iconbtn), obr)
 			THExtras["btnRolepoll"]:SetSize(bsw, iconbtn)
 			THExtras["btnRolepoll"]:Show()
 		end

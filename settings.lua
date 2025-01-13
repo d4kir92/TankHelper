@@ -133,7 +133,7 @@ end
 
 function TankHelper:InitSettings()
 	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.31")
+	TankHelper:SetVersion(AddonName, 132362, "1.9.32")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
@@ -144,7 +144,7 @@ function TankHelper:InitSettings()
 			["name"] = "TankHelper",
 			["icon"] = 132362,
 			["dbtab"] = THTAB,
-			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.31"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.32"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
 			["funcL"] = function()
 				TankHelper:ToggleSettings()
 			end,
@@ -173,7 +173,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.31")
+			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.32")
 		}
 	)
 
@@ -212,8 +212,8 @@ function TankHelper:InitSettings()
 	TankHelper:AddSlider("ibr", "ibr", 1.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("cbr", "cbr", 3.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("iconsize", "iconsize", 16.0, 8.0, 64.0, 2, 0, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("scalestatus", "scalestatus", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("scalecockpit", "scalecockpit", 1.0, 0.0, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("scalestatus", "scalestatus", 1.0, 0.1, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("scalecockpit", "scalecockpit", 1.0, 0.1, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
 	TankHelper:SetAppendY(Y)
 	TankHelper:AppendColorPicker(
 		"BRColor",
