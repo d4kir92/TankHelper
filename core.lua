@@ -1062,26 +1062,36 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
 		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage))
 		np.th_threat.text:SetText(scaledPercentage .. "%")
+		-- Green Red Yellow
 		if scaledPercentage > 100 then
 			np.th_threat.texture:SetTexture("Interface\\COMMON\\Indicator-Yellow")
 			np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
 			np.th_threat.texture:SetAlpha(1)
+			np.th_threat.texture:SetVertexColor(1, 1, 0, 1)
 			np.th_threat.text:SetTextColor(1, 1, 0, 1)
 		elseif scaledPercentage == 100 then
 			np.th_threat.texture:SetTexture("Interface\\MINIMAP\\Minimap_shield_normal")
 			np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
-			np.th_threat.texture:SetAlpha(0.33)
-			np.th_threat.text:SetTextColor(0, 1, 0, 0.33)
+			np.th_threat.texture:SetAlpha(1)
+			np.th_threat.texture:SetVertexColor(0, 1, 0, 1)
+			np.th_threat.text:SetTextColor(0, 1, 0, 1)
 		elseif scaledPercentage == 0 then
 			np.th_threat.texture:SetTexture("Interface\\WORLDSTATEFRAME\\CombatSwords")
 			np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
 			np.th_threat.texture:SetAlpha(1)
+			np.th_threat.texture:SetVertexColor(1, 0, 0, 1)
 			np.th_threat.text:SetTextColor(1, 0, 0, 1)
 		else
 			np.th_threat.texture:SetTexture("Interface\\WORLDSTATEFRAME\\CombatSwords")
 			np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
 			np.th_threat.texture:SetAlpha(1)
-			np.th_threat.text:SetTextColor(1, 1, 0, 1)
+			if scaledPercentage <= 50 then
+				np.th_threat.texture:SetVertexColor(1, 0, 0, 1)
+				np.th_threat.text:SetTextColor(1, 0, 0, 1)
+			elseif scaledPercentage <= 100 then
+				np.th_threat.texture:SetVertexColor(1, 1, 0, 1)
+				np.th_threat.text:SetTextColor(1, 1, 0, 1)
+			end
 		end
 	else
 		np.th_threat.text:SetText(-1 .. "%")
@@ -1120,7 +1130,7 @@ frame:SetScript(
 				np.th_threat.texture:SetSize(42, 42)
 				np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
 				np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-				--np.th_threat.text:SetFont( STANDARD_TEXT_FONT, 12, "THINOUTLINE" )
+				TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
 				np.th_threat.text:SetText("Created by TankHelper -> if you see this tell the Dev. You have custom nameplates?")
 				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
 				C_Timer.After(
