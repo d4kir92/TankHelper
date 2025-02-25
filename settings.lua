@@ -132,8 +132,6 @@ function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, perce
 end
 
 function TankHelper:InitSettings()
-	THTAB = THTAB or {}
-	TankHelper:SetVersion(AddonName, 132362, "1.9.37")
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then
 		THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
@@ -144,7 +142,7 @@ function TankHelper:InitSettings()
 			["name"] = "TankHelper",
 			["icon"] = 132362,
 			["dbtab"] = THTAB,
-			["vTT"] = {{"TankHelper |T132362:16:16:0:0|t", "v|cff3FC7EB1.9.37"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle MinimapButton"}},
+			["vTT"] = {{"|T132362:16:16:0:0|t T|cff3FC7EBank|rH|cff3FC7EBelper|r", "v|cff3FC7EB" .. TankHelper:GetVersion()}, {TankHelper:Trans("LID_LEFTCLICK"), TankHelper:Trans("LID_OPENSETTINGS")}, {TankHelper:Trans("LID_RIGHTCLICK"), TankHelper:Trans("LID_HIDEMINIMAPBUTTON")}},
 			["funcL"] = function()
 				TankHelper:ToggleSettings()
 			end,
@@ -168,7 +166,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.9.37")
+			["title"] = format("|T132362:16:16:0:0|t T|cff3FC7EBank|rH|cff3FC7EBelper|r by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", TankHelper:GetVersion())
 		}
 	)
 
@@ -306,6 +304,13 @@ frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "PLAYER_ENTERING_WORLD" and not THloaded then
 		THloaded = true
+		THTAB = THTAB or {}
+		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
+		if THTAB["MMBTN"] == nil then
+			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
+		end
+
+		TankHelper:SetVersion(132362, "1.9.38")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

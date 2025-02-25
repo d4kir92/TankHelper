@@ -1,13 +1,15 @@
 ## Interface: 20504
-## Version: 1.9.37
-## Title: TankHelper |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
+## Version: 1.9.38
+## Title: T|cff3FC7EBank|rH|cff3FC7EBelper|r |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
 ## Author: D4KiR
+## X-Category: D4KiR
 ## DefaultState: enabled
 ## SavedVariables: THTAB
 ## SavedVariablesPerCharacter: THTABPC
 ## X-Curse-Project-ID: 398385
 ## X-Wago-ID: lQNlmP6e
+## IconTexture: 132362
 
 # External Libs
 libs\D4Lib\D4Lib.xml
