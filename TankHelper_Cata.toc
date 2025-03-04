@@ -1,9 +1,10 @@
 ## Interface: 40401, 40402
-## Version: 1.9.38
+## Version: 1.9.39
 ## Title: T|cff3FC7EBank|rH|cff3FC7EBelper|r |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
-## Author: D4KiR
-## X-Category: D4KiR
+## Author: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
+## Category: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
+## X-Category: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
 ## DefaultState: enabled
 ## SavedVariables: THTAB
 ## SavedVariablesPerCharacter: THTABPC
