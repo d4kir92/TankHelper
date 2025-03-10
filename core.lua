@@ -249,7 +249,7 @@ function TankHelper:HideCombinedAll()
 end
 
 function TankHelper:InitFrames()
-	if TankHelper:GetWoWBuild() == "RETAIL" then
+	if TankHelper:GetWoWBuild() ~= "CLASSIC" then
 		WMN = 8
 		wms = {5, 6, 3, 2, 7, 1, 4, 8}
 		WMIds = {
@@ -515,7 +515,7 @@ function TankHelper:InitFrames()
 				end
 			end
 
-			if (e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE") and (not UnitExists("TARGET") or not UnitIsEnemy("TARGET", "PLAYER")) then
+			if (e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE") and (not UnitExists("TARGET") or not UnitCanAttack("TARGET", "PLAYER")) then
 				TankHelper:UpdateRaidIcons()
 			end
 
@@ -684,7 +684,7 @@ function TankHelper:TargetIconLogic()
 	end
 
 	-- if is not enemy reset the time
-	if not UnitIsEnemy("TARGET", "PLAYER") then
+	if not UnitCanAttack("TARGET", "PLAYER") then
 		ts = GetTime()
 		targetGUID = nil
 	else
