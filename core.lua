@@ -172,13 +172,14 @@ function TankHelper:InitFrame(frame, px, py)
 		"OnDragStop",
 		function(sel)
 			if not TankHelper:GetConfig("fixposition", false) then
+				local name = TankHelper:GetName(frame)
 				frame:StopMovingOrSizing()
 				local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
-				THTAB[frame:GetName() .. "point"] = point
-				THTAB[frame:GetName() .. "parent"] = parent
-				THTAB[frame:GetName() .. "relativePoint"] = relativePoint
-				THTAB[frame:GetName() .. "ofsx"] = ofsx
-				THTAB[frame:GetName() .. "ofsy"] = ofsy
+				THTAB[name .. "point"] = point
+				THTAB[name .. "parent"] = parent
+				THTAB[name .. "relativePoint"] = relativePoint
+				THTAB[name .. "ofsx"] = ofsx
+				THTAB[name .. "ofsy"] = ofsy
 			else
 				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
@@ -1055,7 +1056,7 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	end
 
 	if unit == nil then
-		unit = strlower(np:GetName())
+		unit = strlower(TankHelper:GetName(np))
 	end
 
 	local _, _, scaledPercentage, _, _ = UnitDetailedThreatSituation("PLAYER", unit)
