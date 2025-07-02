@@ -41,7 +41,7 @@ function TankHelper:RW(msg)
 		if TankHelper:ShouldShow() then
 			SendChatMessage(msg, "PARTY")
 		else
-			TankHelper:MSG(TankHelper:Trans("youmustbeinagrouporaraid", true) .. "!")
+			TankHelper:MSG(TankHelper:Trans("LID_youmustbeinagrouporaraid", true) .. "!")
 		end
 	end
 end
@@ -70,14 +70,14 @@ function TankHelper:PullIn(t)
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
 
-			TankHelper:RW(format(TankHelper:Trans("pullinx", TankHelper:GetLang()), t))
+			TankHelper:RW(format(TankHelper:Trans("LID_pullinx", TankHelper:GetLang()), t))
 			for cou = 1, t do
 				C_Timer.After(
 					cou,
 					function()
 						local leftT = t - cou
 						if leftT == 0 then
-							TankHelper:RW(TankHelper:Trans("go", TankHelper:GetLang()) .. "!")
+							TankHelper:RW(TankHelper:Trans("LID_go", TankHelper:GetLang()) .. "!")
 						else
 							TankHelper:RW(leftT)
 						end
@@ -86,7 +86,7 @@ function TankHelper:PullIn(t)
 			end
 		end
 	else
-		TankHelper:MSG(TankHelper:Trans("youmustbeinagrouporaraid", TankHelper:GetLang()) .. "!")
+		TankHelper:MSG(TankHelper:Trans("LID_youmustbeinagrouporaraid", TankHelper:GetLang()) .. "!")
 	end
 end
 
@@ -153,7 +153,7 @@ end
 function TankHelper:InitFrame(frame, px, py)
 	frame:SetPoint("Center", UIParent, "Center", px, py)
 	frame:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, rows * iconbtn + (rows - 1) * cbr + 2 * obr)
-	frame:SetClampedToScreen(true)
+	TankHelper:SetClampedToScreen(frame, true)
 	frame:SetMovable(true)
 	frame:EnableMouse(true)
 	frame:RegisterForDrag("LeftButton")
@@ -163,7 +163,7 @@ function TankHelper:InitFrame(frame, px, py)
 			if not TankHelper:GetConfig("fixposition", false) then
 				frame:StartMoving()
 			else
-				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -181,7 +181,7 @@ function TankHelper:InitFrame(frame, px, py)
 				THTAB[name .. "ofsx"] = ofsx
 				THTAB[name .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -532,7 +532,7 @@ function TankHelper:InitFrames()
 
 	THStatus:SetPoint("Center", UIParent, "Center")
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
-	THStatus:SetClampedToScreen(true)
+	TankHelper:SetClampedToScreen(THStatus, true)
 	THStatus:SetMovable(true)
 	THStatus:EnableMouse(true)
 	THStatus:RegisterForDrag("LeftButton")
@@ -542,7 +542,7 @@ function TankHelper:InitFrames()
 			if not TankHelper:GetConfig("fixposition", false) then
 				THStatus:StartMoving()
 			else
-				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -559,7 +559,7 @@ function TankHelper:InitFrames()
 				THTAB["THStatus" .. "ofsx"] = ofsx
 				THTAB["THStatus" .. "ofsy"] = ofsy
 			else
-				TankHelper:MSG(TankHelper:Trans("fixedpositionisenabled", TankHelper:GetLang()) .. "!")
+				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
 		end
 	)
@@ -708,7 +708,7 @@ end
 function TankHelper:SetStatusText()
 	if THCockpit == nil or THStatus == nil then return end
 	if not TankHelper:GetConfig("hidestatus", true) then
-		local text = TankHelper:Trans("ready", TankHelper:GetLang()) .. "!"
+		local text = TankHelper:Trans("LID_ready", TankHelper:GetLang()) .. "!"
 		THStatusColor = {0, 1, 0, 0.5}
 		if InCombatLockdown() then
 			text = GARRISON_LANDING_STATUS_MISSION_COMBAT .. "!"
@@ -727,22 +727,22 @@ function TankHelper:SetStatusText()
 			end
 
 			if dead then
-				text = TankHelper:Trans("playerdead", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("LID_playerdead", TankHelper:GetLang()) .. "!"
 				THStatusColor = {0, 0, 0, 1}
 			elseif health < 0.3 then
-				text = TankHelper:Trans("playerlowhp", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("LID_playerlowhp", TankHelper:GetLang()) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif health < TankHelper:GetConfig("healthmax", 0.9) then
-				text = TankHelper:Trans("playernotfull", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("LID_playernotfull", TankHelper:GetLang()) .. "!"
 				THStatusColor = {1, 0, 0, 1 - health + 0.1}
 			elseif power < TankHelper:GetConfig("powermax", 0.9) then
-				text = TankHelper:Trans("playerhavenotenoughpower", TankHelper:GetLang()) .. "!"
+				text = TankHelper:Trans("LID_playerhavenotenoughpower", TankHelper:GetLang()) .. "!"
 				THStatusColor = {0, 0, 1, 1 - power + 0.1}
 			end
 		end
 
 		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
-			text = format("%s: %s", TankHelper:Trans("healer", TankHelper:GetLang()), text)
+			text = format("%s: %s", TankHelper:Trans("LID_healer", TankHelper:GetLang()), text)
 		end
 
 		THStatus.text:SetText(text)

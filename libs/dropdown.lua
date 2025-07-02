@@ -12,7 +12,7 @@ function TankHelper:CreateDropdown(opts)
 				args = {i, v.Code},
 				func = function(sel, button, key, value)
 					opts.changeFunc(Menu, value)
-					Menu:SetText(TankHelper:Trans(value))
+					Menu:SetText(TankHelper:Trans("LID_" .. value))
 				end
 			}
 		)
@@ -22,7 +22,7 @@ function TankHelper:CreateDropdown(opts)
 	text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
 	text:SetPoint("LEFT", Menu, "RIGHT", 0, 4)
 	if opts.title then
-		text:SetText(TankHelper:Trans(opts.title))
+		text:SetText(TankHelper:Trans("LID_" .. opts.title))
 	end
 
 	return Menu

@@ -98,7 +98,7 @@ function TankHelper:AddComboBox(key, lstr, value, tab)
 	comboBox.parent = thset.SC
 	comboBox.text = lstr
 	if TankHelper:GetConfig(key, value) ~= nil then
-		comboBox.value = TankHelper:Trans(TankHelper:GetConfig(key, value))
+		comboBox.value = TankHelper:Trans("LID_" .. TankHelper:GetConfig(key, value))
 	else
 		comboBox.value = value
 	end
@@ -259,19 +259,19 @@ function TankHelper:InitSettings()
 		"AUTO",
 		{
 			{
-				Name = TankHelper:Trans("AUTO"),
+				Name = TankHelper:Trans("LID_AUTO"),
 				Code = "AUTO"
 			},
 			{
-				Name = TankHelper:Trans("ONLYTHIRDPARTY"),
+				Name = TankHelper:Trans("LID_ONLYTHIRDPARTY"),
 				Code = "ONLYTHIRDPARTY"
 			},
 			{
-				Name = TankHelper:Trans("ONLYTH"),
+				Name = TankHelper:Trans("LID_ONLYTH"),
 				Code = "ONLYTH"
 			},
 			{
-				Name = TankHelper:Trans("BOTH"),
+				Name = TankHelper:Trans("LID_BOTH"),
 				Code = "BOTH"
 			},
 		}
@@ -310,7 +310,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.48")
+		TankHelper:SetVersion(132362, "1.9.49")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

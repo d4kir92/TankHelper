@@ -6,7 +6,7 @@ function TankHelper:CreateText(tab)
 	tab.frame:SetFrameStrata("HIGH")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(TankHelper:Trans(tab.text))
+	text:SetText(TankHelper:Trans("LID_" .. tab.text))
 	tab.color = tab.color or {1, 1, 1, 1}
 	tab.color[1] = tab.color[1] or 1
 	tab.color[2] = tab.color[2] or 1
