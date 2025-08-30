@@ -1,4 +1,4 @@
-local AddonName, TankHelper = ...
+local _, TankHelper = ...
 local thset = nil
 local Y = 0
 function TankHelper:UpdateColors(frame)
@@ -91,26 +91,6 @@ function TankHelper:CreateCheckBox(key, lstr, x, value, func)
 	Y = Y - 20
 end
 
-function TankHelper:AddComboBox(key, lstr, value, tab)
-	Y = Y - 10
-	local comboBox = {}
-	comboBox.name = key
-	comboBox.parent = thset.SC
-	comboBox.text = lstr
-	if TankHelper:GetConfig(key, value) ~= nil then
-		comboBox.value = TankHelper:Trans("LID_" .. TankHelper:GetConfig(key, value))
-	else
-		comboBox.value = value
-	end
-
-	comboBox.x = 50
-	comboBox.y = Y
-	comboBox.dbvalue = key
-	comboBox.tab = tab
-	TankHelper:CreateDropDown(comboBox)
-	Y = Y - 30
-end
-
 function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, percentage, func)
 	Y = Y - 15
 	local slider = {}
@@ -160,7 +140,7 @@ function TankHelper:InitSettings()
 
 	TankHelper:AddSlash("th", TankHelper.ToggleSettings)
 	TankHelper:AddSlash("tankhelper", TankHelper.ToggleSettings)
-	thset = TankHelper:CreateFrame(
+	thset = TankHelper:CreateWindow(
 		{
 			["name"] = "TankHelper Settings Frame",
 			["pTab"] = {"CENTER"},
@@ -253,28 +233,18 @@ function TankHelper:InitSettings()
 	TankHelper:CreateCategory("specialbar")
 	TankHelper:CreateCheckBox("hidespecialbar", "hidespecialbar", 5, false, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("targettingdelay", "targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:AddComboBox(
-		"PULLTIMERMODE",
+	TankHelper:AppendDropdown(
 		"PULLTIMERMODE",
 		"AUTO",
 		{
-			{
-				Name = TankHelper:Trans("LID_AUTO"),
-				Code = "AUTO"
-			},
-			{
-				Name = TankHelper:Trans("LID_ONLYTHIRDPARTY"),
-				Code = "ONLYTHIRDPARTY"
-			},
-			{
-				Name = TankHelper:Trans("LID_ONLYTH"),
-				Code = "ONLYTH"
-			},
-			{
-				Name = TankHelper:Trans("LID_BOTH"),
-				Code = "BOTH"
-			},
-		}
+			["AUTO"] = "AUTO",
+			["ONLYTHIRDPARTY"] = "ONLYTHIRDPARTY",
+			["ONLYTH"] = "ONLYTH",
+			["BOTH"] = "BOTH",
+		},
+		function(val)
+			print("CHANGED", val)
+		end
 	)
 
 	TankHelper:CreateCategory("nameplate")
@@ -310,7 +280,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.51")
+		TankHelper:SetVersion(132362, "1.9.52")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

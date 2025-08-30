@@ -1,7 +1,8 @@
 ## Interface: 20504
-## Version: 1.9.51
+## Version: 1.9.52
 ## Title: T|cff3FC7EBank|rH|cff3FC7EBelper|r |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
+## Notes-deDE: Raid Symbole und pull timer
 ## Notes-ruRU: Рейдовые метки, таймер атаки и т.п.
 ## Author: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
 ## Category: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
@@ -15,14 +16,11 @@
 
 # External Libs
 libs\D4Lib\D4Lib.xml
-libs\LibStub\LibStub.lua
-libs\LibDropDown\embed.xml
 
 config.lua
 
 libs\LIB_math.lua
 libs\LIB_design.lua
-libs\dropdown.lua
 
 locale\enUS.lua
 locale\deDE.lua

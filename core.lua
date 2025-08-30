@@ -100,18 +100,20 @@ end
 
 function TankHelper:UpdateRaidIcons()
 	for rmId = 0, 8 do
-		local rembtn = THTargetMarkers["btnM" .. rmId].texture
-		if rmId == 0 then
-			if not GetRaidTargetIndex("TARGET") or GetRaidTargetIndex("TARGET") == 0 then
-				rembtn:SetDesaturated(true)
+		if THTargetMarkers["btnM" .. rmId] then
+			local rembtn = THTargetMarkers["btnM" .. rmId].texture
+			if rmId == 0 then
+				if not GetRaidTargetIndex("TARGET") or GetRaidTargetIndex("TARGET") == 0 then
+					rembtn:SetDesaturated(true)
+				else
+					rembtn:SetDesaturated(false)
+				end
 			else
-				rembtn:SetDesaturated(false)
-			end
-		else
-			if not UnitExists("TARGET") then
-				rembtn:SetDesaturated(true)
-			else
-				rembtn:SetDesaturated(false)
+				if not UnitExists("TARGET") then
+					rembtn:SetDesaturated(true)
+				else
+					rembtn:SetDesaturated(false)
+				end
 			end
 		end
 	end
@@ -351,7 +353,10 @@ function TankHelper:InitFrames()
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", THWorldMarkers["THBtnRM" .. btnId], "BOTTOMLEFT", 0, 0)
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
-			THWorldMarkers["THBtnRM" .. btnId]:SetMouseClickEnabled(true)
+			if THWorldMarkers["THBtnRM" .. btnId].SetMouseClickEnabled then
+				THWorldMarkers["THBtnRM" .. btnId]:SetMouseClickEnabled(true)
+			end
+
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("type1", "worldmarker")
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("type2", "worldmarker")
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("marker1", wms[btnId])

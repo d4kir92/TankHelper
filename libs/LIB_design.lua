@@ -125,27 +125,3 @@ function TankHelper:CreateF(tab)
 
 	return frame
 end
-
-function TankHelper:CreateDropDown(tab)
-	tab = tab or {}
-	tab.parent = tab.parent or UIParent
-	tab.tooltip = tab.tooltip or ""
-	tab.x = tab.x or 0
-	tab.y = tab.y or 0
-	local rows = {
-		["name"] = tab.name,
-		["parent"] = tab.parent,
-		["title"] = tab.text,
-		["items"] = tab.tab,
-		["defaultVal"] = tab.value,
-		["changeFunc"] = function(dropdown_frame, dropdown_val)
-			--dropdown_val = tonumber( dropdown_val )
-			THTAB[tab.dbvalue] = dropdown_val
-		end
-	}
-
-	local DD = TankHelper:CreateDropdown(rows)
-	DD:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-
-	return DD
-end
