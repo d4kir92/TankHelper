@@ -35,6 +35,7 @@ function TankHelper:ShouldShow()
 end
 
 function TankHelper:RW(msg)
+	local SendChatMessage = getglobal("SendChatMessage")
 	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	elseif not InCombatLockdown() then
@@ -72,7 +73,7 @@ function TankHelper:PullIn(t)
 
 			TankHelper:RW(format(TankHelper:Trans("LID_pullinx", TankHelper:GetLang()), t))
 			for cou = 1, t do
-				C_Timer.After(
+				TankHelper:After(
 					cou,
 					function()
 						local leftT = t - cou
@@ -81,7 +82,7 @@ function TankHelper:PullIn(t)
 						else
 							TankHelper:RW(leftT)
 						end
-					end
+					end, "PULLIN"
 				)
 			end
 		end
@@ -413,10 +414,10 @@ function TankHelper:InitFrames()
 					end
 				end
 
-				C_Timer.After(0.33, btn.tk_think)
+				TankHelper:After(0.39, btn.tk_think, "tk_think" .. btnId)
 			end
 
-			btn:tk_think()
+			TankHelper:After(0.045 * btnId, btn.tk_think, "START tk_think" .. btnId)
 			table.insert(ricons2, THWorldMarkers["THBtnRM" .. btnId])
 			Y = Y + 1
 		else
@@ -502,7 +503,7 @@ function TankHelper:InitFrames()
 		end
 	)
 
-	C_Timer.After(4, TankHelper.UpdateTargetIcon)
+	TankHelper:After(4, TankHelper.UpdateTargetIcon, "UpdateTargetIcon Delay")
 	THCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
 	THCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
 	THCockpit:RegisterEvent("RAID_TARGET_UPDATE")
@@ -535,7 +536,7 @@ function TankHelper:InitFrames()
 		end
 	)
 
-	THStatus:SetPoint("Center", UIParent, "Center")
+	THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 	TankHelper:SetClampedToScreen(THStatus, true)
 	THStatus:SetMovable(true)
@@ -574,7 +575,6 @@ function TankHelper:InitFrames()
 	THStatus.text = THStatus:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	THStatus.text:SetText("")
 	THStatus.text:SetPoint("CENTER", THStatus, "CENTER", 0, 0)
-	frameDesign = CreateFrame("Frame", "frameDesign", UIParent)
 	THStatus:Hide()
 	function TankHelper:DesignThink()
 		THStatus:SetMovable(not TankHelper:GetConfig("fixposition", false))
@@ -654,7 +654,7 @@ function TankHelper:InitFrames()
 			end
 		end
 
-		C_Timer.After(0.33, TankHelper.DesignThink)
+		TankHelper:After(0.33, TankHelper.DesignThink, "DesignThink")
 	end
 
 	TankHelper:DesignThink()
@@ -707,7 +707,7 @@ end
 
 function TankHelper:UpdateTargetIcon()
 	TankHelper:TargetIconLogic()
-	C_Timer.After(0.1, TankHelper.UpdateTargetIcon)
+	TankHelper:After(0.28, TankHelper.UpdateTargetIcon, "UpdateTargetIcon Loop")
 end
 
 function TankHelper:SetStatusText()
@@ -814,7 +814,7 @@ end
 
 function TankHelper:UpdateDesign()
 	if InCombatLockdown() then
-		C_Timer.After(0.1, TankHelper.UpdateDesign)
+		TankHelper:After(0.16, TankHelper.UpdateDesign, "UpdateDesign InCombat")
 
 		return
 	end
@@ -925,7 +925,7 @@ function TankHelper:UpdateDesign()
 
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 	TankHelper:ResetIcons1()
-	C_Timer.After(
+	TankHelper:After(
 		1,
 		function()
 			if TankHelper:GetConfig("autoselect", 8) ~= -1 then
@@ -934,10 +934,10 @@ function TankHelper:UpdateDesign()
 					btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
 				end
 			end
-		end
+		end, "autoselect"
 	)
 
-	local point, parent, relativePoint, ofsx, ofsy = nil
+	local point, parent, relativePoint, ofsx, ofsy = nil, nil, nil, nil, nil
 	if TankHelper:GetConfig("combineall", false) then
 		point = THTAB["THCockpit" .. "point"]
 		parent = THTAB["THCockpit" .. "parent"]
@@ -1043,7 +1043,7 @@ function TankHelper:InitSetup()
 		TankHelper:UpdateDesign()
 		TankHelper:SetStatusText()
 	else
-		C_Timer.After(0.15, TankHelper.InitSetup)
+		TankHelper:After(0.15, TankHelper.InitSetup, "InitSetup")
 	end
 end
 
@@ -1066,7 +1066,7 @@ function TankHelper:UpdateThreatStatus(np, reset)
 
 	local _, _, scaledPercentage, _, _ = UnitDetailedThreatSituation("PLAYER", unit)
 	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
-		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage))
+		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage)) or 0
 		np.th_threat.text:SetText(scaledPercentage .. "%")
 		-- Green Red Yellow
 		if scaledPercentage > 100 then
@@ -1115,13 +1115,13 @@ function TankHelper:ThinkNameplates(force)
 			TankHelper:UpdateThreatStatus(np)
 		end
 
-		C_Timer.After(0.2, TankHelper.ThinkNameplates)
+		TankHelper:After(0.29, TankHelper.ThinkNameplates, "ThinkNameplates force")
 	else
-		C_Timer.After(1, TankHelper.ThinkNameplates)
+		TankHelper:After(1, TankHelper.ThinkNameplates, "ThinkNameplates else")
 	end
 end
 
-C_Timer.After(2, TankHelper.ThinkNameplates)
+TankHelper:After(2, TankHelper.ThinkNameplates, "ThinkNameplates Start")
 frame:SetScript(
 	"OnEvent",
 	function(self, event, ...)
@@ -1139,18 +1139,18 @@ frame:SetScript(
 				TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
 				np.th_threat.text:SetText("")
 				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-				C_Timer.After(
-					0.1,
+				TankHelper:After(
+					0.11,
 					function()
 						TankHelper:UpdateThreatStatus(np)
-					end
+					end, "UpdateThreatStatus 1"
 				)
 
-				C_Timer.After(
-					0.2,
+				TankHelper:After(
+					0.22,
 					function()
 						TankHelper:UpdateThreatStatus(np)
-					end
+					end, "UpdateThreatStatus 2"
 				)
 
 				table.insert(nps, np)
@@ -1158,3 +1158,43 @@ frame:SetScript(
 		end
 	end
 )
+
+if true then
+	TankHelper:After(
+		1,
+		function()
+			TankHelper:SetDebug(true)
+			if true then
+				TankHelper:DrawDebug(
+					"TankHelper DD 1",
+					function()
+						local text = ""
+						for i, v in pairs(TankHelper:GetCountAfter()) do
+							if v > 100 then
+								text = text .. v .. "x: " .. i .. "\n"
+							end
+						end
+
+						return text
+					end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 1200, 0
+				)
+			end
+
+			if true then
+				TankHelper:DrawDebug(
+					"TankHelper DD 2",
+					function()
+						local text = ""
+						for i, v in pairs(TankHelper:GetCountAfterEvents()) do
+							if v > 1 then
+								text = text .. v .. "x: " .. i .. "\n"
+							end
+						end
+
+						return text
+					end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 100, 0
+				)
+			end
+		end, "DEBUG"
+	)
+end

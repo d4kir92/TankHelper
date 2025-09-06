@@ -37,16 +37,16 @@ function TankHelper:GetLang()
 end
 
 function TankHelper:ToggleSettings()
-	if thset then
-		if thset:IsShown() then
-			thset:Hide()
-		else
-			thset:Show()
-		end
+	if thset == nil then return end
+	if thset:IsShown() then
+		thset:Hide()
+	else
+		thset:Show()
 	end
 end
 
 function TankHelper:CreateCategory(name)
+	if thset == nil then return end
 	if Y == 0 then
 		Y = Y - 5
 	else
@@ -65,6 +65,7 @@ function TankHelper:CreateCategory(name)
 end
 
 function TankHelper:CreateCheckBox(key, lstr, x, value, func)
+	if thset == nil then return end
 	THTAB = THTAB or {}
 	value = value or false
 	local val = THTAB[key]
@@ -92,6 +93,7 @@ function TankHelper:CreateCheckBox(key, lstr, x, value, func)
 end
 
 function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, percentage, func)
+	if thset == nil then return end
 	Y = Y - 15
 	local slider = {}
 	slider.key = key
