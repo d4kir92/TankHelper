@@ -243,23 +243,11 @@ function TankHelper:InitSettings()
 			["ONLYTHIRDPARTY"] = "ONLYTHIRDPARTY",
 			["ONLYTH"] = "ONLYTH",
 			["BOTH"] = "BOTH",
-		},
-		function(val)
-			print("CHANGED", val)
-		end
+		}
 	)
 
 	TankHelper:CreateCategory("nameplate")
-	TankHelper:CreateCheckBox(
-		"nameplatethreat",
-		"nameplatethreat",
-		5,
-		false,
-		function()
-			TankHelper:ThinkNameplates(true)
-		end
-	)
-
+	TankHelper:CreateCheckBox("nameplatethreat", "nameplatethreat", 5, false)
 	TankHelper:CreateCategory("status")
 	TankHelper:CreateCheckBox("hidestatus", "hidestatus", 5, true)
 	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
@@ -282,7 +270,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.54")
+		TankHelper:SetVersion(132362, "1.9.55")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

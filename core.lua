@@ -17,6 +17,7 @@ local markScale = 2
 local WMN = 8
 local WMIds = {}
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
+local targetGUID = UnitGUID("TARGET")
 function TankHelper:CreateButton(name, parent)
 	local btn = CreateFrame("Button", name, parent)
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -164,7 +165,7 @@ function TankHelper:InitFrame(frame, px, py)
 		"OnDragStart",
 		function(sel)
 			if not TankHelper:GetConfig("fixposition", false) then
-				frame:StartMoving()
+				sel:StartMoving()
 			else
 				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 			end
@@ -359,7 +360,7 @@ function TankHelper:InitFrames()
 
 			THWorldMarkers["THBtnRM" .. btnId]:RegisterForClicks("AnyUp", "AnyDown")
 			local btn = THWorldMarkers["THBtnRM" .. btnId]
-			function btn.tk_think()
+			function btn:updateMarker()
 				local btn1 = THWorldMarkers["THBtnRM" .. btnId].texture
 				local btn2 = THWorldMarkers["THBtnRM" .. btnId].tBG
 				if btnId > 0 then
@@ -400,11 +401,19 @@ function TankHelper:InitFrames()
 						btn2:SetAlpha(1)
 					end
 				end
-
-				TankHelper:After(0.39, btn.tk_think, "tk_think" .. btnId)
 			end
 
-			TankHelper:After(0.045 * btnId, btn.tk_think, "START tk_think" .. btnId)
+			btn:RegisterEvent("RAID_TARGET_UPDATE")
+			btn:RegisterEvent("GROUP_ROSTER_UPDATE")
+			btn:RegisterEvent("PLAYER_ENTERING_WORLD")
+			btn:SetScript(
+				"OnEvent",
+				function(_, event)
+					btn:updateMarker()
+				end
+			)
+
+			btn:updateMarker()
 			table.insert(ricons2, THWorldMarkers["THBtnRM" .. btnId])
 			Y = Y + 1
 		else
@@ -490,7 +499,6 @@ function TankHelper:InitFrames()
 		end
 	)
 
-	TankHelper:After(4, TankHelper.UpdateTargetIcon, "UpdateTargetIcon Delay")
 	THCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
 	THCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
 	THCockpit:RegisterEvent("RAID_TARGET_UPDATE")
@@ -514,7 +522,18 @@ function TankHelper:InitFrames()
 			end
 
 			if e == "PLAYER_TARGET_CHANGED" then
-				TankHelper:TargetIconLogic()
+				if not UnitCanAttack("TARGET", "PLAYER") then
+					targetGUID = nil
+				else
+					targetGUID = UnitGUID("TARGET")
+				end
+
+				TankHelper:After(
+					TankHelper:GetConfig("targettingdelay", 0.0),
+					function()
+						TankHelper:TargetIconLogic()
+					end, "Targetting Delay"
+				)
 			end
 
 			if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
@@ -640,61 +659,32 @@ function TankHelper:InitFrames()
 				THExtras:EnableMouse(true)
 			end
 		end
-
-		TankHelper:After(0.33, TankHelper.DesignThink, "DesignThink")
 	end
-
-	TankHelper:DesignThink()
 end
 
-local ts = 0
-local setts = 0
-local targetGUID = UnitGUID("TARGET")
 function TankHelper:TargetIconLogic()
 	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		local role = UnitGroupRolesAssigned("PLAYER")
-		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end -- Only Tank?
+		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end
 	end
 
-	if TankHelper:GetConfig("autoselect", 8) == -1 then return false end -- no Auto marking
-	-- No Unit
+	if TankHelper:GetConfig("autoselect", 8) == -1 then return false end
 	if not UnitExists("TARGET") then
-		ts = GetTime()
 		targetGUID = nil
 
-		return true
+		return false
 	end
 
-	if GetRaidTargetIndex("TARGET") ~= nil then return true end -- Already Has Raid Target Icon
-	-- if target is the current one
-	if targetGUID and UnitGUID("TARGET") == targetGUID and ts <= GetTime() and setts <= GetTime() then
+	if GetRaidTargetIndex("TARGET") ~= nil then return false end
+	if targetGUID and UnitGUID("TARGET") == targetGUID then
 		if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
-			setts = GetTime() + 0.1
 			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 		elseif not IsInRaid() then
 			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 		end
 	end
 
-	-- if is not enemy reset the time
-	if not UnitCanAttack("TARGET", "PLAYER") then
-		ts = GetTime()
-		targetGUID = nil
-	else
-		-- switch from enemy to enemy, then add delay
-		if targetGUID and UnitGUID("TARGET") ~= targetGUID then
-			ts = GetTime() + TankHelper:GetConfig("targettingdelay", 0.0)
-		end
-
-		targetGUID = UnitGUID("TARGET")
-	end
-
 	return true
-end
-
-function TankHelper:UpdateTargetIcon()
-	TankHelper:TargetIconLogic()
-	TankHelper:After(0.28, TankHelper.UpdateTargetIcon, "UpdateTargetIcon Loop")
 end
 
 function TankHelper:SetStatusText()
@@ -804,6 +794,10 @@ function TankHelper:UpdateDesign()
 		TankHelper:After(0.16, TankHelper.UpdateDesign, "UpdateDesign InCombat")
 
 		return
+	end
+
+	if TankHelper.DesignThink then
+		TankHelper:DesignThink()
 	end
 
 	local scalecockpit = TankHelper:GetConfig("scalecockpit", 1)
@@ -1034,10 +1028,11 @@ function TankHelper:InitSetup()
 	end
 end
 
+local nps = {}
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("NAME_PLATE_CREATED")
-frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+--frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+--frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 function TankHelper:UpdateThreatStatus(np, reset)
@@ -1055,7 +1050,6 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
 		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage)) or 0
 		np.th_threat.text:SetText(scaledPercentage .. "%")
-		-- Green Red Yellow
 		if scaledPercentage > 100 then
 			np.th_threat.texture:SetTexture("Interface\\COMMON\\Indicator-Yellow")
 			np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
@@ -1095,52 +1089,60 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	end
 end
 
-local nps = {}
-function TankHelper:ThinkNameplates(force)
-	if TankHelper:GetConfig("nameplatethreat", false) or force then
-		for btnId, np in pairs(nps) do
-			TankHelper:UpdateThreatStatus(np)
-		end
-
-		TankHelper:After(0.29, TankHelper.ThinkNameplates, "ThinkNameplates force")
-	else
-		TankHelper:After(1, TankHelper.ThinkNameplates, "ThinkNameplates else")
-	end
-end
-
-TankHelper:After(2, TankHelper.ThinkNameplates, "ThinkNameplates Start")
 frame:SetScript(
 	"OnEvent",
 	function(self, event, ...)
-		if event == "NAME_PLATE_CREATED" then
-			local np = select(1, ...)
-			if np.th_threat == nil then
-				np.th_threat = CreateFrame("FRAME", nil, np)
-				np.th_threat:SetSize(1, 1)
-				np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
-				-- np.th_threat:SetIgnoreParentAlpha( true )
-				np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
-				np.th_threat.texture:SetSize(42, 42)
-				np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-				np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-				TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
-				np.th_threat.text:SetText("")
-				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-				TankHelper:After(
-					0.11,
-					function()
-						TankHelper:UpdateThreatStatus(np)
-					end, "UpdateThreatStatus 1"
-				)
+		if TankHelper:GetConfig("nameplatethreat", false) then
+			if event == "NAME_PLATE_CREATED" then
+				local np = select(1, ...)
+				if np.th_threat == nil then
+					np.th_threat = CreateFrame("FRAME", nil, np)
+					np.th_threat:SetSize(1, 1)
+					np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
+					-- np.th_threat:SetIgnoreParentAlpha( true )
+					np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
+					np.th_threat.texture:SetSize(42, 42)
+					np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+					np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+					TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
+					np.th_threat.text:SetText("")
+					np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+					TankHelper:After(
+						0.11,
+						function()
+							TankHelper:UpdateThreatStatus(np)
+						end, "UpdateThreatStatus 1"
+					)
 
-				TankHelper:After(
-					0.22,
-					function()
-						TankHelper:UpdateThreatStatus(np)
-					end, "UpdateThreatStatus 2"
-				)
+					TankHelper:After(
+						0.22,
+						function()
+							TankHelper:UpdateThreatStatus(np)
+						end, "UpdateThreatStatus 2"
+					)
 
-				table.insert(nps, np)
+					local unit = np.unit
+					if np.UnitFrame ~= nil then
+						unit = np.UnitFrame.unit
+					end
+
+					if unit == nil then
+						unit = strlower(TankHelper:GetName(np))
+					end
+
+					nps[unit] = np
+					table.insert(nps, np)
+				end
+			elseif event == "UNIT_THREAT_LIST_UPDATE" then
+				local unit = select(1, ...)
+				if unit == nil then return end
+				if nps[unit] == nil then return end
+				TankHelper:UpdateThreatStatus(nps[unit])
+			elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
+				local unit = select(1, ...)
+				if unit == nil then return end
+				if nps[unit] == nil then return end
+				TankHelper:UpdateThreatStatus(nps[unit])
 			end
 		end
 	end
