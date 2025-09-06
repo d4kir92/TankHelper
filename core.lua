@@ -194,19 +194,6 @@ function TankHelper:InitFrame(frame, px, py)
 	frame.tBRt = frame:CreateTexture(nil, "BACKGROUND")
 	frame.tBRb = frame:CreateTexture(nil, "BACKGROUND")
 	frame.tBG = frame:CreateTexture(nil, "BACKGROUND")
-	frame:HookScript(
-		"OnUpdate",
-		function(sel, elapsed)
-			frame.hovered = frame.hovered or false
-			if frame.hovered ~= MouseIsOver(frame) then
-				frame.hovered = MouseIsOver(frame)
-				if TankHelper.UpdateColors then
-					TankHelper:UpdateColors(frame)
-				end
-			end
-		end
-	)
-
 	TankHelper:UpdateColors(frame)
 end
 
