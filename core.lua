@@ -1146,7 +1146,7 @@ frame:SetScript(
 	end
 )
 
-if true then
+if false then
 	TankHelper:After(
 		1,
 		function()
