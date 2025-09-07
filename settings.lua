@@ -270,7 +270,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.55")
+		TankHelper:SetVersion(132362, "1.9.56")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

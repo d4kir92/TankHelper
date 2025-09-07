@@ -1031,8 +1031,8 @@ end
 local nps = {}
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("NAME_PLATE_CREATED")
---frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
---frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 function TankHelper:UpdateThreatStatus(np, reset)
@@ -1133,12 +1133,7 @@ frame:SetScript(
 					nps[unit] = np
 					table.insert(nps, np)
 				end
-			elseif event == "UNIT_THREAT_LIST_UPDATE" then
-				local unit = select(1, ...)
-				if unit == nil then return end
-				if nps[unit] == nil then return end
-				TankHelper:UpdateThreatStatus(nps[unit])
-			elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
+			elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" or event == "NAME_PLATE_UNIT_ADDED" or event == "NAME_PLATE_UNIT_REMOVED" then
 				local unit = select(1, ...)
 				if unit == nil then return end
 				if nps[unit] == nil then return end
