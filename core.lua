@@ -1035,6 +1035,7 @@ frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 function TankHelper:UpdateThreatStatus(np, reset)
 	if np.th_threat == nil then return end
 	local unit = np.unit
@@ -1138,6 +1139,10 @@ frame:SetScript(
 				if unit == nil then return end
 				if nps[unit] == nil then return end
 				TankHelper:UpdateThreatStatus(nps[unit])
+			elseif event == "PLAYER_REGEN_ENABLED" then
+				for i, np in pairs(nps) do
+					TankHelper:UpdateThreatStatus(np)
+				end
 			end
 		end
 	end
