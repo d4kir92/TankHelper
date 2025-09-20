@@ -1134,12 +1134,12 @@ frame:SetScript(
 					nps[unit] = np
 					table.insert(nps, np)
 				end
-			elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" or event == "NAME_PLATE_UNIT_ADDED" or event == "NAME_PLATE_UNIT_REMOVED" then
+			elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
 				local unit = select(1, ...)
 				if unit == nil then return end
 				if nps[unit] == nil then return end
 				TankHelper:UpdateThreatStatus(nps[unit])
-			elseif event == "PLAYER_REGEN_ENABLED" then
+			elseif event == "PLAYER_REGEN_ENABLED" or event == "NAME_PLATE_UNIT_REMOVED" or event == "NAME_PLATE_UNIT_ADDED" then
 				for i, np in pairs(nps) do
 					TankHelper:UpdateThreatStatus(np)
 				end
