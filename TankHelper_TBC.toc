@@ -1,5 +1,5 @@
 ## Interface: 20505
-## Version: 1.9.67
+## Version: 1.9.68
 ## Title: T|cff3FC7EBank|rH|cff3FC7EBelper|r |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
 ## Notes-deDE: Raid Symbole und pull timer
