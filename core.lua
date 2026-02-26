@@ -19,7 +19,7 @@ local WMIds = {}
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 local targetGUID = UnitGUID("TARGET")
 function TankHelper:CreateButton(name, parent)
-	local btn = CreateFrame("Button", name, parent)
+	local btn = CreateFrame("Button", name, parent, "SecureActionButtonTemplate")
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	--btn.text:SetFont(STANDARD_TEXT_FONT, 11, "")
 	btn.text:SetText("")
@@ -296,16 +296,19 @@ function TankHelper:InitFrames()
 		THTargetMarkers["btnM" .. btnId].texture:SetSize(iconsize, iconsize)
 		THTargetMarkers["btnM" .. btnId].texture:SetPoint("CENTER", THTargetMarkers["btnM" .. btnId], "CENTER", 0, 0)
 		THTargetMarkers["btnM" .. btnId]:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-		THTargetMarkers["btnM" .. btnId]:SetScript(
+		THTargetMarkers["btnM" .. btnId]:SetAttribute("type", "macro")
+		THTargetMarkers["btnM" .. btnId]:SetAttribute("typerelease", "macro")
+		THTargetMarkers["btnM" .. btnId]:SetAttribute("macrotext", "/tm " .. btnId)
+		THTargetMarkers["btnM" .. btnId]:SetAttribute("pressAndHoldAction", "1")
+		THTargetMarkers["btnM" .. btnId]:HookScript(
 			"OnClick",
 			function(sel, btn, down)
 				if btn == "LeftButton" then
-					if btnId > 0 and GetRaidTargetIndex("TARGET") ~= btnId then
-						SetRaidTarget("TARGET", btnId)
-					else
-						SetRaidTarget("TARGET", 0)
-						TankHelper:UpdateRaidIcons()
-					end
+					pcall(
+						function()
+							TankHelper:UpdateRaidIcons()
+						end
+					)
 				elseif btn == "RightButton" and btnId > 0 then
 					TankHelper:ResetIcons1()
 					if TankHelper:GetConfig("autoselect", 8) ~= btnId then
@@ -517,11 +520,7 @@ function TankHelper:InitFrames()
 				end
 			end
 
-			if (e == "PLAYER_ENTERING_WORLD" or e == "PLAYER_TARGET_CHANGED" or e == "RAID_TARGET_UPDATE") and (not UnitExists("TARGET") or not UnitCanAttack("TARGET", "PLAYER")) then
-				TankHelper:UpdateRaidIcons()
-			end
-
-			if e == "PLAYER_TARGET_CHANGED" then
+			if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
 				if not UnitCanAttack("TARGET", "PLAYER") then
 					targetGUID = nil
 				else
@@ -662,6 +661,10 @@ function TankHelper:InitFrames()
 	end
 end
 
+function TankHelper:IsSafeUnit(unit)
+	return pcall(UnitExists, unit)
+end
+
 function TankHelper:TargetIconLogic()
 	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 		local role = UnitGroupRolesAssigned("PLAYER")
@@ -676,7 +679,7 @@ function TankHelper:TargetIconLogic()
 	end
 
 	if GetRaidTargetIndex("TARGET") ~= nil then return false end
-	if targetGUID and UnitGUID("TARGET") == targetGUID then
+	if targetGUID and TankHelper:IsSafeUnit("PLAYER") and TankHelper:IsSafeUnit("TARGET") and UnitGUID("TARGET") == targetGUID then
 		if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 		elseif not IsInRaid() then
