@@ -1,12 +1,21 @@
 ## Interface: 40402
-## Version: 1.9.71
-## Title: T|cff3FC7EBank|rH|cff3FC7EBelper|r |T132362:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
+## Version: 1.9.72
+## Title: TankHelper |T132362:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
 ## Notes-deDE: Raid Symbole und pull timer
 ## Notes-ruRU: Рейдовые метки, таймер атаки и т.п.
-## Author: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
-## Category: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
-## X-Category: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
+## Author: D4KiR |T132115:16:16:0:0|t
+## Category: Dungeons & Raids
+## Category-deDE: Dungeons & Schlachtzüge
+## Category-esES: Mazmorras y bandas
+## Category-esMX: Calabozos y bandas
+## Category-frFR: Donjons et raids
+## Category-itIT: Spedizioni e incursioni
+## Category-koKR: 던전 및 공격대
+## Category-ptBR: Masmorras e Raides
+## Category-ruRU: Подземелья и рейды
+## Category-zhCN: 地下城和团队副本
+## Category-zhTW: 地城與團隊
 ## DefaultState: enabled
 ## SavedVariables: THTAB
 ## SavedVariablesPerCharacter: THTABPC

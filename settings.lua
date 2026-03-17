@@ -124,7 +124,7 @@ function TankHelper:InitSettings()
 			["name"] = "TankHelper",
 			["icon"] = 132362,
 			["dbtab"] = THTAB,
-			["vTT"] = {{"|T132362:16:16:0:0|t T|cff3FC7EBank|rH|cff3FC7EBelper|r", "v|cff3FC7EB" .. TankHelper:GetVersion()}, {TankHelper:Trans("LID_LEFTCLICK"), TankHelper:Trans("LID_OPENSETTINGS")}, {TankHelper:Trans("LID_RIGHTCLICK"), TankHelper:Trans("LID_HIDEMINIMAPBUTTON")}},
+			["vTT"] = {{"|T132362:16:16:0:0|t TankHelper", "v" .. TankHelper:GetVersion()}, {TankHelper:Trans("LID_LEFTCLICK"), TankHelper:Trans("LID_OPENSETTINGS")}, {TankHelper:Trans("LID_RIGHTCLICK"), TankHelper:Trans("LID_HIDEMINIMAPBUTTON")}},
 			["funcL"] = function()
 				TankHelper:ToggleSettings()
 			end,
@@ -148,7 +148,7 @@ function TankHelper:InitSettings()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("|T132362:16:16:0:0|t T|cff3FC7EBank|rH|cff3FC7EBelper|r by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", TankHelper:GetVersion())
+			["title"] = format("|T132362:16:16:0:0|t TankHelper by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", TankHelper:GetVersion())
 		}
 	)
 
@@ -270,7 +270,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.71")
+		TankHelper:SetVersion(132362, "1.9.72")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
