@@ -67,7 +67,7 @@ function TankHelper:PullIn(t)
 			end
 		end
 
-		if (TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
+		if not TankHelper:GetWoWBuild() ~= "RETAIL" and ((TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs")) then
 			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
