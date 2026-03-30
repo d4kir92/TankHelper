@@ -37,11 +37,15 @@ end
 
 function TankHelper:RW(msg)
 	local SendChatMessage = getglobal("SendChatMessage")
-	if TankHelper:GetWoWBuild() ~= "RETAIL" and IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
+	if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
 		SendChatMessage(msg, "RAID_WARNING")
 	elseif not InCombatLockdown() then
 		if TankHelper:ShouldShow() then
-			SendChatMessage(msg, "PARTY")
+			if IsInRaid() then
+				SendChatMessage(msg, "RAID")
+			else
+				SendChatMessage(msg, "PARTY")
+			end
 		else
 			TankHelper:MSG(TankHelper:Trans("LID_youmustbeinagrouporaraid", true) .. "!")
 		end
@@ -67,7 +71,7 @@ function TankHelper:PullIn(t)
 			end
 		end
 
-		if not TankHelper:GetWoWBuild() ~= "RETAIL" and ((TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs")) then
+		if TankHelper:GetWoWBuild() ~= "RETAIL" and ((TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs")) then
 			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
 				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
 			end
