@@ -809,15 +809,19 @@ function TankHelper:UpdateDesign()
 
 	local scalecockpit = TankHelper:GetConfig("scalecockpit", 1)
 	local scalestatus = TankHelper:GetConfig("scalestatus", 1)
-	if THTAB["obr"] ~= nil and THTAB["obr"] >= 16 then
-		THTAB["obr"] = 6
+	if THTAB["obr"] ~= nil then
+		if THTAB["obr"] >= 12 then
+			THTAB["obr"] = 12
+		elseif THTAB["obr"] <= 3 then
+			THTAB["obr"] = 3
+		end
 	end
 
-	if THTAB["ibr"] ~= nil and THTAB["ibr"] >= 16 then
+	if THTAB["ibr"] ~= nil and THTAB["ibr"] >= 12 then
 		THTAB["ibr"] = 1
 	end
 
-	if THTAB["cbr"] ~= nil and THTAB["cbr"] >= 16 then
+	if THTAB["cbr"] ~= nil and THTAB["cbr"] >= 12 then
 		THTAB["cbr"] = 3
 	end
 

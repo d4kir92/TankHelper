@@ -183,7 +183,7 @@ function TankHelper:InitSettings()
 	TankHelper:CreateCheckBox("showalways", "showalways", 5, false)
 	TankHelper:CreateCheckBox("combineall", "combineall", 5, false, TankHelper.UpdateDesign)
 	TankHelper:CreateCheckBox("fixposition", "fixposition", 5, false)
-	TankHelper:AddSlider("obr", "obr", 6.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
+	TankHelper:AddSlider("obr", "obr", 6.0, 3.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("ibr", "ibr", 1.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("cbr", "cbr", 3.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
 	TankHelper:AddSlider("iconsize", "iconsize", 16.0, 8.0, 64.0, 2, 0, nil, TankHelper.UpdateDesign)
@@ -270,7 +270,7 @@ function frame:OnEvent(event)
 			THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL"
 		end
 
-		TankHelper:SetVersion(132362, "1.9.74")
+		TankHelper:SetVersion(132362, "1.9.75")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
