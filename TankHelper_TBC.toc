@@ -1,5 +1,5 @@
 ## Interface: 20505
-## Version: 1.9.76
+## Version: 1.9.77
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
 ## Notes-deDE: Raid Symbole und pull timer
