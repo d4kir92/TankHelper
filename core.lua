@@ -18,7 +18,7 @@ local WMN = 8
 local WMIds = {}
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 local targetGUID = UnitGUID("TARGET")
-function TankHelper:CreateButton(name, parent)
+function TankHelper:CreateInvisibleButton(name, parent)
 	local btn = CreateFrame("Button", name, parent, "SecureActionButtonTemplate")
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	--btn.text:SetFont(STANDARD_TEXT_FONT, 11, "")
@@ -281,7 +281,7 @@ function TankHelper:InitFrames()
 	TankHelper:InitFrame(THExtras, 0, -80)
 	local Y = 1
 	for btnId = 0, 8 do
-		THTargetMarkers["btnM" .. btnId] = TankHelper:CreateButton("btnM" .. btnId, THTargetMarkers)
+		THTargetMarkers["btnM" .. btnId] = TankHelper:CreateInvisibleButton("btnM" .. btnId, THTargetMarkers)
 		THTargetMarkers["btnM" .. btnId]:SetPoint("TOPLEFT", THTargetMarkers, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
 		THTargetMarkers["btnM" .. btnId]:SetSize(iconbtn, iconbtn)
 		THTargetMarkers["btnM" .. btnId].bgtexture = THTargetMarkers["btnM" .. btnId]:CreateTexture(nil, "OVERLAY")
@@ -429,7 +429,7 @@ function TankHelper:InitFrames()
 
 		if btnId <= #pt then
 			local PullName = "btnPull" .. btnId
-			THExtras[PullName] = TankHelper:CreateButton(PullName, THExtras)
+			THExtras[PullName] = TankHelper:CreateInvisibleButton(PullName, THExtras)
 			THExtras[PullName]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
 			THExtras[PullName]:SetSize(iconbtn, iconbtn)
 			THExtras[PullName]:SetText(pt[btnId])
@@ -442,7 +442,7 @@ function TankHelper:InitFrames()
 		end
 	end
 
-	THExtras["btnReadycheck"] = TankHelper:CreateButton("btnReadycheck", THExtras)
+	THExtras["btnReadycheck"] = TankHelper:CreateInvisibleButton("btnReadycheck", THExtras)
 	if IsRaidMarkerActive or InitiateRolePoll then
 		THExtras["btnReadycheck"]:SetSize(50, iconbtn)
 		THExtras["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 6))
@@ -459,7 +459,7 @@ function TankHelper:InitFrames()
 	)
 
 	if InitiateRolePoll then
-		THExtras["btnRolepoll"] = TankHelper:CreateButton("btnRolepoll", THExtras)
+		THExtras["btnRolepoll"] = TankHelper:CreateInvisibleButton("btnRolepoll", THExtras)
 		THExtras["btnRolepoll"]:SetSize(50, iconbtn)
 		THExtras["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
 		THExtras["btnRolepoll"]:SetScript(
@@ -470,7 +470,7 @@ function TankHelper:InitFrames()
 		)
 	end
 
-	THExtras["btnDiscord"] = TankHelper:CreateButton("btnDiscord", THExtras)
+	THExtras["btnDiscord"] = TankHelper:CreateInvisibleButton("btnDiscord", THExtras)
 	THExtras["btnDiscord"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
 	THExtras["btnDiscord"]:SetSize(iconbtn, iconbtn)
 	THExtras["btnDiscord"]:SetText("D")
