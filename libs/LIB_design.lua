@@ -13,7 +13,6 @@ function TankHelper:CreateText(tab)
 	tab.color[3] = tab.color[3] or 1
 	tab.color[4] = tab.color[4] or 1
 	text:SetTextColor(tab.color[1], tab.color[2], tab.color[3], tab.color[4])
-
 	return text
 end
 
@@ -27,24 +26,18 @@ function TankHelper:CreateCheckBox(tab)
 	CB:SetPoint("TOPLEFT", tab.x, tab.y)
 	CB.tooltip = tab.tooltip
 	CB:SetChecked(tab.checked)
-	CB:SetScript(
-		"OnClick",
-		function(sel)
-			local status = CB:GetChecked()
-			sel:SetChecked(status)
-			THTAB[tab.dbvalue] = status
-			if tab.func ~= nil then
-				tab:func()
-			end
-		end
-	)
+	CB:SetScript("OnClick", function(sel)
+		local status = CB:GetChecked()
+		sel:SetChecked(status)
+		THTAB[tab.dbvalue] = status
+		if tab.func ~= nil then tab:func() end
+	end)
 
 	tab.frame = CB
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
 	tab.color = tab.color or {1, 1, 1, 1}
 	CB.text = TankHelper:CreateText(tab)
-
 	return CB
 end
 
@@ -80,7 +73,6 @@ function TankHelper:CTexture(frame, tab)
 		tab.y = tab.y or 0
 		texture:SetPoint(tab.align or "TOPLEFT", frame, tab.x, tab.y)
 	end
-
 	return texture
 end
 
@@ -122,6 +114,5 @@ function TankHelper:CreateF(tab)
 		frame:oldSetSize(w, h)
 		self.texture:SetSize(w, h)
 	end
-
 	return frame
 end

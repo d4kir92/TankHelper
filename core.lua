@@ -27,7 +27,6 @@ function TankHelper:CreateInvisibleButton(name, parent)
 	function btn:SetText(text)
 		btn.text:SetText(text)
 	end
-
 	return btn
 end
 
@@ -61,34 +60,24 @@ function TankHelper:PullIn(t)
 				DEFAULT_CHAT_FRAME.editBox:SetText("/pull " .. t)
 				ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 			else
-				if C_PartyInfo and C_PartyInfo.DoCountdown then
-					C_PartyInfo.DoCountdown(t)
-				end
+				if C_PartyInfo and C_PartyInfo.DoCountdown then C_PartyInfo.DoCountdown(t) end
 			end
 		else
-			if C_PartyInfo and C_PartyInfo.DoCountdown then
-				C_PartyInfo.DoCountdown(t)
-			end
+			if C_PartyInfo and C_PartyInfo.DoCountdown then C_PartyInfo.DoCountdown(t) end
 		end
 
 		if TankHelper:GetWoWBuild() ~= "RETAIL" and ((TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "AUTO" and (not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs"))) or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "BOTH" or TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs")) then
-			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then
-				TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.")
-			end
-
+			if TankHelper:GetConfig("PULLTIMERMODE", "AUTO") == "ONLYTHIRDPARTY" and not TankHelper:IsAddOnLoaded("DBM-Core") and not TankHelper:IsAddOnLoaded("BigWigs") then TankHelper:MSG("Found no Thirdparty countdown addon" .. "!" .. " Using Default timer.") end
 			TankHelper:RW(format(TankHelper:Trans("LID_pullinx", TankHelper:GetLang()), t))
 			for cou = 1, t do
-				TankHelper:After(
-					cou,
-					function()
-						local leftT = t - cou
-						if leftT == 0 then
-							TankHelper:RW(TankHelper:Trans("LID_go", TankHelper:GetLang()) .. "!")
-						else
-							TankHelper:RW(leftT)
-						end
-					end, "PULLIN"
-				)
+				TankHelper:After(cou, function()
+					local leftT = t - cou
+					if leftT == 0 then
+						TankHelper:RW(TankHelper:Trans("LID_go", TankHelper:GetLang()) .. "!")
+					else
+						TankHelper:RW(leftT)
+					end
+				end, "PULLIN")
 			end
 		end
 	else
@@ -98,9 +87,7 @@ end
 
 function TankHelper:ResetIcons1()
 	for btnId, v in pairs(ricons1) do
-		if THTargetMarkers:IsShown() then
-			v.bgtexture:SetTexture("")
-		end
+		if THTargetMarkers:IsShown() then v.bgtexture:SetTexture("") end
 	end
 end
 
@@ -130,31 +117,21 @@ function TankHelper:CheckUnit(unit, dead, health, power)
 		local can = true
 		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 			local role = UnitGroupRolesAssigned(unit)
-			if role ~= "HEALER" then
-				can = false
-			end
+			if role ~= "HEALER" then can = false end
 		end
 
 		if can then
 			local hpercent = UnitHealth(unit) / UnitHealthMax(unit)
-			if hpercent < health then
-				health = hpercent
-			end
-
+			if hpercent < health then health = hpercent end
 			local powertype = UnitPowerType(unit)
 			if powertype == 0 and UnitPower(unit) > 0 and UnitPowerMax(unit) > 0 then
 				local ppercent = UnitPower(unit) / UnitPowerMax(unit)
-				if ppercent < power then
-					power = ppercent
-				end
+				if ppercent < power then power = ppercent end
 			end
 		end
 
-		if UnitIsDead(unit) then
-			dead = true
-		end
+		if UnitIsDead(unit) then dead = true end
 	end
-
 	return dead, health, power
 end
 
@@ -165,34 +142,28 @@ function TankHelper:InitFrame(frame, px, py)
 	frame:SetMovable(true)
 	frame:EnableMouse(true)
 	frame:RegisterForDrag("LeftButton")
-	frame:SetScript(
-		"OnDragStart",
-		function(sel)
-			if not TankHelper:GetConfig("fixposition", false) then
-				sel:StartMoving()
-			else
-				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
-			end
+	frame:SetScript("OnDragStart", function(sel)
+		if not TankHelper:GetConfig("fixposition", false) then
+			sel:StartMoving()
+		else
+			TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 		end
-	)
+	end)
 
-	frame:SetScript(
-		"OnDragStop",
-		function(sel)
-			if not TankHelper:GetConfig("fixposition", false) then
-				local name = TankHelper:GetName(frame)
-				frame:StopMovingOrSizing()
-				local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
-				THTAB[name .. "point"] = point
-				THTAB[name .. "parent"] = parent
-				THTAB[name .. "relativePoint"] = relativePoint
-				THTAB[name .. "ofsx"] = ofsx
-				THTAB[name .. "ofsy"] = ofsy
-			else
-				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
-			end
+	frame:SetScript("OnDragStop", function(sel)
+		if not TankHelper:GetConfig("fixposition", false) then
+			local name = TankHelper:GetName(frame)
+			frame:StopMovingOrSizing()
+			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+			THTAB[name .. "point"] = point
+			THTAB[name .. "parent"] = parent
+			THTAB[name .. "relativePoint"] = relativePoint
+			THTAB[name .. "ofsx"] = ofsx
+			THTAB[name .. "ofsy"] = ofsy
+		else
+			TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 		end
-	)
+	end)
 
 	frame.tBRl = frame:CreateTexture(nil, "BACKGROUND")
 	frame.tBRr = frame:CreateTexture(nil, "BACKGROUND")
@@ -304,29 +275,19 @@ function TankHelper:InitFrames()
 		THTargetMarkers["btnM" .. btnId]:SetAttribute("typerelease", "macro")
 		THTargetMarkers["btnM" .. btnId]:SetAttribute("macrotext", "/tm " .. btnId)
 		THTargetMarkers["btnM" .. btnId]:SetAttribute("pressAndHoldAction", "1")
-		THTargetMarkers["btnM" .. btnId]:HookScript(
-			"OnClick",
-			function(sel, btn, down)
-				if btn == "LeftButton" then
-					pcall(
-						function()
-							TankHelper:UpdateRaidIcons()
-						end
-					)
-				elseif btn == "RightButton" and btnId > 0 then
-					TankHelper:ResetIcons1()
-					if TankHelper:GetConfig("autoselect", 8) ~= btnId then
-						if THTargetMarkers:IsShown() then
-							sel.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-						end
-
-						THTAB["autoselect"] = btnId
-					else
-						THTAB["autoselect"] = -1
-					end
+		THTargetMarkers["btnM" .. btnId]:HookScript("OnClick", function(sel, btn, down)
+			if btn == "LeftButton" then
+				pcall(function() TankHelper:UpdateRaidIcons() end)
+			elseif btn == "RightButton" and btnId > 0 then
+				TankHelper:ResetIcons1()
+				if TankHelper:GetConfig("autoselect", 8) ~= btnId then
+					if THTargetMarkers:IsShown() then sel.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
+					THTAB["autoselect"] = btnId
+				else
+					THTAB["autoselect"] = -1
 				end
 			end
-		)
+		end)
 
 		table.insert(ricons1, THTargetMarkers["btnM" .. btnId])
 		if IsRaidMarkerActive and btnId <= WMN then
@@ -349,10 +310,7 @@ function TankHelper:InitFrames()
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetPoint("BOTTOMLEFT", THWorldMarkers["THBtnRM" .. btnId], "BOTTOMLEFT", 0, 0)
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetDrawLayer("ARTWORK", 2)
 			THWorldMarkers["THBtnRM" .. btnId].tBG:SetVertexColor(1, 1, 1, 1)
-			if THWorldMarkers["THBtnRM" .. btnId].SetMouseClickEnabled then
-				THWorldMarkers["THBtnRM" .. btnId]:SetMouseClickEnabled(true)
-			end
-
+			if THWorldMarkers["THBtnRM" .. btnId].SetMouseClickEnabled then THWorldMarkers["THBtnRM" .. btnId]:SetMouseClickEnabled(true) end
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("type1", "worldmarker")
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("type2", "worldmarker")
 			THWorldMarkers["THBtnRM" .. btnId]:SetAttribute("marker1", wms[btnId])
@@ -413,13 +371,7 @@ function TankHelper:InitFrames()
 			btn:RegisterEvent("RAID_TARGET_UPDATE")
 			btn:RegisterEvent("GROUP_ROSTER_UPDATE")
 			btn:RegisterEvent("PLAYER_ENTERING_WORLD")
-			btn:SetScript(
-				"OnEvent",
-				function(_, event)
-					btn:updateMarker()
-				end
-			)
-
+			btn:SetScript("OnEvent", function(_, event) btn:updateMarker() end)
 			btn:updateMarker()
 			table.insert(ricons2, THWorldMarkers["THBtnRM" .. btnId])
 			Y = Y + 1
@@ -433,12 +385,7 @@ function TankHelper:InitFrames()
 			THExtras[PullName]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
 			THExtras[PullName]:SetSize(iconbtn, iconbtn)
 			THExtras[PullName]:SetText(pt[btnId])
-			THExtras[PullName]:SetScript(
-				"OnClick",
-				function(sel, btn, down)
-					TankHelper:PullIn(pt[btnId])
-				end
-			)
+			THExtras[PullName]:SetScript("OnClick", function(sel, btn, down) TankHelper:PullIn(pt[btnId]) end)
 		end
 	end
 
@@ -451,60 +398,41 @@ function TankHelper:InitFrames()
 		THExtras["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 12))
 	end
 
-	THExtras["btnReadycheck"]:SetScript(
-		"OnClick",
-		function(sel, btn, down)
-			DoReadyCheck()
-		end
-	)
-
+	THExtras["btnReadycheck"]:SetScript("OnClick", function(sel, btn, down) DoReadyCheck() end)
 	if InitiateRolePoll then
 		THExtras["btnRolepoll"] = TankHelper:CreateInvisibleButton("btnRolepoll", THExtras)
 		THExtras["btnRolepoll"]:SetSize(50, iconbtn)
 		THExtras["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
-		THExtras["btnRolepoll"]:SetScript(
-			"OnClick",
-			function(sel, btn, down)
-				InitiateRolePoll()
-			end
-		)
+		THExtras["btnRolepoll"]:SetScript("OnClick", function(sel, btn, down) InitiateRolePoll() end)
 	end
 
 	THExtras["btnDiscord"] = TankHelper:CreateInvisibleButton("btnDiscord", THExtras)
 	THExtras["btnDiscord"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
 	THExtras["btnDiscord"]:SetSize(iconbtn, iconbtn)
 	THExtras["btnDiscord"]:SetText("D")
-	THExtras["btnDiscord"]:SetScript(
-		"OnClick",
-		function(sel, btn, down)
-			local s = CreateFrame("Frame", nil, UIParent)
-			s:SetSize(300, 2 * iconbtn + 2 * 10)
-			s:SetPoint("CENTER")
-			s.texture = s:CreateTexture(nil, "BACKGROUND")
-			s.texture:SetColorTexture(0, 0, 0, 0.5)
-			s.texture:SetAllPoints(s)
-			s.text = s:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-			s.text:SetText("Feedback")
-			s.text:SetPoint("CENTER", s, "TOP", 0, -10)
-			local eb = CreateFrame("EditBox", "logEditBox", s, "InputBoxTemplate")
-			eb:SetFrameStrata("DIALOG")
-			eb:SetSize(280, iconbtn)
-			eb:SetAutoFocus(false)
-			eb:SetText("https://discord.gg/Ymv5MamPd5")
-			eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
-			s.close = TankHelper:CreateButton("closediscord", s)
-			s.close:SetFrameStrata("DIALOG")
-			s.close:SetPoint("TOPLEFT", 300 - 10 - iconbtn, -10)
-			s.close:SetSize(iconbtn, iconbtn)
-			s.close:SetText("X")
-			s.close:SetScript(
-				"OnClick",
-				function(se, sbtn, sdown)
-					s:Hide()
-				end
-			)
-		end
-	)
+	THExtras["btnDiscord"]:SetScript("OnClick", function(sel, btn, down)
+		local s = CreateFrame("Frame", nil, UIParent)
+		s:SetSize(300, 2 * iconbtn + 2 * 10)
+		s:SetPoint("CENTER")
+		s.texture = s:CreateTexture(nil, "BACKGROUND")
+		s.texture:SetColorTexture(0, 0, 0, 0.5)
+		s.texture:SetAllPoints(s)
+		s.text = s:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		s.text:SetText("Feedback")
+		s.text:SetPoint("CENTER", s, "TOP", 0, -10)
+		local eb = CreateFrame("EditBox", "logEditBox", s, "InputBoxTemplate")
+		eb:SetFrameStrata("DIALOG")
+		eb:SetSize(280, iconbtn)
+		eb:SetAutoFocus(false)
+		eb:SetText("https://discord.gg/Ymv5MamPd5")
+		eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
+		s.close = TankHelper:CreateButton("closediscord", s)
+		s.close:SetFrameStrata("DIALOG")
+		s.close:SetPoint("TOPLEFT", 300 - 10 - iconbtn, -10)
+		s.close:SetSize(iconbtn, iconbtn)
+		s.close:SetText("X")
+		s.close:SetScript("OnClick", function(se, sbtn, sdown) s:Hide() end)
+	end)
 
 	THCockpit:RegisterEvent("PLAYER_ENTERING_WORLD")
 	THCockpit:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -514,36 +442,24 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("GROUP_ROSTER_UPDATE")
 	THCockpit:RegisterEvent("RAID_ROSTER_UPDATE")
 	THCockpit:RegisterEvent("ADDON_LOADED")
-	THCockpit:HookScript(
-		"OnEvent",
-		function(sel, e, ...)
-			if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
-				local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
-				if THTargetMarkers:IsShown() then
-					btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-				end
-			end
-
-			if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
-				if not UnitCanAttack("TARGET", "PLAYER") then
-					targetGUID = nil
-				else
-					targetGUID = UnitGUID("TARGET")
-				end
-
-				TankHelper:After(
-					TankHelper:GetConfig("targettingdelay", 0.0),
-					function()
-						TankHelper:TargetIconLogic()
-					end, "Targetting Delay"
-				)
-			end
-
-			if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then
-				TankHelper:SetStatusText()
-			end
+	THCockpit:HookScript("OnEvent", function(sel, e, ...)
+		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
+			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
+			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
 		end
-	)
+
+		if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
+			if not UnitCanAttack("TARGET", "PLAYER") then
+				targetGUID = nil
+			else
+				targetGUID = UnitGUID("TARGET")
+			end
+
+			TankHelper:After(TankHelper:GetConfig("targettingdelay", 0.0), function() TankHelper:TargetIconLogic() end, "Targetting Delay")
+		end
+
+		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then TankHelper:SetStatusText() end
+	end)
 
 	THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
@@ -551,33 +467,27 @@ function TankHelper:InitFrames()
 	THStatus:SetMovable(true)
 	THStatus:EnableMouse(true)
 	THStatus:RegisterForDrag("LeftButton")
-	THStatus:SetScript(
-		"OnDragStart",
-		function(sel)
-			if not TankHelper:GetConfig("fixposition", false) then
-				THStatus:StartMoving()
-			else
-				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
-			end
+	THStatus:SetScript("OnDragStart", function(sel)
+		if not TankHelper:GetConfig("fixposition", false) then
+			THStatus:StartMoving()
+		else
+			TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 		end
-	)
+	end)
 
-	THStatus:SetScript(
-		"OnDragStop",
-		function(sel)
-			if not TankHelper:GetConfig("fixposition", false) then
-				THStatus:StopMovingOrSizing()
-				local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
-				THTAB["THStatus" .. "point"] = point
-				THTAB["THStatus" .. "parent"] = parent
-				THTAB["THStatus" .. "relativePoint"] = relativePoint
-				THTAB["THStatus" .. "ofsx"] = ofsx
-				THTAB["THStatus" .. "ofsy"] = ofsy
-			else
-				TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
-			end
+	THStatus:SetScript("OnDragStop", function(sel)
+		if not TankHelper:GetConfig("fixposition", false) then
+			THStatus:StopMovingOrSizing()
+			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+			THTAB["THStatus" .. "point"] = point
+			THTAB["THStatus" .. "parent"] = parent
+			THTAB["THStatus" .. "relativePoint"] = relativePoint
+			THTAB["THStatus" .. "ofsx"] = ofsx
+			THTAB["THStatus" .. "ofsy"] = ofsy
+		else
+			TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
 		end
-	)
+	end)
 
 	THStatus.texture = THStatus:CreateTexture(nil, "BACKGROUND")
 	THStatus.texture:SetAllPoints(THStatus)
@@ -678,7 +588,6 @@ function TankHelper:TargetIconLogic()
 	if TankHelper:GetConfig("autoselect", 8) == -1 then return false end
 	if not UnitExists("TARGET") then
 		targetGUID = nil
-
 		return false
 	end
 
@@ -690,7 +599,6 @@ function TankHelper:TargetIconLogic()
 			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 		end
 	end
-
 	return true
 end
 
@@ -730,20 +638,11 @@ function TankHelper:SetStatusText()
 			end
 		end
 
-		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
-			text = format("%s: %s", TankHelper:Trans("LID_healer", TankHelper:GetLang()), text)
-		end
-
+		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then text = format("%s: %s", TankHelper:Trans("LID_healer", TankHelper:GetLang()), text) end
 		THStatus.text:SetText(text)
 		if THStatus.texture.SetColorTexture and THStatusColor[1] and THStatusColor[2] and THStatusColor[3] then
-			if THStatusColor[4] > 1 then
-				THStatusColor[4] = 1
-			end
-
-			if THStatusColor[4] < 0 then
-				THStatusColor[4] = 0
-			end
-
+			if THStatusColor[4] > 1 then THStatusColor[4] = 1 end
+			if THStatusColor[4] < 0 then THStatusColor[4] = 0 end
 			THStatus.texture:SetColorTexture(THStatusColor[1], THStatusColor[2], THStatusColor[3], THStatusColor[4])
 		end
 	end
@@ -799,14 +698,10 @@ end
 function TankHelper:UpdateDesign()
 	if InCombatLockdown() then
 		TankHelper:After(0.16, TankHelper.UpdateDesign, "UpdateDesign InCombat")
-
 		return
 	end
 
-	if TankHelper.DesignThink then
-		TankHelper:DesignThink()
-	end
-
+	if TankHelper.DesignThink then TankHelper:DesignThink() end
 	local scalecockpit = TankHelper:GetConfig("scalecockpit", 1)
 	local scalestatus = TankHelper:GetConfig("scalestatus", 1)
 	if THTAB["obr"] ~= nil then
@@ -817,14 +712,8 @@ function TankHelper:UpdateDesign()
 		end
 	end
 
-	if THTAB["ibr"] ~= nil and THTAB["ibr"] >= 12 then
-		THTAB["ibr"] = 1
-	end
-
-	if THTAB["cbr"] ~= nil and THTAB["cbr"] >= 12 then
-		THTAB["cbr"] = 3
-	end
-
+	if THTAB["ibr"] ~= nil and THTAB["ibr"] >= 12 then THTAB["ibr"] = 1 end
+	if THTAB["cbr"] ~= nil and THTAB["cbr"] >= 12 then THTAB["cbr"] = 3 end
 	obr = TankHelper:GetConfig("obr", 6) -- Outer Border
 	ibr = TankHelper:GetConfig("ibr", 1) -- Column Spacer
 	cbr = TankHelper:GetConfig("cbr", 3) -- Row Spacer
@@ -882,10 +771,7 @@ function TankHelper:UpdateDesign()
 
 	local bw = obr + (5 - 1) * (iconbtn + ibr)
 	local bsw = THExtras:GetWidth() - bw - obr - iconsize - ibr
-	if IsRaidMarkerActive or InitiateRolePoll then
-		bsw = bsw / 2
-	end
-
+	if IsRaidMarkerActive or InitiateRolePoll then bsw = bsw / 2 end
 	if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnReadycheck"]:Hide()
 	else
@@ -917,17 +803,12 @@ function TankHelper:UpdateDesign()
 
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
 	TankHelper:ResetIcons1()
-	TankHelper:After(
-		1,
-		function()
-			if TankHelper:GetConfig("autoselect", 8) ~= -1 then
-				local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
-				if THTargetMarkers:IsShown() then
-					btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
-				end
-			end
-		end, "autoselect"
-	)
+	TankHelper:After(1, function()
+		if TankHelper:GetConfig("autoselect", 8) ~= -1 then
+			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
+			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
+		end
+	end, "autoselect")
 
 	local point, parent, relativePoint, ofsx, ofsy = nil, nil, nil, nil, nil
 	if TankHelper:GetConfig("combineall", false) then
@@ -1013,18 +894,9 @@ function TankHelper:UpdateDesign()
 	end
 
 	local cl_rows = 0
-	if TankHelper:GetConfig("hideworldmarks", false) == false then
-		cl_rows = cl_rows + 1
-	end
-
-	if TankHelper:GetConfig("hidetargetmarks", false) == false then
-		cl_rows = cl_rows + 1
-	end
-
-	if TankHelper:GetConfig("hidespecialbar", false) == false then
-		cl_rows = cl_rows + 1
-	end
-
+	if TankHelper:GetConfig("hideworldmarks", false) == false then cl_rows = cl_rows + 1 end
+	if TankHelper:GetConfig("hidetargetmarks", false) == false then cl_rows = cl_rows + 1 end
+	if TankHelper:GetConfig("hidespecialbar", false) == false then cl_rows = cl_rows + 1 end
 	THCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, cl_rows * iconbtn + (cl_rows - 1) * cbr + 2 * obr)
 	TankHelper:UpdateFrameDesign(THCockpit)
 end
@@ -1050,14 +922,8 @@ frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 function TankHelper:UpdateThreatStatus(np, reset)
 	if np.th_threat == nil then return end
 	local unit = np.unit
-	if np.UnitFrame ~= nil then
-		unit = np.UnitFrame.unit
-	end
-
-	if unit == nil then
-		unit = strlower(TankHelper:GetName(np))
-	end
-
+	if np.UnitFrame ~= nil then unit = np.UnitFrame.unit end
+	if unit == nil then unit = strlower(TankHelper:GetName(np)) end
 	local _, _, scaledPercentage, _, _ = UnitDetailedThreatSituation("PLAYER", unit)
 	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
 		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage)) or 0
@@ -1101,100 +967,64 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	end
 end
 
-frame:SetScript(
-	"OnEvent",
-	function(self, event, ...)
-		if TankHelper:GetConfig("nameplatethreat", false) then
-			if event == "NAME_PLATE_CREATED" then
-				local np = select(1, ...)
-				if np.th_threat == nil then
-					np.th_threat = CreateFrame("FRAME", nil, np)
-					np.th_threat:SetSize(1, 1)
-					np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
-					-- np.th_threat:SetIgnoreParentAlpha( true )
-					np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
-					np.th_threat.texture:SetSize(42, 42)
-					np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-					np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-					TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
-					np.th_threat.text:SetText("")
-					np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-					TankHelper:After(
-						0.11,
-						function()
-							TankHelper:UpdateThreatStatus(np)
-						end, "UpdateThreatStatus 1"
-					)
-
-					TankHelper:After(
-						0.22,
-						function()
-							TankHelper:UpdateThreatStatus(np)
-						end, "UpdateThreatStatus 2"
-					)
-
-					local unit = np.unit
-					if np.UnitFrame ~= nil then
-						unit = np.UnitFrame.unit
-					end
-
-					if unit == nil then
-						unit = strlower(TankHelper:GetName(np))
-					end
-
-					nps[unit] = np
-					table.insert(nps, np)
-				end
-			elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
-				local unit = select(1, ...)
-				if unit == nil then return end
-				if nps[unit] == nil then return end
-				TankHelper:UpdateThreatStatus(nps[unit])
-			elseif event == "PLAYER_REGEN_ENABLED" or event == "NAME_PLATE_UNIT_REMOVED" or event == "NAME_PLATE_UNIT_ADDED" then
-				for i, np in pairs(nps) do
-					TankHelper:UpdateThreatStatus(np)
-				end
+frame:SetScript("OnEvent", function(self, event, ...)
+	if TankHelper:GetConfig("nameplatethreat", false) then
+		if event == "NAME_PLATE_CREATED" then
+			local np = select(1, ...)
+			if np.th_threat == nil then
+				np.th_threat = CreateFrame("FRAME", nil, np)
+				np.th_threat:SetSize(1, 1)
+				np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
+				-- np.th_threat:SetIgnoreParentAlpha( true )
+				np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
+				np.th_threat.texture:SetSize(42, 42)
+				np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+				np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+				TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
+				np.th_threat.text:SetText("")
+				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+				TankHelper:After(0.11, function() TankHelper:UpdateThreatStatus(np) end, "UpdateThreatStatus 1")
+				TankHelper:After(0.22, function() TankHelper:UpdateThreatStatus(np) end, "UpdateThreatStatus 2")
+				local unit = np.unit
+				if np.UnitFrame ~= nil then unit = np.UnitFrame.unit end
+				if unit == nil then unit = strlower(TankHelper:GetName(np)) end
+				nps[unit] = np
+				table.insert(nps, np)
+			end
+		elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
+			local unit = select(1, ...)
+			if unit == nil then return end
+			if nps[unit] == nil then return end
+			TankHelper:UpdateThreatStatus(nps[unit])
+		elseif event == "PLAYER_REGEN_ENABLED" or event == "NAME_PLATE_UNIT_REMOVED" or event == "NAME_PLATE_UNIT_ADDED" then
+			for i, np in pairs(nps) do
+				TankHelper:UpdateThreatStatus(np)
 			end
 		end
 	end
-)
+end)
 
 if false then
-	TankHelper:After(
-		1,
-		function()
-			TankHelper:SetDebug(true)
-			if true then
-				TankHelper:DrawDebug(
-					"TankHelper DD 1",
-					function()
-						local text = ""
-						for i, v in pairs(TankHelper:GetCountAfter()) do
-							if v > 100 then
-								text = text .. v .. "x: " .. i .. "\n"
-							end
-						end
+	TankHelper:After(1, function()
+		TankHelper:SetDebug(true)
+		if true then
+			TankHelper:DrawDebug("TankHelper DD 1", function()
+				local text = ""
+				for i, v in pairs(TankHelper:GetCountAfter()) do
+					if v > 100 then text = text .. v .. "x: " .. i .. "\n" end
+				end
+				return text
+			end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 1200, 0)
+		end
 
-						return text
-					end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 1200, 0
-				)
-			end
-
-			if true then
-				TankHelper:DrawDebug(
-					"TankHelper DD 2",
-					function()
-						local text = ""
-						for i, v in pairs(TankHelper:GetCountAfterEvents()) do
-							if v > 1 then
-								text = text .. v .. "x: " .. i .. "\n"
-							end
-						end
-
-						return text
-					end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 100, 0
-				)
-			end
-		end, "DEBUG"
-	)
+		if true then
+			TankHelper:DrawDebug("TankHelper DD 2", function()
+				local text = ""
+				for i, v in pairs(TankHelper:GetCountAfterEvents()) do
+					if v > 1 then text = text .. v .. "x: " .. i .. "\n" end
+				end
+				return text
+			end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 100, 0)
+		end
+	end, "DEBUG")
 end

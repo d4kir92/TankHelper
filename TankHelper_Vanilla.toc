@@ -2,8 +2,16 @@
 ## Version: 1.9.82
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
-## Notes-deDE: Raid Symbole und pull timer
+## Notes-deDE: Schlachtzugssymbole und pull-timer
+## Notes-esES: Iconos de banda y temporizador de pull
+## Notes-esMX: Iconos de banda y temporizador de pull
+## Notes-frFR: Icônes de raid et minuteur de pull
+## Notes-itIT: Icone raid e timer di pull
+## Notes-koKR: 공격대 표시와 풀 타이머
+## Notes-ptBR: Ícones de raide e temporizador de pull
 ## Notes-ruRU: Рейдовые метки, таймер атаки и т.п.
+## Notes-zhCN: 团队图标和拉怪计时器
+## Notes-zhTW: 團隊圖示和拉怪計時器
 ## Author: D4KiR |T132115:16:16:0:0|t
 ## Category: Dungeons & Raids
 ## Category-deDE: Dungeons & Schlachtzüge
