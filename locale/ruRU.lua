@@ -46,4 +46,3 @@ TankHelper:AddTrans("ruRU", "LID_specialbar", "Специальная панел
 TankHelper:AddTrans("ruRU", "LID_nameplate", "Индикаторы здоровья")
 TankHelper:AddTrans("ruRU", "LID_status", "Статус")
 TankHelper:AddTrans("ruRU", "LID_MMBTN", "Показывать иконку на миникарте")
-TankHelper:AddTrans("ruRU", "LID_AUTO", "АВТО")
