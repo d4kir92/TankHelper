@@ -7,7 +7,12 @@ function TankHelper:UpdateColors(frame)
 	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor", "UpdateColors")
 	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor", "UpdateColors")
 	if frame then
-		if MouseIsOver(frame) and a1 < 0.15 then a1 = 0.15 end
+		if frame.IsMouseOver == nil then
+			TankHelper:ERR("TankHelper:UpdateColors(frame) => IsMouseOver missing")
+			return
+		end
+
+		if frame:IsMouseOver() and a1 < 0.15 then a1 = 0.15 end
 		if frame.tBRl and frame.tBRr and frame.tBRt and frame.tBRb then
 			frame.tBRl:SetColorTexture(r1, g1, b1, a1)
 			frame.tBRr:SetColorTexture(r1, g1, b1, a1)
@@ -216,7 +221,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.9.85")
+		TankHelper:SetVersion(132362, "1.9.86")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

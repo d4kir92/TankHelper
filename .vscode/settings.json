@@ -21,7 +21,6 @@
         "GARRISON_LANDING_STATUS_MISSION_COMBAT",
         "SlashCmdList",
         "ChatEdit_SendText",
-        "MouseIsOver",
         "DEFAULT_CHAT_FRAME",
         "ColorPickerFrame",
         "UIDropDownMenu_SetWidth",
