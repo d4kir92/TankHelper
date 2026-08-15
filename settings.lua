@@ -221,7 +221,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.9.86")
+		TankHelper:SetVersion(132362, "1.9.87")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
