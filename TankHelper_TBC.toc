@@ -1,5 +1,5 @@
 ## Interface: 20506
-## Version: 1.10.0
+## Version: 1.10.1
 ## Title: TankHelper |T132362:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Raid Icons and pull timer
 ## Notes-deDE: Schlachtzugssymbole und pull-timer
@@ -37,7 +37,6 @@ libs\D4Lib\D4Lib.xml
 config.lua
 
 libs\LIB_math.lua
-libs\LIB_design.lua
 
 locale\enUS.lua
 locale\deDE.lua
