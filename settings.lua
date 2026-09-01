@@ -1,6 +1,7 @@
 local _, TankHelper = ...
 local thset = nil
-local Y = 0
+local DEFAULT_WIDTH = 520
+local DEFAULT_HEIGHT = 520
 function TankHelper:UpdateColors(frame)
 	if TankHelper:GetColor("BGColor", "UpdateColors") == nil then TankHelper:SetColor("BGColor", 0, 0, 0, 0.4) end
 	if TankHelper:GetColor("BRColor", "UpdateColors") == nil then TankHelper:SetColor("BRColor", 0, 0, 0, 0.2) end
@@ -31,70 +32,89 @@ end
 
 function TankHelper:ToggleSettings()
 	if thset == nil then return end
-	if thset:IsShown() then
-		thset:Hide()
+	thset:Toggle()
+end
+
+local function UpdateAllColors()
+	TankHelper:UpdateColors(THCockpit)
+	TankHelper:UpdateColors(THWorldMarkers)
+	TankHelper:UpdateColors(THTargetMarkers)
+	TankHelper:UpdateColors(THExtras)
+end
+
+local function GetCollapsed(key)
+	if key == nil then return nil end
+	if type(THTAB) ~= "table" then return nil end
+	if type(THTAB["COLLAPSED"]) ~= "table" then return nil end
+	return THTAB["COLLAPSED"][key]
+end
+
+local function SetCollapsed(key, collapsed)
+	if key == nil then return end
+	if type(THTAB) ~= "table" then return end
+	if type(THTAB["COLLAPSED"]) ~= "table" then THTAB["COLLAPSED"] = {} end
+	if collapsed then
+		THTAB["COLLAPSED"][key] = true
 	else
-		thset:Show()
+		THTAB["COLLAPSED"][key] = nil
 	end
 end
 
-function TankHelper:CreateCategory(name)
-	if thset == nil then return end
-	if Y == 0 then
-		Y = Y - 5
-	else
-		Y = Y - 30
-	end
-
-	TankHelper:AddCategory({
-		["name"] = name,
-		["parent"] = thset.SC,
-		["pTab"] = {"TOPLEFT", 5, Y},
+local function AddCategory(key)
+	thset:AddCategory({
+		["label"] = "LID_" .. key,
+		["key"] = key,
+		["search"] = key
 	})
-
-	Y = Y - 20
 end
 
-function TankHelper:CreateCheckBox(key, lstr, x, value, func)
-	if thset == nil then return end
-	THTAB = THTAB or {}
-	value = value or false
-	local val = THTAB[key]
-	if val == nil then val = value end
-	x = x or 5
-	TankHelper:CreateCheckbox({
-		["name"] = key,
-		["parent"] = thset.SC,
-		["pTab"] = {"TOPLEFT", x, Y},
-		["value"] = val,
-		["funcV"] = function(sel, checked)
-			THTAB[key] = checked
+local function AddCheckbox(key, default, func)
+	local value = THTAB[key]
+	if value == nil then value = default end
+	thset:AddCheckbox({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = value,
+		["func"] = function(newValue)
+			THTAB[key] = newValue
 			if func then func() end
 		end
 	})
-
-	Y = Y - 20
 end
 
-function TankHelper:AddSlider(key, lstr, value, min, max, steps, decimals, percentage, func)
-	if thset == nil then return end
-	Y = Y - 15
-	local slider = {}
-	slider.key = key
-	slider.parent = thset.SC
-	slider.value = TankHelper:GetConfig(key, value)
-	slider.text = lstr
-	slider.pTab = {"TOPLEFT", 10, Y}
-	slider.vmin = min
-	slider.vmax = max
-	slider.steps = steps
-	slider.decimals = decimals
-	slider.percentage = percentage
-	slider.sw = 460
-	slider.color = {0, 1, 0, 1}
-	slider.func = func
-	TankHelper:CreateSlider(slider)
-	Y = Y - 30
+local function AddSlider(key, default, min, max, step, decimals, func)
+	thset:AddSlider({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = TankHelper:GetConfig(key, default),
+		["min"] = min,
+		["max"] = max,
+		["step"] = step,
+		["decimals"] = decimals,
+		["func"] = function(value)
+			THTAB[key] = value
+			if func then func() end
+		end
+	})
+end
+
+local function AddColorPicker(key, default, func)
+	if THTAB[key .. "_R"] == nil then TankHelper:SetColor(key, default.R, default.G, default.B, default.A) end
+	local r, g, b, a = TankHelper:GetColor(key, "AddColorPicker")
+	thset:AddColorPicker({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = {
+			["r"] = r,
+			["g"] = g,
+			["b"] = b,
+			["a"] = a
+		},
+		["func"] = function(newR, newG, newB, newA)
+			TankHelper:SetColor(key, newR, newG, newB, newA)
+			if func then func() end
+		end
+	})
 end
 
 function TankHelper:InitSettings()
@@ -119,27 +139,27 @@ function TankHelper:InitSettings()
 
 	TankHelper:AddSlash("th", TankHelper.ToggleSettings)
 	TankHelper:AddSlash("tankhelper", TankHelper.ToggleSettings)
-	thset = TankHelper:CreateWindow({
-		["name"] = "TankHelper Settings Frame",
+	TankHelper:SetAppendTab(THTAB)
+	thset = TankHelper:CreateUIWindow({
+		["name"] = "TankHelperSettings",
 		["pTab"] = {"CENTER"},
-		["sw"] = 520,
-		["sh"] = 520,
+		["width"] = TankHelper:GetConfig("WINDOWWIDTH", DEFAULT_WIDTH),
+		["height"] = TankHelper:GetConfig("WINDOWHEIGHT", DEFAULT_HEIGHT),
+		["minWidth"] = 360,
+		["minHeight"] = 240,
+		["onResize"] = function(width, height)
+			THTAB["WINDOWWIDTH"] = width
+			THTAB["WINDOWHEIGHT"] = height
+		end,
+		["getCollapsed"] = function(key) return GetCollapsed(key) end,
+		["setCollapsed"] = function(key, collapsed) SetCollapsed(key, collapsed) end,
 		["title"] = format("|T132362:16:16:0:0|t TankHelper by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", TankHelper:GetVersion())
 	})
 
-	thset:SetFrameLevel(110)
-	thset.SF = CreateFrame("ScrollFrame", "thset_SF", thset, "UIPanelScrollFrameTemplate")
-	thset.SF:SetPoint("TOPLEFT", thset, 8, -26)
-	thset.SF:SetPoint("BOTTOMRIGHT", thset, -32, 8)
-	thset.SC = CreateFrame("Frame", "thset_SC", thset.SF)
-	thset.SC:SetSize(thset.SF:GetSize())
-	thset.SC:SetPoint("TOPLEFT", thset.SF, "TOPLEFT", 0, 0)
-	thset.SF:SetScrollChild(thset.SC)
-	Y = 0
-	TankHelper:SetAppendParent(thset.SC)
-	TankHelper:SetAppendTab(THTAB)
-	TankHelper:CreateCategory("general")
-	TankHelper:CreateCheckBox("MMBTN", "MMBTN", 5, TankHelper:GetWoWBuild() ~= "RETAIL", function()
+	thset:SuspendLayout()
+	thset:AddSearch()
+	AddCategory("general")
+	AddCheckbox("MMBTN", TankHelper:GetWoWBuild() ~= "RETAIL", function()
 		if THTAB["MMBTN"] then
 			TankHelper:ShowMMBtn("TankHelper")
 		else
@@ -147,69 +167,75 @@ function TankHelper:InitSettings()
 		end
 	end)
 
-	TankHelper:CreateCheckBox("showtranslation", "showtranslation", 5, true)
-	TankHelper:CreateCategory("design")
-	TankHelper:CreateCheckBox("showalways", "showalways", 5, false)
-	TankHelper:CreateCheckBox("combineall", "combineall", 5, false, TankHelper.UpdateDesign)
-	TankHelper:CreateCheckBox("fixposition", "fixposition", 5, false)
-	TankHelper:AddSlider("obr", "obr", 6.0, 3.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("ibr", "ibr", 1.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("cbr", "cbr", 3.0, 0.0, 12.0, 1, 0, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("iconsize", "iconsize", 16.0, 8.0, 64.0, 2, 0, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("scalestatus", "scalestatus", 1.0, 0.1, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("scalecockpit", "scalecockpit", 1.0, 0.1, 2.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:SetAppendY(Y)
-	TankHelper:AppendColorPicker("BRColor", {
+	AddCheckbox("showtranslation", true)
+	AddCategory("design")
+	AddCheckbox("showalways", false)
+	AddCheckbox("combineall", false, TankHelper.UpdateDesign)
+	AddCheckbox("fixposition", false)
+	AddSlider("obr", 6.0, 3.0, 12.0, 1, 0, TankHelper.UpdateDesign)
+	AddSlider("ibr", 1.0, 0.0, 12.0, 1, 0, TankHelper.UpdateDesign)
+	AddSlider("cbr", 3.0, 0.0, 12.0, 1, 0, TankHelper.UpdateDesign)
+	AddSlider("iconsize", 16.0, 8.0, 64.0, 2, 0, TankHelper.UpdateDesign)
+	AddSlider("scalestatus", 1.0, 0.1, 2.0, 0.1, 1, TankHelper.UpdateDesign)
+	AddSlider("scalecockpit", 1.0, 0.1, 2.0, 0.1, 1, TankHelper.UpdateDesign)
+	AddColorPicker("BRColor", {
 		["R"] = 0,
 		["G"] = 0,
 		["B"] = 0,
 		["A"] = 0
-	}, function()
-		TankHelper:UpdateColors(THCockpit)
-		TankHelper:UpdateColors(THWorldMarkers)
-		TankHelper:UpdateColors(THTargetMarkers)
-		TankHelper:UpdateColors(THExtras)
-	end, 5)
+	}, UpdateAllColors)
 
-	Y = Y - 30
-	TankHelper:AppendColorPicker("BGColor", {
+	AddColorPicker("BGColor", {
 		["R"] = 0,
 		["G"] = 0,
 		["B"] = 0,
 		["A"] = 0
-	}, function()
-		TankHelper:UpdateColors(THCockpit)
-		TankHelper:UpdateColors(THWorldMarkers)
-		TankHelper:UpdateColors(THTargetMarkers)
-		TankHelper:UpdateColors(THExtras)
-	end, 5)
+	}, UpdateAllColors)
 
-	Y = Y - 30
 	if IsRaidMarkerActive then
-		TankHelper:CreateCategory("worldmarks")
-		TankHelper:CreateCheckBox("hideworldmarks", "hideworldmarks", 5, false, TankHelper.UpdateDesign)
+		AddCategory("worldmarks")
+		AddCheckbox("hideworldmarks", false, TankHelper.UpdateDesign)
 	end
 
-	TankHelper:CreateCategory("targetmarks")
-	TankHelper:CreateCheckBox("hidetargetmarks", "hidetargetmarks", 5, false, TankHelper.UpdateDesign)
-	TankHelper:CreateCheckBox("onlytank", "onlytank", 5, false)
-	TankHelper:CreateCategory("specialbar")
-	TankHelper:CreateCheckBox("hidespecialbar", "hidespecialbar", 5, false, TankHelper.UpdateDesign)
-	TankHelper:AddSlider("targettingdelay", "targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, nil, TankHelper.UpdateDesign)
-	TankHelper:AppendDropdown("PULLTIMERMODE", "AUTO", {
-		["AUTO"] = "AUTO",
-		["ONLYTHIRDPARTY"] = "ONLYTHIRDPARTY",
-		["ONLYTH"] = "ONLYTH",
-		["BOTH"] = "BOTH",
+	AddCategory("targetmarks")
+	AddCheckbox("hidetargetmarks", false, TankHelper.UpdateDesign)
+	AddCheckbox("onlytank", false)
+	AddCategory("specialbar")
+	AddCheckbox("hidespecialbar", false, TankHelper.UpdateDesign)
+	AddSlider("targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, TankHelper.UpdateDesign)
+	thset:AddDropdown({
+		["label"] = "LID_PULLTIMERMODE",
+		["search"] = "PULLTIMERMODE",
+		["value"] = TankHelper:GetConfig("PULLTIMERMODE", "AUTO"),
+		["choices"] = {
+			{
+				["value"] = "AUTO",
+				["label"] = "LID_AUTO"
+			},
+			{
+				["value"] = "ONLYTHIRDPARTY",
+				["label"] = "LID_ONLYTHIRDPARTY"
+			},
+			{
+				["value"] = "ONLYTH",
+				["label"] = "LID_ONLYTH"
+			},
+			{
+				["value"] = "BOTH",
+				["label"] = "LID_BOTH"
+			},
+		},
+		["func"] = function(value) THTAB["PULLTIMERMODE"] = value end
 	})
 
-	TankHelper:CreateCategory("nameplate")
-	TankHelper:CreateCheckBox("nameplatethreat", "nameplatethreat", 5, false)
-	TankHelper:CreateCategory("status")
-	TankHelper:CreateCheckBox("hidestatus", "hidestatus", 5, true)
-	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then TankHelper:CreateCheckBox("statusonlyhealers", "statusonlyhealers", 5, true) end
-	TankHelper:AddSlider("healthmax", "healthmax", 0.9, 0.1, 1.0, 0.1, 1, true)
-	TankHelper:AddSlider("powermax", "powermax", 0.9, 0.1, 1.0, 0.1, 1, true)
+	AddCategory("nameplate")
+	AddCheckbox("nameplatethreat", false)
+	AddCategory("status")
+	AddCheckbox("hidestatus", true)
+	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then AddCheckbox("statusonlyhealers", true) end
+	AddSlider("healthmax", 0.9, 0.1, 1.0, 0.1, 1)
+	AddSlider("powermax", 0.9, 0.1, 1.0, 0.1, 1)
+	thset:ResumeLayout()
 end
 
 local THloaded = false
@@ -221,7 +247,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.9.87")
+		TankHelper:SetVersion(132362, "1.10.0")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
