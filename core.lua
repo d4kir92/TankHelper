@@ -329,8 +329,18 @@ function TankHelper:InitFrames()
 				local btn1 = THWorldMarkers["THBtnRM" .. btnId].texture
 				local btn2 = THWorldMarkers["THBtnRM" .. btnId].tBG
 				if btnId > 0 then
-					if IsRaidMarkerActive and THWorldMarkers["THBtnRM" .. btnId].status ~= IsRaidMarkerActive(wms[btnId]) then
-						THWorldMarkers["THBtnRM" .. btnId].status = IsRaidMarkerActive(wms[btnId])
+					local active = IsRaidMarkerActive and IsRaidMarkerActive(wms[btnId])
+					if TankHelper:IsSecret(active) then
+						THWorldMarkers["THBtnRM" .. btnId].status = nil
+						updatewms = true
+						local desaturation = C_CurveUtil.EvaluateColorValueFromBoolean(active, 0, 1)
+						local alpha = C_CurveUtil.EvaluateColorValueFromBoolean(active, 1, 0.5)
+						btn1:SetDesaturation(desaturation)
+						btn2:SetDesaturation(desaturation)
+						btn1:SetAlpha(alpha)
+						btn2:SetAlpha(alpha)
+					elseif IsRaidMarkerActive and THWorldMarkers["THBtnRM" .. btnId].status ~= active then
+						THWorldMarkers["THBtnRM" .. btnId].status = active
 						updatewms = true
 						if THWorldMarkers["THBtnRM" .. btnId].status == false then
 							btn1:SetDesaturated(true)
@@ -348,7 +358,8 @@ function TankHelper:InitFrames()
 					updatewms = false
 					local canremove = false
 					for rmId = 1, WMN do
-						if IsRaidMarkerActive and IsRaidMarkerActive(wms[rmId]) then
+						local active = IsRaidMarkerActive and IsRaidMarkerActive(wms[rmId])
+						if TankHelper:IsSecret(active) or active then
 							canremove = true
 							break
 						end
