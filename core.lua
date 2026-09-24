@@ -17,7 +17,7 @@ local markScale = 2
 local WMN = 8
 local WMIds = {}
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
-local targetGUID = UnitGUID("TARGET")
+local targetRevision = 0
 function TankHelper:CreateInvisibleButton(name, parent)
 	local btn = CreateFrame("Button", name, parent, "SecureActionButtonTemplate")
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -32,6 +32,53 @@ end
 
 function TankHelper:ShouldShow()
 	return IsInInstance() or UnitInParty("PLAYER") or UnitInRaid("PLAYER")
+end
+
+local function GetPartyUnitForRole(role)
+	local units = {"PLAYER", "party1", "party2", "party3", "party4"}
+	for _, unit in ipairs(units) do
+		if UnitExists(unit) then
+			local assignedRole = UnitGroupRolesAssigned(unit)
+			if not TankHelper:IsSecret(assignedRole) and assignedRole == role then return unit end
+		end
+	end
+end
+
+function TankHelper:UpdateTankHealerMarkerButton()
+	if THMarkTankAndHealer == nil or InCombatLockdown() then return end
+	local inInstance, instanceType = IsInInstance()
+	if UnitGroupRolesAssigned == nil or not TankHelper:GetConfig("marktankhealer", true) or not inInstance or instanceType ~= "party" or IsInRaid() then
+		THMarkTankAndHealer:Hide()
+		return
+	end
+
+	local tankUnit = GetPartyUnitForRole("TANK")
+	local healerUnit = GetPartyUnitForRole("HEALER")
+	if tankUnit == nil or healerUnit == nil then
+		THMarkTankAndHealer:Hide()
+		return
+	end
+
+	local tankMarker = GetRaidTargetIndex(tankUnit)
+	local healerMarker = GetRaidTargetIndex(healerUnit)
+	if TankHelper:IsSecret(tankMarker) or TankHelper:IsSecret(healerMarker) then
+		THMarkTankAndHealer:Hide()
+		return
+	end
+
+	local macro = ""
+	if tankMarker ~= 6 then macro = macro .. "/tm [@" .. tankUnit .. "] 6" end
+	if healerMarker ~= 5 then
+		if macro ~= "" then macro = macro .. "\n" end
+		macro = macro .. "/tm [@" .. healerUnit .. "] 5"
+	end
+
+	if macro == "" then
+		THMarkTankAndHealer:Hide()
+	else
+		THMarkTankAndHealer:SetAttribute("macrotext", macro)
+		THMarkTankAndHealer:Show()
+	end
 end
 
 function TankHelper:RW(msg)
@@ -246,6 +293,15 @@ function TankHelper:InitFrames()
 	THTargetMarkers = CreateFrame("Frame", "THTargetMarkers", UIParent)
 	THExtras = CreateFrame("Frame", "THExtras", UIParent)
 	THStatus = CreateFrame("Frame", "THStatus", UIParent)
+	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", UIParent, "SecureActionButtonTemplate,UIPanelButtonTemplate")
+	THMarkTankAndHealer:SetSize(220, 40)
+	THMarkTankAndHealer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	THMarkTankAndHealer:SetFrameStrata("DIALOG")
+	THMarkTankAndHealer:SetText(TankHelper:Trans("LID_marktankandhealer", TankHelper:GetLang()))
+	THMarkTankAndHealer:RegisterForClicks("LeftButtonDown")
+	THMarkTankAndHealer:SetAttribute("type", "macro")
+	THMarkTankAndHealer:SetAttribute("pressAndHoldAction", "1")
+	THMarkTankAndHealer:Hide()
 	TankHelper:InitFrame(THCockpit, 0, 0)
 	TankHelper:InitFrame(THWorldMarkers, 0, 0)
 	TankHelper:InitFrame(THTargetMarkers, 0, -40)
@@ -452,6 +508,9 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("UNIT_POWER_UPDATE")
 	THCockpit:RegisterEvent("GROUP_ROSTER_UPDATE")
 	THCockpit:RegisterEvent("RAID_ROSTER_UPDATE")
+	THCockpit:RegisterEvent("PLAYER_ROLES_ASSIGNED")
+	THCockpit:RegisterEvent("ROLE_CHANGED_INFORM")
+	THCockpit:RegisterEvent("PLAYER_REGEN_ENABLED")
 	THCockpit:RegisterEvent("ADDON_LOADED")
 	THCockpit:HookScript("OnEvent", function(sel, e, ...)
 		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
@@ -459,17 +518,16 @@ function TankHelper:InitFrames()
 			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
 		end
 
-		if e == "PLAYER_TARGET_CHANGED" and (TankHelper:GetWoWBuild() ~= "RETAIL" or TankHelper:IsForever()) then
-			if not UnitCanAttack("TARGET", "PLAYER") then
-				targetGUID = nil
-			else
-				targetGUID = UnitGUID("TARGET")
-			end
-
-			TankHelper:After(TankHelper:GetConfig("targettingdelay", 0.0), function() TankHelper:TargetIconLogic() end, "Targetting Delay")
+		if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
+			targetRevision = targetRevision + 1
+			local revision = targetRevision
+			TankHelper:After(TankHelper:GetConfig("targettingdelay", 0.0), function()
+				if revision == targetRevision then TankHelper:TargetIconLogic() end
+			end, "Targetting Delay")
 		end
 
 		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then TankHelper:SetStatusText() end
+		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "RAID_TARGET_UPDATE" or e == "PLAYER_REGEN_ENABLED" then TankHelper:UpdateTankHealerMarkerButton() end
 	end)
 
 	THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -586,29 +644,24 @@ function TankHelper:InitFrames()
 	end
 end
 
-function TankHelper:IsSafeUnit(unit)
-	return pcall(UnitExists, unit)
-end
-
 function TankHelper:TargetIconLogic()
+	if TankHelper:GetWoWBuild() == "RETAIL" then return false end
 	if UnitGroupRolesAssigned and (TankHelper:GetWoWBuildNr() > 19999 or TankHelper:IsForever()) then
 		local role = UnitGroupRolesAssigned("PLAYER")
-		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end
+		if TankHelper:GetConfig("onlytank", false) and (role == "HEALER" or role == "DAMAGER") then return false end
 	end
 
 	if TankHelper:GetConfig("autoselect", 8) == -1 then return false end
 	if not UnitExists("TARGET") then
-		targetGUID = nil
 		return false
 	end
 
+	if not UnitCanAttack("TARGET", "PLAYER") then return false end
 	if GetRaidTargetIndex("TARGET") ~= nil then return false end
-	if targetGUID and TankHelper:IsSafeUnit("PLAYER") and TankHelper:IsSafeUnit("TARGET") and UnitGUID("TARGET") == targetGUID then
-		if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
-			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
-		elseif not IsInRaid() then
-			SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
-		end
+	if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
+		SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
+	elseif not IsInRaid() then
+		SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 	end
 	return true
 end

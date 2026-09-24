@@ -46,3 +46,5 @@ TankHelper:AddTrans("zhTW", "LID_specialbar", "特殊列（開怪倒數、準備
 TankHelper:AddTrans("zhTW", "LID_nameplate", "名條")
 TankHelper:AddTrans("zhTW", "LID_status", "狀態")
 TankHelper:AddTrans("zhTW", "LID_MMBTN", "顯示小地圖按鈕")
+TankHelper:AddTrans("zhTW", "LID_marktankhealer", "顯示坦克和治療者標記按鈕")
+TankHelper:AddTrans("zhTW", "LID_marktankandhealer", "標記坦克和治療者")

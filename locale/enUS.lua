@@ -46,3 +46,5 @@ TankHelper:AddTrans("enUS", "LID_specialbar", "Specialbar (Pulltimer, Readycheck
 TankHelper:AddTrans("enUS", "LID_nameplate", "Nameplate")
 TankHelper:AddTrans("enUS", "LID_status", "Status")
 TankHelper:AddTrans("enUS", "LID_MMBTN", "Show Minimap Button")
+TankHelper:AddTrans("enUS", "LID_marktankhealer", "Show Tank and Healer marker button")
+TankHelper:AddTrans("enUS", "LID_marktankandhealer", "Mark Tank and Healer")

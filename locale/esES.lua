@@ -46,3 +46,5 @@ TankHelper:AddTrans("esES", "LID_specialbar", "Barra especial (temporizador de p
 TankHelper:AddTrans("esES", "LID_nameplate", "Placa de nombre")
 TankHelper:AddTrans("esES", "LID_status", "Estado")
 TankHelper:AddTrans("esES", "LID_MMBTN", "Mostrar botón de minimapa")
+TankHelper:AddTrans("esES", "LID_marktankhealer", "Mostrar botón para marcar al tanque y al sanador")
+TankHelper:AddTrans("esES", "LID_marktankandhealer", "Marcar tanque y sanador")

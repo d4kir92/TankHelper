@@ -46,3 +46,5 @@ TankHelper:AddTrans("ptBR", "LID_specialbar", "Barra especial (temporizador de p
 TankHelper:AddTrans("ptBR", "LID_nameplate", "Placa de nome")
 TankHelper:AddTrans("ptBR", "LID_status", "Status")
 TankHelper:AddTrans("ptBR", "LID_MMBTN", "Mostrar botão do minimapa")
+TankHelper:AddTrans("ptBR", "LID_marktankhealer", "Mostrar botão para marcar tanque e curador")
+TankHelper:AddTrans("ptBR", "LID_marktankandhealer", "Marcar tanque e curador")

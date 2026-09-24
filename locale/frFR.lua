@@ -46,3 +46,5 @@ TankHelper:AddTrans("frFR", "LID_specialbar", "Barre spéciale (minuteur de pull
 TankHelper:AddTrans("frFR", "LID_nameplate", "Plaque de nom")
 TankHelper:AddTrans("frFR", "LID_status", "Statut")
 TankHelper:AddTrans("frFR", "LID_MMBTN", "Afficher le bouton de la minicarte")
+TankHelper:AddTrans("frFR", "LID_marktankhealer", "Afficher le bouton de marquage du tank et du soigneur")
+TankHelper:AddTrans("frFR", "LID_marktankandhealer", "Marquer le tank et le soigneur")

@@ -46,3 +46,5 @@ TankHelper:AddTrans("zhCN", "LID_specialbar", "特殊栏（开怪计时器、准
 TankHelper:AddTrans("zhCN", "LID_nameplate", "姓名板")
 TankHelper:AddTrans("zhCN", "LID_status", "状态")
 TankHelper:AddTrans("zhCN", "LID_MMBTN", "显示小地图按钮")
+TankHelper:AddTrans("zhCN", "LID_marktankhealer", "显示坦克和治疗标记按钮")
+TankHelper:AddTrans("zhCN", "LID_marktankandhealer", "标记坦克和治疗")

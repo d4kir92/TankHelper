@@ -46,3 +46,5 @@ TankHelper:AddTrans("koKR", "LID_specialbar", "특수 바 (풀타이머, 준비 
 TankHelper:AddTrans("koKR", "LID_nameplate", "명판")
 TankHelper:AddTrans("koKR", "LID_status", "상태")
 TankHelper:AddTrans("koKR", "LID_MMBTN", "미니맵 버튼 표시")
+TankHelper:AddTrans("koKR", "LID_marktankhealer", "방어 담당 및 치유 담당 징표 버튼 표시")
+TankHelper:AddTrans("koKR", "LID_marktankandhealer", "방어 담당 및 치유 담당 징표 설정")

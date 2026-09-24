@@ -46,3 +46,5 @@ TankHelper:AddTrans("itIT", "LID_specialbar", "Barra Speciale (Pull, Controllo, 
 TankHelper:AddTrans("itIT", "LID_nameplate", "Barre del Nome")
 TankHelper:AddTrans("itIT", "LID_status", "Stati")
 TankHelper:AddTrans("itIT", "LID_MMBTN", "Mostra il pulsante della Minimappa")
+TankHelper:AddTrans("itIT", "LID_marktankhealer", "Mostra il pulsante per contrassegnare tank e guaritore")
+TankHelper:AddTrans("itIT", "LID_marktankandhealer", "Contrassegna tank e guaritore")

@@ -46,3 +46,5 @@ TankHelper:AddTrans("deDE", "LID_specialbar", "Spezialleiste (Pulltimer, Bereits
 TankHelper:AddTrans("deDE", "LID_nameplate", "Namensplakette")
 TankHelper:AddTrans("deDE", "LID_status", "Status")
 TankHelper:AddTrans("deDE", "LID_MMBTN", "Minimapknopf anzeigen")
+TankHelper:AddTrans("deDE", "LID_marktankhealer", "Button zum Markieren von Tank und Heiler anzeigen")
+TankHelper:AddTrans("deDE", "LID_marktankandhealer", "Tank und Heiler markieren")
