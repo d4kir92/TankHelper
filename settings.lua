@@ -3,8 +3,8 @@ local thset = nil
 local DEFAULT_WIDTH = 520
 local DEFAULT_HEIGHT = 520
 function TankHelper:UpdateColors(frame)
-	if TankHelper:GetColor("BGColor", "UpdateColors") == nil then TankHelper:SetColor("BGColor", 0, 0, 0, 0.4) end
-	if TankHelper:GetColor("BRColor", "UpdateColors") == nil then TankHelper:SetColor("BRColor", 0, 0, 0, 0.2) end
+	if THTAB["BGColor_R"] == nil then TankHelper:SetColor("BGColor", 0, 0, 0, 0.4) end
+	if THTAB["BRColor_R"] == nil then TankHelper:SetColor("BRColor", 0, 0, 0, 0.2) end
 	local r1, g1, b1, a1 = TankHelper:GetColor("BRColor", "UpdateColors")
 	local r2, g2, b2, a2 = TankHelper:GetColor("BGColor", "UpdateColors")
 	if frame then
@@ -117,6 +117,10 @@ local function AddColorPicker(key, default, func)
 	})
 end
 
+local function IsTransparentBlack(key)
+	return THTAB[key .. "_R"] == 0 and THTAB[key .. "_G"] == 0 and THTAB[key .. "_B"] == 0 and THTAB[key .. "_A"] == 0
+end
+
 function TankHelper:InitSettings()
 	THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 	if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
@@ -140,6 +144,12 @@ function TankHelper:InitSettings()
 	TankHelper:AddSlash("th", TankHelper.ToggleSettings)
 	TankHelper:AddSlash("tankhelper", TankHelper.ToggleSettings)
 	TankHelper:SetAppendTab(THTAB)
+	if THTAB["COLORDEFAULTS_FIXED"] == nil then
+		if IsTransparentBlack("BRColor") then TankHelper:SetColor("BRColor", 0, 0, 0, 0.2) end
+		if IsTransparentBlack("BGColor") then TankHelper:SetColor("BGColor", 0, 0, 0, 0.4) end
+		THTAB["COLORDEFAULTS_FIXED"] = true
+	end
+
 	thset = TankHelper:CreateUIWindow({
 		["name"] = "TankHelperSettings",
 		["pTab"] = {"CENTER"},
@@ -182,14 +192,14 @@ function TankHelper:InitSettings()
 		["R"] = 0,
 		["G"] = 0,
 		["B"] = 0,
-		["A"] = 0
+		["A"] = 0.2
 	}, UpdateAllColors)
 
 	AddColorPicker("BGColor", {
 		["R"] = 0,
 		["G"] = 0,
 		["B"] = 0,
-		["A"] = 0
+		["A"] = 0.4
 	}, UpdateAllColors)
 
 	if IsRaidMarkerActive then

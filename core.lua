@@ -459,7 +459,7 @@ function TankHelper:InitFrames()
 			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
 		end
 
-		if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
+		if e == "PLAYER_TARGET_CHANGED" and (TankHelper:GetWoWBuild() ~= "RETAIL" or TankHelper:IsForever()) then
 			if not UnitCanAttack("TARGET", "PLAYER") then
 				targetGUID = nil
 			else
@@ -591,7 +591,7 @@ function TankHelper:IsSafeUnit(unit)
 end
 
 function TankHelper:TargetIconLogic()
-	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and (TankHelper:GetWoWBuildNr() > 19999 or TankHelper:IsForever()) then
 		local role = UnitGroupRolesAssigned("PLAYER")
 		if TankHelper:GetConfig("onlytank", true) and role ~= "TANK" then return false end
 	end
