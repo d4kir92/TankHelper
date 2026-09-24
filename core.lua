@@ -44,8 +44,16 @@ local function GetPartyUnitForRole(role)
 	end
 end
 
+function TankHelper:GetRaidIconText(index)
+	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":16|t"
+end
+
 function TankHelper:UpdateTankHealerMarkerButton()
 	if THMarkTankAndHealer == nil or InCombatLockdown() then return end
+	local tankIcon = TankHelper:GetConfig("marktankicon", 6)
+	local healerIcon = TankHelper:GetConfig("markhealericon", 5)
+	THMarkTankAndHealer:SetText(TankHelper:Trans("LID_marktankandhealer", TankHelper:GetLang(), TankHelper:GetRaidIconText(tankIcon), TankHelper:GetRaidIconText(healerIcon)))
+	THMarkTankAndHealer:SetWidth(math.max(220, THMarkTankAndHealer:GetTextWidth() + 40))
 	local inInstance, instanceType = IsInInstance()
 	if UnitGroupRolesAssigned == nil or not TankHelper:GetConfig("marktankhealer", true) or not inInstance or instanceType ~= "party" or IsInRaid() then
 		THMarkTankAndHealer:Hide()
@@ -54,23 +62,14 @@ function TankHelper:UpdateTankHealerMarkerButton()
 
 	local tankUnit = GetPartyUnitForRole("TANK")
 	local healerUnit = GetPartyUnitForRole("HEALER")
-	if tankUnit == nil or healerUnit == nil then
-		THMarkTankAndHealer:Hide()
-		return
-	end
-
-	local tankMarker = GetRaidTargetIndex(tankUnit)
-	local healerMarker = GetRaidTargetIndex(healerUnit)
-	if TankHelper:IsSecret(tankMarker) or TankHelper:IsSecret(healerMarker) then
-		THMarkTankAndHealer:Hide()
-		return
-	end
-
+	if tankUnit and healerIcon == tankIcon then healerUnit = nil end
+	local tankMarker = tankUnit and GetRaidTargetIndex(tankUnit)
+	local healerMarker = healerUnit and GetRaidTargetIndex(healerUnit)
 	local macro = ""
-	if tankMarker ~= 6 then macro = macro .. "/tm [@" .. tankUnit .. "] 6" end
-	if healerMarker ~= 5 then
+	if tankUnit and not TankHelper:IsSecret(tankMarker) and tankMarker ~= tankIcon then macro = "/tm [@" .. tankUnit .. "] " .. tankIcon end
+	if healerUnit and not TankHelper:IsSecret(healerMarker) and healerMarker ~= healerIcon then
 		if macro ~= "" then macro = macro .. "\n" end
-		macro = macro .. "/tm [@" .. healerUnit .. "] 5"
+		macro = macro .. "/tm [@" .. healerUnit .. "] " .. healerIcon
 	end
 
 	if macro == "" then
@@ -293,11 +292,14 @@ function TankHelper:InitFrames()
 	THTargetMarkers = CreateFrame("Frame", "THTargetMarkers", UIParent)
 	THExtras = CreateFrame("Frame", "THExtras", UIParent)
 	THStatus = CreateFrame("Frame", "THStatus", UIParent)
-	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", UIParent, "SecureActionButtonTemplate,UIPanelButtonTemplate")
+	local markerHolder = CreateFrame("Frame", "THMarkTankAndHealerHolder", UIParent)
+	markerHolder:SetAllPoints(UIParent)
+	markerHolder:SetFrameStrata("DIALOG")
+	RegisterStateDriver(markerHolder, "visibility", "[combat] hide; show")
+	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", markerHolder, "SecureActionButtonTemplate,UIPanelButtonTemplate")
 	THMarkTankAndHealer:SetSize(220, 40)
 	THMarkTankAndHealer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	THMarkTankAndHealer:SetFrameStrata("DIALOG")
-	THMarkTankAndHealer:SetText(TankHelper:Trans("LID_marktankandhealer", TankHelper:GetLang()))
 	THMarkTankAndHealer:RegisterForClicks("LeftButtonDown")
 	THMarkTankAndHealer:SetAttribute("type", "macro")
 	THMarkTankAndHealer:SetAttribute("pressAndHoldAction", "1")

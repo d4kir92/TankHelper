@@ -117,6 +117,37 @@ local function AddColorPicker(key, default, func)
 	})
 end
 
+local markerIconDropdowns = {}
+local function UpdateMarkerIconDropdowns()
+	for _, dropdown in ipairs(markerIconDropdowns) do
+		dropdown:SetEnabled(THTAB["marktankhealer"] ~= false)
+	end
+end
+
+local function AddMarkerIconDropdown(key, default)
+	local choices = {}
+	for index = 1, 8 do
+		tinsert(choices, {
+			["value"] = index,
+			["label"] = TankHelper:GetRaidIconText(index) .. " " .. (_G["RAID_TARGET_" .. index] or index)
+		})
+	end
+
+	local dropdown = thset:AddDropdown({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = TankHelper:GetConfig(key, default),
+		["choices"] = choices,
+		["func"] = function(value)
+			THTAB[key] = value
+			TankHelper:UpdateTankHealerMarkerButton()
+		end
+	})
+
+	dropdown.uiElement.depth = dropdown.uiElement.depth + 1
+	tinsert(markerIconDropdowns, dropdown)
+end
+
 local function IsTransparentBlack(key)
 	return THTAB[key .. "_R"] == 0 and THTAB[key .. "_G"] == 0 and THTAB[key .. "_B"] == 0 and THTAB[key .. "_A"] == 0
 end
@@ -210,7 +241,14 @@ function TankHelper:InitSettings()
 	AddCategory("targetmarks")
 	AddCheckbox("hidetargetmarks", false, TankHelper.UpdateDesign)
 	AddCheckbox("onlytank", false)
-	AddCheckbox("marktankhealer", true, TankHelper.UpdateTankHealerMarkerButton)
+	AddCheckbox("marktankhealer", true, function()
+		TankHelper:UpdateTankHealerMarkerButton()
+		UpdateMarkerIconDropdowns()
+	end)
+
+	AddMarkerIconDropdown("marktankicon", 6)
+	AddMarkerIconDropdown("markhealericon", 5)
+	UpdateMarkerIconDropdowns()
 	AddCategory("specialbar")
 	AddCheckbox("hidespecialbar", false, TankHelper.UpdateDesign)
 	AddSlider("targettingdelay", 0.0, 0.0, 5.0, 0.1, 1, TankHelper.UpdateDesign)
@@ -258,7 +296,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.10.4")
+		TankHelper:SetVersion(132362, "1.10.5")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

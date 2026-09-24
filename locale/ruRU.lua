@@ -47,4 +47,6 @@ TankHelper:AddTrans("ruRU", "LID_nameplate", "Индикаторы здоров�
 TankHelper:AddTrans("ruRU", "LID_status", "Статус")
 TankHelper:AddTrans("ruRU", "LID_MMBTN", "Показывать иконку на миникарте")
 TankHelper:AddTrans("ruRU", "LID_marktankhealer", "Показывать кнопку меток танка и лекаря")
-TankHelper:AddTrans("ruRU", "LID_marktankandhealer", "Отметить танка и лекаря")
+TankHelper:AddTrans("ruRU", "LID_marktankandhealer", "Отметить %s танка и %s лекаря")
+TankHelper:AddTrans("ruRU", "LID_marktankicon", "Метка танка")
+TankHelper:AddTrans("ruRU", "LID_markhealericon", "Метка лекаря")
