@@ -190,6 +190,7 @@ function TankHelper:InitFrame(frame, px, py)
 	frame:RegisterForDrag("LeftButton")
 	frame:SetScript("OnDragStart", function(sel)
 		if not TankHelper:GetConfig("fixposition", false) then
+			if InCombatLockdown() then return end
 			sel:StartMoving()
 		else
 			TankHelper:MSG(TankHelper:Trans("LID_fixedpositionisenabled", TankHelper:GetLang()) .. "!")
@@ -198,11 +199,12 @@ function TankHelper:InitFrame(frame, px, py)
 
 	frame:SetScript("OnDragStop", function(sel)
 		if not TankHelper:GetConfig("fixposition", false) then
+			if InCombatLockdown() then return end
 			local name = TankHelper:GetName(frame)
 			frame:StopMovingOrSizing()
-			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+			local point, _, relativePoint, ofsx, ofsy = sel:GetPoint()
 			THTAB[name .. "point"] = point
-			THTAB[name .. "parent"] = parent
+			THTAB[name .. "parent"] = nil
 			THTAB[name .. "relativePoint"] = relativePoint
 			THTAB[name .. "ofsx"] = ofsx
 			THTAB[name .. "ofsy"] = ofsy
@@ -549,9 +551,9 @@ function TankHelper:InitFrames()
 	THStatus:SetScript("OnDragStop", function(sel)
 		if not TankHelper:GetConfig("fixposition", false) then
 			THStatus:StopMovingOrSizing()
-			local point, parent, relativePoint, ofsx, ofsy = sel:GetPoint()
+			local point, _, relativePoint, ofsx, ofsy = sel:GetPoint()
 			THTAB["THStatus" .. "point"] = point
-			THTAB["THStatus" .. "parent"] = parent
+			THTAB["THStatus" .. "parent"] = nil
 			THTAB["THStatus" .. "relativePoint"] = relativePoint
 			THTAB["THStatus" .. "ofsx"] = ofsx
 			THTAB["THStatus" .. "ofsy"] = ofsy
@@ -876,16 +878,15 @@ function TankHelper:UpdateDesign()
 		end
 	end, "autoselect")
 
-	local point, parent, relativePoint, ofsx, ofsy = nil, nil, nil, nil, nil
+	local point, relativePoint, ofsx, ofsy = nil, nil, nil, nil
 	if TankHelper:GetConfig("combineall", false) then
 		point = THTAB["THCockpit" .. "point"]
-		parent = THTAB["THCockpit" .. "parent"]
 		relativePoint = THTAB["THCockpit" .. "relativePoint"]
 		ofsx = THTAB["THCockpit" .. "ofsx"]
 		ofsy = THTAB["THCockpit" .. "ofsy"]
 		if point and THCockpit then
 			THCockpit:ClearAllPoints()
-			THCockpit:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+			THCockpit:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
 		else
 			THCockpit:ClearAllPoints()
 			THCockpit:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -907,39 +908,36 @@ function TankHelper:UpdateDesign()
 		end
 	else
 		point = THTAB["THWorldMarkers" .. "point"]
-		parent = THTAB["THWorldMarkers" .. "parent"]
 		relativePoint = THTAB["THWorldMarkers" .. "relativePoint"]
 		ofsx = THTAB["THWorldMarkers" .. "ofsx"]
 		ofsy = THTAB["THWorldMarkers" .. "ofsy"]
 		if point and THWorldMarkers then
 			THWorldMarkers:ClearAllPoints()
-			THWorldMarkers:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+			THWorldMarkers:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
 		else
 			THWorldMarkers:ClearAllPoints()
 			THWorldMarkers:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
 		point = THTAB["THTargetMarkers" .. "point"]
-		parent = THTAB["THTargetMarkers" .. "parent"]
 		relativePoint = THTAB["THTargetMarkers" .. "relativePoint"]
 		ofsx = THTAB["THTargetMarkers" .. "ofsx"]
 		ofsy = THTAB["THTargetMarkers" .. "ofsy"]
 		if point and THTargetMarkers then
 			THTargetMarkers:ClearAllPoints()
-			THTargetMarkers:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+			THTargetMarkers:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
 		else
 			THTargetMarkers:ClearAllPoints()
 			THTargetMarkers:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
 		point = THTAB["THExtras" .. "point"]
-		parent = THTAB["THExtras" .. "parent"]
 		relativePoint = THTAB["THExtras" .. "relativePoint"]
 		ofsx = THTAB["THExtras" .. "ofsx"]
 		ofsy = THTAB["THExtras" .. "ofsy"]
 		if point and THExtras then
 			THExtras:ClearAllPoints()
-			THExtras:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+			THExtras:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
 		else
 			THExtras:ClearAllPoints()
 			THExtras:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -947,13 +945,12 @@ function TankHelper:UpdateDesign()
 	end
 
 	point = THTAB["THStatus" .. "point"]
-	parent = THTAB["THStatus" .. "parent"]
 	relativePoint = THTAB["THStatus" .. "relativePoint"]
 	ofsx = THTAB["THStatus" .. "ofsx"]
 	ofsy = THTAB["THStatus" .. "ofsy"]
 	if point and THStatus then
 		THStatus:ClearAllPoints()
-		THStatus:SetPoint(point, parent, relativePoint, ofsx, ofsy)
+		THStatus:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
 	else
 		THStatus:ClearAllPoints()
 		THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
