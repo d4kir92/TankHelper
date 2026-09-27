@@ -44,6 +44,15 @@ local function GetPartyUnitForRole(role)
 	end
 end
 
+local function IsUnitNearby(unit)
+	if unit == "PLAYER" then return true end
+	if not UnitIsConnected(unit) or not UnitIsVisible(unit) then return false end
+	if UnitInRange == nil then return true end
+	local inRange, checkedRange = UnitInRange(unit)
+	if TankHelper:IsSecret(inRange) or TankHelper:IsSecret(checkedRange) then return true end
+	return not checkedRange or inRange
+end
+
 function TankHelper:GetRaidIconText(index)
 	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":16|t"
 end
@@ -55,7 +64,7 @@ function TankHelper:UpdateTankHealerMarkerButton()
 	THMarkTankAndHealer:SetText(TankHelper:Trans("LID_marktankandhealer", TankHelper:GetLang(), TankHelper:GetRaidIconText(tankIcon), TankHelper:GetRaidIconText(healerIcon)))
 	THMarkTankAndHealer:SetWidth(math.max(220, THMarkTankAndHealer:GetTextWidth() + 40))
 	local inInstance, instanceType = IsInInstance()
-	if UnitGroupRolesAssigned == nil or not TankHelper:GetConfig("marktankhealer", true) or not inInstance or instanceType ~= "party" or IsInRaid() then
+	if UnitGroupRolesAssigned == nil or not TankHelper:GetConfig("marktankhealer", true) or not inInstance or instanceType ~= "party" or IsInRaid() or UnitIsDeadOrGhost("PLAYER") then
 		THMarkTankAndHealer:Hide()
 		return
 	end
@@ -63,6 +72,8 @@ function TankHelper:UpdateTankHealerMarkerButton()
 	local tankUnit = GetPartyUnitForRole("TANK")
 	local healerUnit = GetPartyUnitForRole("HEALER")
 	if tankUnit and healerIcon == tankIcon then healerUnit = nil end
+	if tankUnit and not IsUnitNearby(tankUnit) then tankUnit = nil end
+	if healerUnit and not IsUnitNearby(healerUnit) then healerUnit = nil end
 	local tankMarker = tankUnit and GetRaidTargetIndex(tankUnit)
 	local healerMarker = healerUnit and GetRaidTargetIndex(healerUnit)
 	local macro = ""
@@ -300,8 +311,34 @@ function TankHelper:InitFrames()
 	RegisterStateDriver(markerHolder, "visibility", "[combat] hide; show")
 	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", markerHolder, "SecureActionButtonTemplate,UIPanelButtonTemplate")
 	THMarkTankAndHealer:SetSize(220, 40)
-	THMarkTankAndHealer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	if THTAB["THMarkTankAndHealer" .. "point"] then
+		THMarkTankAndHealer:SetPoint(THTAB["THMarkTankAndHealer" .. "point"], UIParent, THTAB["THMarkTankAndHealer" .. "relativePoint"], THTAB["THMarkTankAndHealer" .. "ofsx"], THTAB["THMarkTankAndHealer" .. "ofsy"])
+	else
+		THMarkTankAndHealer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	end
+
 	THMarkTankAndHealer:SetFrameStrata("DIALOG")
+	TankHelper:SetClampedToScreen(THMarkTankAndHealer, true)
+	THMarkTankAndHealer:SetMovable(true)
+	THMarkTankAndHealer:RegisterForDrag("RightButton")
+	THMarkTankAndHealer:SetScript("OnDragStart", function(sel)
+		if InCombatLockdown() then return end
+		sel:StartMoving()
+	end)
+
+	THMarkTankAndHealer:SetScript("OnDragStop", function(sel)
+		if InCombatLockdown() then return end
+		sel:StopMovingOrSizing()
+		local point, _, relativePoint, ofsx, ofsy = sel:GetPoint()
+		THTAB["THMarkTankAndHealer" .. "point"] = point
+		THTAB["THMarkTankAndHealer" .. "relativePoint"] = relativePoint
+		THTAB["THMarkTankAndHealer" .. "ofsx"] = ofsx
+		THTAB["THMarkTankAndHealer" .. "ofsy"] = ofsy
+		sel:ClearAllPoints()
+		sel:SetPoint(point, UIParent, relativePoint, ofsx, ofsy)
+	end)
+
+	C_Timer.NewTicker(1, function() TankHelper:UpdateTankHealerMarkerButton() end)
 	THMarkTankAndHealer:RegisterForClicks("LeftButtonDown")
 	THMarkTankAndHealer:SetAttribute("type", "macro")
 	THMarkTankAndHealer:SetAttribute("pressAndHoldAction", "1")
@@ -515,6 +552,9 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("PLAYER_ROLES_ASSIGNED")
 	THCockpit:RegisterEvent("ROLE_CHANGED_INFORM")
 	THCockpit:RegisterEvent("PLAYER_REGEN_ENABLED")
+	THCockpit:RegisterEvent("PLAYER_DEAD")
+	THCockpit:RegisterEvent("PLAYER_ALIVE")
+	THCockpit:RegisterEvent("PLAYER_UNGHOST")
 	THCockpit:RegisterEvent("ADDON_LOADED")
 	THCockpit:HookScript("OnEvent", function(sel, e, ...)
 		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
@@ -531,7 +571,7 @@ function TankHelper:InitFrames()
 		end
 
 		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then TankHelper:SetStatusText() end
-		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "RAID_TARGET_UPDATE" or e == "PLAYER_REGEN_ENABLED" then TankHelper:UpdateTankHealerMarkerButton() end
+		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "RAID_TARGET_UPDATE" or e == "PLAYER_REGEN_ENABLED" or e == "PLAYER_DEAD" or e == "PLAYER_ALIVE" or e == "PLAYER_UNGHOST" then TankHelper:UpdateTankHealerMarkerButton() end
 	end)
 
 	THStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
