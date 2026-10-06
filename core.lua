@@ -1022,85 +1022,133 @@ frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+
+local function ClearThreatDisplay(np)
+	if np.th_threat == nil then return end
+	np.th_threat.text:SetText("")
+	np.th_threat.text:SetTextColor(0, 0, 0, 0)
+	np.th_threat.texture:SetTexture(nil)
+	np.th_threat.texture:SetAlpha(0)
+end
+
+local function CreateThreatDisplay(np)
+	if np.th_threat ~= nil then return end
+	np.th_threat = CreateFrame("Frame", nil, np)
+	np.th_threat:SetSize(1, 1)
+	np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
+	np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
+	np.th_threat.texture:SetSize(42, 42)
+	np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+	np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
+	np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+	ClearThreatDisplay(np)
+end
+
 function TankHelper:UpdateThreatStatus(np, reset)
 	if np.th_threat == nil then return end
-	local unit = np.unit
-	if np.UnitFrame ~= nil then unit = np.UnitFrame.unit end
-	if unit == nil then unit = strlower(TankHelper:GetName(np)) end
-	local _, _, scaledPercentage, _, _ = UnitDetailedThreatSituation("PLAYER", unit)
-	if TankHelper:GetConfig("nameplatethreat", false) and scaledPercentage and not reset then
-		scaledPercentage = tonumber(string.format("%.0f", scaledPercentage)) or 0
-		np.th_threat.text:SetText(scaledPercentage .. "%")
-		if scaledPercentage > 100 then
-			np.th_threat.texture:SetTexture("Interface\\COMMON\\Indicator-Yellow")
-			np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
-			np.th_threat.texture:SetAlpha(1)
-			np.th_threat.texture:SetVertexColor(1, 1, 0, 1)
-			np.th_threat.text:SetTextColor(1, 1, 0, 1)
-		elseif scaledPercentage == 100 then
-			np.th_threat.texture:SetTexture("Interface\\MINIMAP\\Minimap_shield_normal")
-			np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
-			np.th_threat.texture:SetAlpha(1)
-			np.th_threat.texture:SetVertexColor(0, 1, 0, 1)
-			np.th_threat.text:SetTextColor(0, 1, 0, 1)
-		elseif scaledPercentage == 0 then
-			np.th_threat.texture:SetTexture("Interface\\WORLDSTATEFRAME\\CombatSwords")
-			np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
-			np.th_threat.texture:SetAlpha(1)
-			np.th_threat.texture:SetVertexColor(1, 0, 0, 1)
-			np.th_threat.text:SetTextColor(1, 0, 0, 1)
-		else
-			np.th_threat.texture:SetTexture("Interface\\WORLDSTATEFRAME\\CombatSwords")
-			np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
-			np.th_threat.texture:SetAlpha(1)
-			if scaledPercentage <= 50 then
-				np.th_threat.texture:SetVertexColor(1, 0, 0, 1)
-				np.th_threat.text:SetTextColor(1, 0, 0, 1)
-			elseif scaledPercentage <= 100 then
-				np.th_threat.texture:SetVertexColor(1, 1, 0, 1)
-				np.th_threat.text:SetTextColor(1, 1, 0, 1)
-			end
-		end
-	else
-		np.th_threat.text:SetText(-1 .. "%")
-		np.th_threat.texture:SetTexture(nil)
-		np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
-		np.th_threat.texture:SetAlpha(0)
-		np.th_threat.text:SetTextColor(0, 0, 0, 0)
+	local unit = np.th_threat.unit
+	if reset or not TankHelper:GetConfig("nameplatethreat", false) or unit == nil or not UnitExists(unit) then
+		ClearThreatDisplay(np)
+		return
 	end
+
+	local status, scaledPercentage
+	if type(UnitDetailedThreatSituation) == "function" then
+		local ok, _, threatStatus, percentage = pcall(UnitDetailedThreatSituation, "player", unit)
+		if ok then
+			status = threatStatus
+			scaledPercentage = percentage
+		end
+	end
+
+	-- Forever can expose the threat state while withholding detailed values.
+	if TankHelper:IsSecret(status) or type(status) ~= "number" then
+		status = nil
+		if type(UnitThreatSituation) == "function" then
+			local ok, threatStatus = pcall(UnitThreatSituation, "player", unit)
+			if ok and not TankHelper:IsSecret(threatStatus) and type(threatStatus) == "number" then status = threatStatus end
+		end
+	end
+
+	local hasPercentage = TankHelper:IsSecret(scaledPercentage) or type(scaledPercentage) == "number"
+	if not hasPercentage and status == nil then
+		ClearThreatDisplay(np)
+		return
+	end
+
+	local r, g, b = 1, 1, 1
+	local text = ""
+	local texture = "Interface\\WORLDSTATEFRAME\\CombatSwords"
+	local shield = false
+	if status == 3 then
+		r, g, b = 0, 1, 0
+		text = "TANK"
+		texture = "Interface\\MINIMAP\\Minimap_shield_normal"
+		shield = true
+	elseif status == 2 then
+		r, g, b = 1, 0.6, 0
+		text = "LOSING"
+		texture = "Interface\\COMMON\\Indicator-Yellow"
+		shield = true
+	elseif status == 1 then
+		r, g, b = 1, 1, 0
+		text = "HIGH"
+	elseif status == 0 then
+		r, g, b = 1, 0, 0
+		text = "LOW"
+	end
+
+	if hasPercentage then
+		-- This native setter accepts secret numbers; Lua formatting/comparisons do not.
+		np.th_threat.text:SetFormattedText("%.0f%%", scaledPercentage)
+	else
+		np.th_threat.text:SetText(text)
+	end
+	np.th_threat.text:SetTextColor(r, g, b, 1)
+	np.th_threat.texture:SetTexture(texture)
+	if shield then
+		np.th_threat.texture:SetTexCoord(0, 1, 0, 1)
+	else
+		np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
+	end
+	np.th_threat.texture:SetAlpha(1)
+	np.th_threat.texture:SetVertexColor(r, g, b, 1)
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
-	if TankHelper:GetConfig("nameplatethreat", false) then
-		if event == "NAME_PLATE_CREATED" then
-			local np = select(1, ...)
-			if np.th_threat == nil then
-				np.th_threat = CreateFrame("FRAME", nil, np)
-				np.th_threat:SetSize(1, 1)
-				np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
-				-- np.th_threat:SetIgnoreParentAlpha( true )
-				np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
-				np.th_threat.texture:SetSize(42, 42)
-				np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-				np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-				TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
-				np.th_threat.text:SetText("")
-				np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
-				TankHelper:After(0.11, function() TankHelper:UpdateThreatStatus(np) end, "UpdateThreatStatus 1")
-				TankHelper:After(0.22, function() TankHelper:UpdateThreatStatus(np) end, "UpdateThreatStatus 2")
-				local unit = np.unit
-				if np.UnitFrame ~= nil then unit = np.UnitFrame.unit end
-				if unit == nil then unit = strlower(TankHelper:GetName(np)) end
-				nps[unit] = np
-				table.insert(nps, np)
-			end
-		elseif event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
-			local unit = select(1, ...)
-			if unit == nil then return end
-			if nps[unit] == nil then return end
+	if event == "NAME_PLATE_CREATED" then
+		local np = ...
+		if np ~= nil and not np:IsForbidden() then CreateThreatDisplay(np) end
+	elseif event == "NAME_PLATE_UNIT_ADDED" then
+		local unit = ...
+		if TankHelper:IsSecret(unit) or type(unit) ~= "string" then return end
+		local np = C_NamePlate.GetNamePlateForUnit(unit)
+		if np == nil or np:IsForbidden() then return end
+		CreateThreatDisplay(np)
+		-- Bind on UNIT_ADDED: a pooled frame's name is not its current unit token.
+		local previousUnit = np.th_threat.unit
+		if previousUnit ~= nil then nps[previousUnit] = nil end
+		np.th_threat.unit = unit
+		nps[unit] = np
+		TankHelper:UpdateThreatStatus(np)
+	elseif event == "NAME_PLATE_UNIT_REMOVED" then
+		local unit = ...
+		if TankHelper:IsSecret(unit) or type(unit) ~= "string" then return end
+		local np = nps[unit]
+		if np ~= nil then
+			TankHelper:UpdateThreatStatus(np, true)
+			np.th_threat.unit = nil
+			nps[unit] = nil
+		end
+	else
+		local unit = ...
+		if not TankHelper:IsSecret(unit) and type(unit) == "string" and nps[unit] ~= nil then
 			TankHelper:UpdateThreatStatus(nps[unit])
-		elseif event == "PLAYER_REGEN_ENABLED" or event == "NAME_PLATE_UNIT_REMOVED" or event == "NAME_PLATE_UNIT_ADDED" then
-			for i, np in pairs(nps) do
+		else
+			-- Threat events can name the player, target, or a party member.
+			for _, np in pairs(nps) do
 				TankHelper:UpdateThreatStatus(np)
 			end
 		end
