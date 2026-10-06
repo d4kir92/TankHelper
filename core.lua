@@ -723,7 +723,6 @@ function TankHelper:CanTabMark()
 	end
 
 	if IsInRaid() and not UnitIsGroupAssistant("PLAYER") and not UnitIsGroupLeader("PLAYER") then return false end
-
 	return true
 end
 
@@ -744,7 +743,6 @@ function TankHelper:UpdateTabMarker()
 	ClearOverrideBindings(THTabMarker)
 	if #keys == 0 then
 		THTabMarker:SetAttribute("macrotext", nil)
-
 		return
 	end
 
