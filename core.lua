@@ -565,9 +565,7 @@ function TankHelper:InitFrames()
 		if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
 			targetRevision = targetRevision + 1
 			local revision = targetRevision
-			TankHelper:After(TankHelper:GetConfig("targettingdelay", 0.0), function()
-				if revision == targetRevision then TankHelper:TargetIconLogic() end
-			end, "Targetting Delay")
+			TankHelper:After(TankHelper:GetConfig("targettingdelay", 0.0), function() if revision == targetRevision then TankHelper:TargetIconLogic() end end, "Targetting Delay")
 		end
 
 		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then TankHelper:SetStatusText() end
@@ -696,10 +694,7 @@ function TankHelper:TargetIconLogic()
 	end
 
 	if TankHelper:GetConfig("autoselect", 8) == -1 then return false end
-	if not UnitExists("TARGET") then
-		return false
-	end
-
+	if not UnitExists("TARGET") then return false end
 	if not UnitCanAttack("TARGET", "PLAYER") then return false end
 	if GetRaidTargetIndex("TARGET") ~= nil then return false end
 	if IsInRaid() and (UnitIsGroupAssistant("PLAYER") or UnitIsGroupLeader("PLAYER")) then
@@ -1023,7 +1018,6 @@ frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-
 local function ClearThreatDisplay(np)
 	if np.th_threat == nil then return end
 	np.th_threat.text:SetText("")
@@ -1106,6 +1100,7 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	else
 		np.th_threat.text:SetText(text)
 	end
+
 	np.th_threat.text:SetTextColor(r, g, b, 1)
 	np.th_threat.texture:SetTexture(texture)
 	if shield then
@@ -1113,6 +1108,7 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	else
 		np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
 	end
+
 	np.th_threat.texture:SetAlpha(1)
 	np.th_threat.texture:SetVertexColor(r, g, b, 1)
 end
