@@ -343,6 +343,10 @@ function TankHelper:InitFrames()
 	THMarkTankAndHealer:SetAttribute("type", "macro")
 	THMarkTankAndHealer:SetAttribute("pressAndHoldAction", "1")
 	THMarkTankAndHealer:Hide()
+	THTabMarker = CreateFrame("Button", "THTabMarker", UIParent, "SecureActionButtonTemplate")
+	THTabMarker:RegisterForClicks("LeftButtonDown")
+	THTabMarker:SetAttribute("type", "macro")
+	THTabMarker:SetAttribute("pressAndHoldAction", "1")
 	TankHelper:InitFrame(THCockpit, 0, 0)
 	TankHelper:InitFrame(THWorldMarkers, 0, 0)
 	TankHelper:InitFrame(THTargetMarkers, 0, -40)
@@ -383,6 +387,8 @@ function TankHelper:InitFrames()
 				else
 					THTAB["autoselect"] = -1
 				end
+
+				TankHelper:UpdateTabMarker()
 			end
 		end)
 
@@ -556,7 +562,9 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("PLAYER_ALIVE")
 	THCockpit:RegisterEvent("PLAYER_UNGHOST")
 	THCockpit:RegisterEvent("ADDON_LOADED")
+	THCockpit:RegisterEvent("UPDATE_BINDINGS")
 	THCockpit:HookScript("OnEvent", function(sel, e, ...)
+		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "PLAYER_REGEN_ENABLED" or e == "UPDATE_BINDINGS" then TankHelper:UpdateTabMarker() end
 		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
 			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
 			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
@@ -703,6 +711,47 @@ function TankHelper:TargetIconLogic()
 		SetRaidTarget("TARGET", TankHelper:GetConfig("autoselect", 8))
 	end
 	return true
+end
+
+function TankHelper:CanTabMark()
+	if TankHelper:GetWoWBuild() ~= "RETAIL" then return false end
+	local icon = TankHelper:GetConfig("autoselect", 8)
+	if icon == -1 then return false end
+	if UnitGroupRolesAssigned and TankHelper:GetConfig("onlytank", false) then
+		local role = UnitGroupRolesAssigned("PLAYER")
+		if role == "HEALER" or role == "DAMAGER" then return false end
+	end
+
+	if IsInRaid() and not UnitIsGroupAssistant("PLAYER") and not UnitIsGroupLeader("PLAYER") then return false end
+
+	return true
+end
+
+function TankHelper:UpdateTabMarker()
+	if THTabMarker == nil then return end
+	if InCombatLockdown() then return end
+	local keys = {}
+	if TankHelper:CanTabMark() then
+		for _, key in pairs({GetBindingKey("TARGETNEARESTENEMY")}) do
+			if key and key ~= "" then table.insert(keys, key) end
+		end
+	end
+
+	local macro = "/targetenemy\n/tm [harm,nodead] ~" .. TankHelper:GetConfig("autoselect", 8)
+	local state = table.concat(keys, ",") .. "|" .. macro
+	if THTabMarker.state == state then return end
+	THTabMarker.state = state
+	ClearOverrideBindings(THTabMarker)
+	if #keys == 0 then
+		THTabMarker:SetAttribute("macrotext", nil)
+
+		return
+	end
+
+	THTabMarker:SetAttribute("macrotext", macro)
+	for _, key in ipairs(keys) do
+		SetOverrideBindingClick(THTabMarker, false, key, "THTabMarker", "LeftButton")
+	end
 end
 
 function TankHelper:SetStatusText()

@@ -240,7 +240,7 @@ function TankHelper:InitSettings()
 
 	AddCategory("targetmarks")
 	AddCheckbox("hidetargetmarks", false, TankHelper.UpdateDesign)
-	AddCheckbox("onlytank", false)
+	AddCheckbox("onlytank", false, function() TankHelper:UpdateTabMarker() end)
 	AddCheckbox("marktankhealer", true, function()
 		TankHelper:UpdateTankHealerMarkerButton()
 		UpdateMarkerIconDropdowns()
