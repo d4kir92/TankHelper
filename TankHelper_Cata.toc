@@ -31,7 +31,6 @@
 ## X-Wago-ID: lQNlmP6e
 ## IconTexture: 132362
 
-# External Libs
 libs\D4Lib\D4Lib.xml
 
 config.lua

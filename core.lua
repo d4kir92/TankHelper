@@ -1057,7 +1057,6 @@ function TankHelper:UpdateThreatStatus(np, reset)
 		end
 	end
 
-	-- Forever can expose the threat state while withholding detailed values.
 	if TankHelper:IsSecret(status) or type(status) ~= "number" then
 		status = nil
 		if type(UnitThreatSituation) == "function" then
@@ -1095,7 +1094,6 @@ function TankHelper:UpdateThreatStatus(np, reset)
 	end
 
 	if hasPercentage then
-		-- This native setter accepts secret numbers; Lua formatting/comparisons do not.
 		np.th_threat.text:SetFormattedText("%.0f%%", scaledPercentage)
 	else
 		np.th_threat.text:SetText(text)
@@ -1123,7 +1121,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
 		local np = C_NamePlate.GetNamePlateForUnit(unit)
 		if np == nil or np:IsForbidden() then return end
 		CreateThreatDisplay(np)
-		-- Bind on UNIT_ADDED: a pooled frame's name is not its current unit token.
 		local previousUnit = np.th_threat.unit
 		if previousUnit ~= nil then nps[previousUnit] = nil end
 		np.th_threat.unit = unit
@@ -1143,7 +1140,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
 		if not TankHelper:IsSecret(unit) and type(unit) == "string" and nps[unit] ~= nil then
 			TankHelper:UpdateThreatStatus(nps[unit])
 		else
-			-- Threat events can name the player, target, or a party member.
 			for _, np in pairs(nps) do
 				TankHelper:UpdateThreatStatus(np)
 			end
