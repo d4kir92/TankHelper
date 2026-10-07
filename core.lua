@@ -201,8 +201,14 @@ end
 
 function TankHelper:ResetIcons1()
 	for btnId, v in pairs(ricons1) do
-		if THTargetMarkers:IsShown() then v.bgtexture:SetTexture("") end
+		v.bgtexture:SetTexture("")
 	end
+end
+
+function TankHelper:UpdateAutoSelectHighlight()
+	TankHelper:ResetIcons1()
+	local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
+	if btn and btn.bgtexture then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
 end
 
 function TankHelper:UpdateRaidIcons()
@@ -410,7 +416,7 @@ function TankHelper:InitFrames()
 		THTargetMarkers["btnM" .. btnId]:SetPoint("TOPLEFT", THTargetMarkers, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
 		THTargetMarkers["btnM" .. btnId]:SetSize(iconbtn, iconbtn)
 		THTargetMarkers["btnM" .. btnId].bgtexture = THTargetMarkers["btnM" .. btnId]:CreateTexture(nil, "OVERLAY")
-		THTargetMarkers["btnM" .. btnId].bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert")
+		THTargetMarkers["btnM" .. btnId].bgtexture:SetTexture("")
 		THTargetMarkers["btnM" .. btnId].bgtexture:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
 		THTargetMarkers["btnM" .. btnId].bgtexture:SetPoint("CENTER", THTargetMarkers["btnM" .. btnId], "CENTER", 0, 0)
 		THTargetMarkers["btnM" .. btnId].bgtexture:SetVertexColor(1, 1, 0, THBORDERALPHA)
@@ -433,14 +439,13 @@ function TankHelper:InitFrames()
 			if btn == "LeftButton" then
 				pcall(function() TankHelper:UpdateRaidIcons() end)
 			elseif btn == "RightButton" and btnId > 0 then
-				TankHelper:ResetIcons1()
 				if TankHelper:GetConfig("autoselect", 8) ~= btnId then
-					if THTargetMarkers:IsShown() then sel.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
 					THTAB["autoselect"] = btnId
 				else
 					THTAB["autoselect"] = -1
 				end
 
+				TankHelper:UpdateAutoSelectHighlight()
 				TankHelper:UpdateTabMarker()
 			end
 		end)
@@ -623,10 +628,7 @@ function TankHelper:InitFrames()
 		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" or e == "GROUP_ROSTER_UPDATE" or e == "PLAYER_REGEN_ENABLED" then TankHelper:UpdateRaidManager() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" then TankHelper:UpdateRaidManagerIcons() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "PLAYER_REGEN_ENABLED" or e == "UPDATE_BINDINGS" then TankHelper:UpdateTabMarker() end
-		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
-			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
-			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
-		end
+		if e == "PLAYER_ENTERING_WORLD" then TankHelper:UpdateAutoSelectHighlight() end
 
 		if e == "PLAYER_TARGET_CHANGED" and TankHelper:GetWoWBuild() ~= "RETAIL" then
 			targetRevision = targetRevision + 1
@@ -1011,13 +1013,7 @@ function TankHelper:UpdateDesign()
 	end
 
 	THStatus:SetSize(THCockpit:GetWidth(), 1 * iconbtn + 4 * obr)
-	TankHelper:ResetIcons1()
-	TankHelper:After(1, function()
-		if TankHelper:GetConfig("autoselect", 8) ~= -1 then
-			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
-			if THTargetMarkers:IsShown() then btn.bgtexture:SetTexture("Interface\\SpellActivationOverlay\\IconAlert") end
-		end
-	end, "autoselect")
+	TankHelper:UpdateAutoSelectHighlight()
 
 	local point, relativePoint, ofsx, ofsy = nil, nil, nil, nil
 	if TankHelper:GetConfig("combineall", false) then
