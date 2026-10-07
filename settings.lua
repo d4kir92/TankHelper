@@ -52,6 +52,7 @@ function TankHelper:RefreshSettingsLanguage()
 		if element then self.UI:SetLabel(element, text) end
 		if info.widget.SetValue and info.widget.value then info.widget:SetValue(info.widget.value) end
 	end
+
 	if thset.search and thset.search.Hint then thset.search.Hint:SetText(self:Trans("LID_SEARCH")) end
 	thset.Language:SetText(self:GetLanguageName())
 	self:UpdateTankHealerMarkerButton()
@@ -61,6 +62,7 @@ function TankHelper:SetLanguage(lang)
 	THTAB["LANGUAGE"] = lang
 	self:RefreshSettingsLanguage()
 end
+
 function TankHelper:ToggleSettings()
 	if thset == nil then return end
 	thset:Toggle()
@@ -234,7 +236,11 @@ function TankHelper:InitSettings()
 		local original = thset[method]
 		thset[method] = function(win, tab)
 			local widget = original(win, tab)
-			tinsert(win.translatedElements, {widget = widget, key = tab.label})
+			tinsert(win.translatedElements, {
+				widget = widget,
+				key = tab.label
+			})
+
 			if widget.slider then widget.slider:HookScript("OnValueChanged", function() TankHelper:RefreshSettingsLanguage() end) end
 			return widget
 		end
@@ -272,10 +278,12 @@ function TankHelper:InitSettings()
 				for i, info in ipairs(TankHelper.LANGUAGES) do
 					if info[2] == TankHelper:GetLang() then current = i end
 				end
+
 				TankHelper:SetLanguage(TankHelper.LANGUAGES[current % #TankHelper.LANGUAGES + 1][2])
 			end
 		end)
 	end
+
 	thset.Language:SetText(TankHelper:GetLanguageName())
 	thset:SuspendLayout()
 	thset:AddSearch()
@@ -377,7 +385,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.11.0")
+		TankHelper:SetVersion(132362, "1.12.0")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
