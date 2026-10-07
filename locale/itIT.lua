@@ -50,3 +50,5 @@ TankHelper:AddTrans("itIT", "LID_marktankhealer", "Mostra il pulsante per contra
 TankHelper:AddTrans("itIT", "LID_marktankandhealer", "Contrassegna %s tank e %s guaritore")
 TankHelper:AddTrans("itIT", "LID_marktankicon", "Icona del tank")
 TankHelper:AddTrans("itIT", "LID_markhealericon", "Icona del guaritore")
+TankHelper:AddTrans("itIT", "LID_hideraidmanager", "Nascondi il gestore delle incursioni Blizzard")
+TankHelper:AddTrans("itIT", "LID_LANGUAGE", "Lingua")

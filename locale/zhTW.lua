@@ -50,3 +50,5 @@ TankHelper:AddTrans("zhTW", "LID_marktankhealer", "顯示坦克和治療者標�
 TankHelper:AddTrans("zhTW", "LID_marktankandhealer", "標記%s坦克和%s治療者")
 TankHelper:AddTrans("zhTW", "LID_marktankicon", "坦克標記")
 TankHelper:AddTrans("zhTW", "LID_markhealericon", "治療者標記")
+TankHelper:AddTrans("zhTW", "LID_hideraidmanager", "隱藏暴雪團隊管理器")
+TankHelper:AddTrans("zhTW", "LID_LANGUAGE", "語言")

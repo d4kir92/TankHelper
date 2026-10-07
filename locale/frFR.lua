@@ -50,3 +50,5 @@ TankHelper:AddTrans("frFR", "LID_marktankhealer", "Afficher le bouton de marquag
 TankHelper:AddTrans("frFR", "LID_marktankandhealer", "Marquer le %s tank et le %s soigneur")
 TankHelper:AddTrans("frFR", "LID_marktankicon", "Icône du tank")
 TankHelper:AddTrans("frFR", "LID_markhealericon", "Icône du soigneur")
+TankHelper:AddTrans("frFR", "LID_hideraidmanager", "Masquer le gestionnaire de raid Blizzard")
+TankHelper:AddTrans("frFR", "LID_LANGUAGE", "Langue")

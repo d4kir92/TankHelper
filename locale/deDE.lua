@@ -50,3 +50,5 @@ TankHelper:AddTrans("deDE", "LID_marktankhealer", "Button zum Markieren von Tank
 TankHelper:AddTrans("deDE", "LID_marktankandhealer", "%s Tank und %s Heiler markieren")
 TankHelper:AddTrans("deDE", "LID_marktankicon", "Tank-Symbol")
 TankHelper:AddTrans("deDE", "LID_markhealericon", "Heiler-Symbol")
+TankHelper:AddTrans("deDE", "LID_hideraidmanager", "Blizzard-Raidmanager ausblenden")
+TankHelper:AddTrans("deDE", "LID_LANGUAGE", "Sprache")

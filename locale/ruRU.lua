@@ -50,3 +50,5 @@ TankHelper:AddTrans("ruRU", "LID_marktankhealer", "Показывать кноп
 TankHelper:AddTrans("ruRU", "LID_marktankandhealer", "Отметить %s танка и %s лекаря")
 TankHelper:AddTrans("ruRU", "LID_marktankicon", "Метка танка")
 TankHelper:AddTrans("ruRU", "LID_markhealericon", "Метка лекаря")
+TankHelper:AddTrans("ruRU", "LID_hideraidmanager", "Скрыть управление рейдом Blizzard")
+TankHelper:AddTrans("ruRU", "LID_LANGUAGE", "Язык")

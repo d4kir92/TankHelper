@@ -50,3 +50,5 @@ TankHelper:AddTrans("enUS", "LID_marktankhealer", "Show Tank and Healer marker b
 TankHelper:AddTrans("enUS", "LID_marktankandhealer", "Mark %s Tank and %s Healer")
 TankHelper:AddTrans("enUS", "LID_marktankicon", "Tank icon")
 TankHelper:AddTrans("enUS", "LID_markhealericon", "Healer icon")
+TankHelper:AddTrans("enUS", "LID_hideraidmanager", "Hide Blizzard Raid Manager")
+TankHelper:AddTrans("enUS", "LID_LANGUAGE", "Language")

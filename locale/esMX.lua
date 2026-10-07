@@ -50,3 +50,5 @@ TankHelper:AddTrans("esMX", "LID_marktankhealer", "Mostrar botón para marcar al
 TankHelper:AddTrans("esMX", "LID_marktankandhealer", "Marcar %s tanque y %s sanador")
 TankHelper:AddTrans("esMX", "LID_marktankicon", "Icono del tanque")
 TankHelper:AddTrans("esMX", "LID_markhealericon", "Icono del sanador")
+TankHelper:AddTrans("esMX", "LID_hideraidmanager", "Ocultar el gestor de banda de Blizzard")
+TankHelper:AddTrans("esMX", "LID_LANGUAGE", "Idioma")

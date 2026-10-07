@@ -50,3 +50,5 @@ TankHelper:AddTrans("koKR", "LID_marktankhealer", "방어 담당 및 치유 담�
 TankHelper:AddTrans("koKR", "LID_marktankandhealer", "%s 방어 담당 및 %s 치유 담당 징표 설정")
 TankHelper:AddTrans("koKR", "LID_marktankicon", "방어 담당 징표")
 TankHelper:AddTrans("koKR", "LID_markhealericon", "치유 담당 징표")
+TankHelper:AddTrans("koKR", "LID_hideraidmanager", "블리자드 공격대 관리자 숨기기")
+TankHelper:AddTrans("koKR", "LID_LANGUAGE", "언어")

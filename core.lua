@@ -6,7 +6,7 @@ local cbr = 3 -- Cell Border
 local iconsize = 16
 local iconbr = 4
 local iconbtn = iconsize + 2 * iconbr
-local pt = {3, 5, 10, 20}
+local pt = {3, 5, 10, 20, 60, 300}
 local THStatusColor = {1, 1, 1, 1}
 local updatewms = true
 local ricons1 = {}
@@ -18,6 +18,63 @@ local WMN = 8
 local WMIds = {}
 local wms = {5, 6, 3, 2, 7, 1, 4, 8}
 local targetRevision = 0
+function TankHelper:UpdateRaidManager()
+	if InCombatLockdown() then return end
+	local manager = CompactRaidFrameManager
+	if not manager then return end
+	if not manager.thVisibilityHooked then
+		manager.thVisibilityHooked = true
+		manager:HookScript("OnShow", function() if TankHelper:GetConfig("hideraidmanager", true) then TankHelper:UpdateRaidManager() end end)
+	end
+
+	if TankHelper:GetConfig("hideraidmanager", true) then
+		manager:Hide()
+	elseif CompactRaidFrameManager_UpdateShown then
+		CompactRaidFrameManager_UpdateShown(manager)
+	end
+end
+
+function TankHelper:UpdateRaidManagerIcons()
+	if not THExtras then return end
+	local manager = CompactRaidFrameManager
+	local display = manager and manager.displayFrame
+	local options = display and (display.leaderOptions or display)
+	for _, info in ipairs({{"btnReadycheck", "readyCheckButton", "GM-icon-readyCheck", READY_CHECK}, {"btnRolepoll", "rolePollButton", "GM-icon-roles", ROLE_POLL}}) do
+		local button = THExtras[info[1]]
+		if button then
+			local source = options and options[info[2]]
+			local texture = source and source:GetNormalTexture()
+			local atlas = texture and texture.GetAtlas and texture:GetAtlas()
+			if not atlas and C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(info[3]) then atlas = info[3] end
+			if atlas or (texture and texture:GetTexture()) then
+				if not button.icon then
+					button.icon = button:CreateTexture(nil, "ARTWORK")
+					button.icon:SetPoint("CENTER")
+				end
+
+				button.icon:SetSize(iconsize, iconsize)
+				if atlas then
+					button.icon:SetAtlas(atlas)
+
+				else
+					button.icon:SetTexture(texture:GetTexture())
+					button.icon:SetTexCoord(texture:GetTexCoord())
+				end
+
+				button:SetText("")
+			else
+				button:SetText(info[4])
+			end
+
+			button:SetScript("OnEnter", function(sel)
+				GameTooltip:SetOwner(sel, "ANCHOR_RIGHT")
+				GameTooltip:SetText(info[4])
+				GameTooltip:Show()
+			end)
+			button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+		end
+	end
+end
 function TankHelper:CreateInvisibleButton(name, parent)
 	local btn = CreateFrame("Button", name, parent, "SecureActionButtonTemplate")
 	btn.text = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -493,7 +550,7 @@ function TankHelper:InitFrames()
 			THWorldMarkers:Hide()
 		end
 
-		if btnId <= #pt then
+		if btnId >= 1 and btnId <= #pt then
 			local PullName = "btnPull" .. btnId
 			THExtras[PullName] = TankHelper:CreateInvisibleButton(PullName, THExtras)
 			THExtras[PullName]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + (btnId - 1) * (iconbtn + ibr), -obr)
@@ -504,28 +561,30 @@ function TankHelper:InitFrames()
 	end
 
 	THExtras["btnReadycheck"] = TankHelper:CreateInvisibleButton("btnReadycheck", THExtras)
-	if IsRaidMarkerActive or InitiateRolePoll then
-		THExtras["btnReadycheck"]:SetSize(50, iconbtn)
-		THExtras["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 6))
-	else
-		THExtras["btnReadycheck"]:SetSize(100, iconbtn)
-		THExtras["btnReadycheck"]:SetText(string.sub(READY_CHECK, 1, 12))
-	end
+	THExtras["btnReadycheck"]:SetSize(iconbtn, iconbtn)
 
 	THExtras["btnReadycheck"]:SetScript("OnClick", function(sel, btn, down) DoReadyCheck() end)
 	if InitiateRolePoll then
 		THExtras["btnRolepoll"] = TankHelper:CreateInvisibleButton("btnRolepoll", THExtras)
-		THExtras["btnRolepoll"]:SetSize(50, iconbtn)
+		THExtras["btnRolepoll"]:SetSize(iconbtn, iconbtn)
 		THExtras["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
 		THExtras["btnRolepoll"]:SetScript("OnClick", function(sel, btn, down) InitiateRolePoll() end)
 	end
 
+	TankHelper:UpdateRaidManagerIcons()
+	TankHelper:UpdateRaidManager()
 	THExtras["btnDiscord"] = TankHelper:CreateInvisibleButton("btnDiscord", THExtras)
 	THExtras["btnDiscord"]:SetPoint("TOPLEFT", THExtras, "TOPLEFT", obr + 100 + ibr + 100 + ibr, -obr - Y * (iconbtn + cbr))
 	THExtras["btnDiscord"]:SetSize(iconbtn, iconbtn)
 	THExtras["btnDiscord"]:SetText("D")
 	THExtras["btnDiscord"]:SetScript("OnClick", function(sel, btn, down)
-		local s = CreateFrame("Frame", nil, UIParent)
+		if TankHelper.discordWindow then
+			TankHelper.discordWindow:SetShown(not TankHelper.discordWindow:IsShown())
+			return
+		end
+
+		local s = CreateFrame("Frame", "TankHelperDiscordWindow", UIParent)
+		TankHelper.discordWindow = s
 		s:SetSize(300, 2 * iconbtn + 2 * 10)
 		s:SetPoint("CENTER")
 		s.texture = s:CreateTexture(nil, "BACKGROUND")
@@ -534,13 +593,13 @@ function TankHelper:InitFrames()
 		s.text = s:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		s.text:SetText("Feedback")
 		s.text:SetPoint("CENTER", s, "TOP", 0, -10)
-		local eb = CreateFrame("EditBox", "logEditBox", s, "InputBoxTemplate")
+		local eb = CreateFrame("EditBox", "TankHelperDiscordEditBox", s, "InputBoxTemplate")
 		eb:SetFrameStrata("DIALOG")
 		eb:SetSize(280, iconbtn)
 		eb:SetAutoFocus(false)
 		eb:SetText("https://discord.gg/Ymv5MamPd5")
 		eb:SetPoint("TOPLEFT", 10, -10 - iconbtn)
-		s.close = TankHelper:CreateButton("closediscord", s)
+		s.close = TankHelper:CreateButton("TankHelperDiscordClose", s)
 		s.close:SetFrameStrata("DIALOG")
 		s.close:SetPoint("TOPLEFT", 300 - 10 - iconbtn, -10)
 		s.close:SetSize(iconbtn, iconbtn)
@@ -564,6 +623,8 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("ADDON_LOADED")
 	THCockpit:RegisterEvent("UPDATE_BINDINGS")
 	THCockpit:HookScript("OnEvent", function(sel, e, ...)
+		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" or e == "GROUP_ROSTER_UPDATE" or e == "PLAYER_REGEN_ENABLED" then TankHelper:UpdateRaidManager() end
+		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" then TankHelper:UpdateRaidManagerIcons() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "PLAYER_REGEN_ENABLED" or e == "UPDATE_BINDINGS" then TankHelper:UpdateTabMarker() end
 		if e == "PLAYER_ENTERING_WORLD" and TankHelper:GetConfig("autoselect", 8) ~= -1 then
 			local btn = THTargetMarkers["btnM" .. TankHelper:GetConfig("autoselect", 8)]
@@ -871,9 +932,11 @@ function TankHelper:UpdateDesign()
 	iconbr = iconsize / 4
 	iconbtn = iconsize + 2 * iconbr
 	THCockpit:SetScale(scalecockpit)
-	THTargetMarkers:SetScale(scalecockpit)
-	THWorldMarkers:SetScale(scalecockpit)
-	THExtras:SetScale(scalecockpit)
+	local combined = TankHelper:GetConfig("combineall", false)
+	for _, bar in ipairs({THTargetMarkers, THWorldMarkers, THExtras}) do
+		bar:SetParent(combined and THCockpit or UIParent)
+		bar:SetScale(combined and 1 or scalecockpit)
+	end
 	THStatus:SetScale(scalestatus)
 	local THROW = 1
 	THTargetMarkers:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, iconbtn + 2 * obr)
@@ -906,7 +969,7 @@ function TankHelper:UpdateDesign()
 		end
 	end
 
-	for pId = 0, 8 do
+	for pId = 1, #pt do
 		if pId <= #pt then
 			local PullName = "btnPull" .. pId
 			if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
@@ -919,15 +982,14 @@ function TankHelper:UpdateDesign()
 		end
 	end
 
-	local bw = obr + (5 - 1) * (iconbtn + ibr)
-	local bsw = THExtras:GetWidth() - bw - obr - iconsize - ibr
-	if IsRaidMarkerActive or InitiateRolePoll then bsw = bsw / 2 end
+	TankHelper:UpdateRaidManagerIcons()
+
 	if TankHelper:GetConfig("hidespecialbar", false) and TankHelper:GetConfig("combineall", false) then
 		THExtras["btnReadycheck"]:Hide()
 	else
 		THExtras["btnReadycheck"]:ClearAllPoints()
-		THExtras["btnReadycheck"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + iconbtn + bsw), obr)
-		THExtras["btnReadycheck"]:SetSize(bsw, iconbtn)
+		THExtras["btnReadycheck"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + (InitiateRolePoll and 2 or 1) * (iconbtn + ibr)), obr)
+		THExtras["btnReadycheck"]:SetSize(iconbtn, iconbtn)
 		THExtras["btnReadycheck"]:Show()
 	end
 
@@ -936,8 +998,8 @@ function TankHelper:UpdateDesign()
 			THExtras["btnRolepoll"]:Hide()
 		else
 			THExtras["btnRolepoll"]:ClearAllPoints()
-			THExtras["btnRolepoll"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + iconbtn), obr)
-			THExtras["btnRolepoll"]:SetSize(bsw, iconbtn)
+			THExtras["btnRolepoll"]:SetPoint("BOTTOMRIGHT", THExtras, "BOTTOMRIGHT", -(obr + iconbtn + ibr), obr)
+			THExtras["btnRolepoll"]:SetSize(iconbtn, iconbtn)
 			THExtras["btnRolepoll"]:Show()
 		end
 	end
@@ -1050,6 +1112,21 @@ function TankHelper:InitSetup()
 	if not InCombatLockdown() then
 		TankHelper:InitFrames()
 		TankHelper:UpdateDesign()
+		for _, bar in ipairs({THCockpit, THTargetMarkers, THWorldMarkers, THExtras}) do
+			bar.thLastScale = bar:GetScale()
+			hooksecurefunc(bar, "SetScale", function(sel)
+				local scale = sel:GetScale()
+				if scale == sel.thLastScale then return end
+				sel.thLastScale = scale
+				if TankHelper.scaleRefreshPending then return end
+				TankHelper.scaleRefreshPending = true
+				TankHelper:After(0, function()
+					TankHelper:UpdateDesign()
+					TankHelper.scaleRefreshPending = false
+				end, "Refresh scaled bars")
+			end)
+			bar:HookScript("OnSizeChanged", function(sel) TankHelper:UpdateFrameDesign(sel) end)
+		end
 		TankHelper:SetStatusText()
 	else
 		TankHelper:After(0.15, TankHelper.InitSetup, "InitSetup")

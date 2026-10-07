@@ -50,3 +50,5 @@ TankHelper:AddTrans("zhCN", "LID_marktankhealer", "显示坦克和治疗标记�
 TankHelper:AddTrans("zhCN", "LID_marktankandhealer", "标记%s坦克和%s治疗")
 TankHelper:AddTrans("zhCN", "LID_marktankicon", "坦克标记")
 TankHelper:AddTrans("zhCN", "LID_markhealericon", "治疗标记")
+TankHelper:AddTrans("zhCN", "LID_hideraidmanager", "隐藏暴雪团队管理器")
+TankHelper:AddTrans("zhCN", "LID_LANGUAGE", "语言")

@@ -25,11 +25,42 @@ function TankHelper:UpdateColors(frame)
 	end
 end
 
+TankHelper.LANGUAGES = {{"English", "enUS"}, {"Deutsch", "deDE"}, {"Español (España)", "esES"}, {"Español (México)", "esMX"}, {"Français", "frFR"}, {"Italiano", "itIT"}, {"한국어", "koKR"}, {"Português (Brasil)", "ptBR"}, {"Русский", "ruRU"}, {"简体中文", "zhCN"}, {"繁體中文", "zhTW"}}
+local Translate = TankHelper.Trans
 function TankHelper:GetLang()
-	if TankHelper:GetConfig("showtranslation", true) then return nil end
-	return "enUS"
+	return THTAB and THTAB["LANGUAGE"] or (TankHelper:GetConfig("showtranslation", true) and GetLocale() or "enUS")
 end
 
+function TankHelper:Trans(key, lang, ...)
+	return Translate(self, key, lang or self:GetLang(), ...)
+end
+
+function TankHelper:GetLanguageName()
+	for _, info in ipairs(self.LANGUAGES) do
+		if info[2] == self:GetLang() then return info[1] end
+	end
+	return self:GetLang()
+end
+
+function TankHelper:RefreshSettingsLanguage()
+	if not thset then return end
+	for _, info in ipairs(thset.translatedElements or {}) do
+		local text = self:Trans(info.key)
+		if info.widget.slider then text = format(text, info.widget.slider:GetValue()) end
+		if info.widget.Label then info.widget.Label:SetText(text) end
+		local element = info.widget.uiElement or info.widget.element
+		if element then self.UI:SetLabel(element, text) end
+		if info.widget.SetValue and info.widget.value then info.widget:SetValue(info.widget.value) end
+	end
+	if thset.search and thset.search.Hint then thset.search.Hint:SetText(self:Trans("LID_SEARCH")) end
+	thset.Language:SetText(self:GetLanguageName())
+	self:UpdateTankHealerMarkerButton()
+end
+
+function TankHelper:SetLanguage(lang)
+	THTAB["LANGUAGE"] = lang
+	self:RefreshSettingsLanguage()
+end
 function TankHelper:ToggleSettings()
 	if thset == nil then return end
 	thset:Toggle()
@@ -68,13 +99,14 @@ local function AddCategory(key)
 	})
 end
 
-local function AddCheckbox(key, default, func)
+local function AddCheckbox(key, default, func, added)
 	local value = THTAB[key]
 	if value == nil then value = default end
 	thset:AddCheckbox({
 		["label"] = "LID_" .. key,
 		["search"] = key,
 		["value"] = value,
+		["added"] = added,
 		["func"] = function(newValue)
 			THTAB[key] = newValue
 			if func then func() end
@@ -197,6 +229,54 @@ function TankHelper:InitSettings()
 		["title"] = format("|T132362:16:16:0:0|t TankHelper by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", TankHelper:GetVersion())
 	})
 
+	thset.translatedElements = {}
+	for _, method in ipairs({"AddCategory", "AddCheckbox", "AddSlider", "AddDropdown", "AddColorPicker"}) do
+		local original = thset[method]
+		thset[method] = function(win, tab)
+			local widget = original(win, tab)
+			tinsert(win.translatedElements, {widget = widget, key = tab.label})
+			if widget.slider then widget.slider:HookScript("OnValueChanged", function() TankHelper:RefreshSettingsLanguage() end) end
+			return widget
+		end
+	end
+
+	function thset.LanguageMenu(_, root)
+		root:CreateTitle(TankHelper:Trans("LID_LANGUAGE"))
+		for _, info in ipairs(TankHelper.LANGUAGES) do
+			local lang = info[2]
+			root:CreateRadio(format("%s (%s)", info[1], lang), function() return TankHelper:GetLang() == lang end, function() TankHelper:SetLanguage(lang) end)
+		end
+	end
+
+	if TankHelper:GetWoWBuild() == "RETAIL" and TankHelper:CheckTemplates("WowStyle1DropdownTemplate") then
+		thset.Language = CreateFrame("DropdownButton", "TankHelperSettings_Language", thset.titleBar or thset, "WowStyle1DropdownTemplate")
+		thset.Language:SetScale(0.8)
+		thset.Language:SetSize(162.5, 25)
+		thset.Language:SetPoint("TOPLEFT", thset.titleBar or thset, "TOPLEFT", 10, -1.25)
+		thset.Language:SetSelectionText(function() return TankHelper:GetLanguageName() end)
+		thset.Language:SetTooltip(function(tooltip) tooltip:SetText(TankHelper:Trans("LID_LANGUAGE")) end)
+		thset.Language:SetupMenu(thset.LanguageMenu)
+	else
+		thset.Language = TankHelper:CreateButton("TankHelperSettings_Language", thset.titleBar or thset)
+		thset.Language:SetSize(130, 20)
+		thset.Language:SetPoint("TOPLEFT", thset.titleBar or thset, "TOPLEFT", 7, -2)
+		thset.Language.Arrow = thset.Language:CreateTexture(nil, "OVERLAY")
+		thset.Language.Arrow:SetTexture("Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up")
+		thset.Language.Arrow:SetSize(16, 16)
+		thset.Language.Arrow:SetPoint("RIGHT", thset.Language, "RIGHT", -2, 0)
+		thset.Language:SetScript("OnClick", function(sel)
+			if MenuUtil and MenuUtil.CreateContextMenu then
+				MenuUtil.CreateContextMenu(sel, thset.LanguageMenu)
+			else
+				local current = 1
+				for i, info in ipairs(TankHelper.LANGUAGES) do
+					if info[2] == TankHelper:GetLang() then current = i end
+				end
+				TankHelper:SetLanguage(TankHelper.LANGUAGES[current % #TankHelper.LANGUAGES + 1][2])
+			end
+		end)
+	end
+	thset.Language:SetText(TankHelper:GetLanguageName())
 	thset:SuspendLayout()
 	thset:AddSearch()
 	AddCategory("general")
@@ -208,7 +288,7 @@ function TankHelper:InitSettings()
 		end
 	end)
 
-	AddCheckbox("showtranslation", true)
+	AddCheckbox("hideraidmanager", true, function() TankHelper:UpdateRaidManager() end, "2026-10-07")
 	AddCategory("design")
 	AddCheckbox("showalways", false)
 	AddCheckbox("combineall", false, TankHelper.UpdateDesign)
@@ -285,6 +365,7 @@ function TankHelper:InitSettings()
 	AddSlider("healthmax", 0.9, 0.1, 1.0, 0.1, 1)
 	AddSlider("powermax", 0.9, 0.1, 1.0, 0.1, 1)
 	thset:ResumeLayout()
+	TankHelper:RefreshSettingsLanguage()
 end
 
 local THloaded = false

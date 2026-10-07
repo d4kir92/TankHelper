@@ -50,3 +50,5 @@ TankHelper:AddTrans("ptBR", "LID_marktankhealer", "Mostrar botão para marcar ta
 TankHelper:AddTrans("ptBR", "LID_marktankandhealer", "Marcar %s tanque e %s curador")
 TankHelper:AddTrans("ptBR", "LID_marktankicon", "Ícone do tanque")
 TankHelper:AddTrans("ptBR", "LID_markhealericon", "Ícone do curador")
+TankHelper:AddTrans("ptBR", "LID_hideraidmanager", "Ocultar o gerenciador de raide da Blizzard")
+TankHelper:AddTrans("ptBR", "LID_LANGUAGE", "Idioma")
