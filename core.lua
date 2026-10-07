@@ -52,7 +52,7 @@ function TankHelper:UpdateRaidManagerIcons()
 					button.icon:SetPoint("CENTER")
 				end
 
-				button.icon:SetSize(iconsize, iconsize)
+				button.icon:SetSize(iconbtn, iconbtn)
 				if atlas then
 					button.icon:SetAtlas(atlas)
 
@@ -1036,19 +1036,12 @@ function TankHelper:UpdateDesign()
 			THCockpit:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 		end
 
-		if THWorldMarkers then
-			THWorldMarkers:ClearAllPoints()
-			THWorldMarkers:SetPoint("CENTER", THCockpit, "CENTER", 0, 0)
-		end
-
-		if THTargetMarkers then
-			THTargetMarkers:ClearAllPoints()
-			THTargetMarkers:SetPoint("TOP", THCockpit, "TOP", 0, 0)
-		end
-
-		if THExtras then
-			THExtras:ClearAllPoints()
-			THExtras:SetPoint("BOTTOM", THCockpit, "BOTTOM", 0, 0)
+		local row = 0
+		for _, info in ipairs({{THTargetMarkers, "hidetargetmarks", true}, {THWorldMarkers, "hideworldmarks", IsRaidMarkerActive ~= nil}, {THExtras, "hidespecialbar", true}}) do
+			local bar = info[1]
+			bar:ClearAllPoints()
+			bar:SetPoint("TOPLEFT", THCockpit, "TOPLEFT", 0, -row * (iconbtn + cbr))
+			if info[3] and not TankHelper:GetConfig(info[2], false) then row = row + 1 end
 		end
 	else
 		point = THTAB["THWorldMarkers" .. "point"]
@@ -1101,7 +1094,7 @@ function TankHelper:UpdateDesign()
 	end
 
 	local cl_rows = 0
-	if TankHelper:GetConfig("hideworldmarks", false) == false then cl_rows = cl_rows + 1 end
+	if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then cl_rows = cl_rows + 1 end
 	if TankHelper:GetConfig("hidetargetmarks", false) == false then cl_rows = cl_rows + 1 end
 	if TankHelper:GetConfig("hidespecialbar", false) == false then cl_rows = cl_rows + 1 end
 	THCockpit:SetSize(cols * iconbtn + (cols - 1) * ibr + 2 * obr, cl_rows * iconbtn + (cl_rows - 1) * cbr + 2 * obr)
