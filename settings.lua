@@ -290,7 +290,7 @@ function TankHelper:InitSettings()
 
 	AddCheckbox("hideraidmanager", true, function() TankHelper:UpdateRaidManager() end, "2026-10-07")
 	AddCategory("design")
-	AddCheckbox("showalways", false)
+	AddCheckbox("showalways", false, function() if TankHelper.DesignThink then TankHelper:DesignThink() end end)
 	AddCheckbox("combineall", false, TankHelper.UpdateDesign)
 	AddCheckbox("fixposition", false)
 	AddSlider("obr", 6.0, 3.0, 12.0, 1, 0, TankHelper.UpdateDesign)

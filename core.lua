@@ -317,11 +317,7 @@ end
 
 function TankHelper:HideCombinedAll()
 	THCockpit:Hide()
-	if IsRaidMarkerActive and TankHelper:GetConfig("hideworldmarks", false) == false then
-		THWorldMarkers:Show()
-	else
-		THWorldMarkers:Hide()
-	end
+	THWorldMarkers:Hide()
 
 	THTargetMarkers:Hide()
 	THExtras:Hide()
@@ -623,6 +619,7 @@ function TankHelper:InitFrames()
 	THCockpit:RegisterEvent("ADDON_LOADED")
 	THCockpit:RegisterEvent("UPDATE_BINDINGS")
 	THCockpit:HookScript("OnEvent", function(sel, e, ...)
+		if (e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_REGEN_ENABLED") and TankHelper.DesignThink then TankHelper:DesignThink() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" or e == "GROUP_ROSTER_UPDATE" or e == "PLAYER_REGEN_ENABLED" then TankHelper:UpdateRaidManager() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "ADDON_LOADED" then TankHelper:UpdateRaidManagerIcons() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "PLAYER_REGEN_ENABLED" or e == "UPDATE_BINDINGS" then TankHelper:UpdateTabMarker() end
