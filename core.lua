@@ -398,8 +398,9 @@ function TankHelper:InitFrames()
 	markerHolder:SetAllPoints(UIParent)
 	markerHolder:SetFrameStrata("DIALOG")
 	RegisterStateDriver(markerHolder, "visibility", "[combat] hide; show")
-	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", markerHolder, "SecureActionButtonTemplate,GameMenuButtonTemplate")
-	THMarkTankAndHealer:SetSize(220, 40)
+	local menuButtonTemplate = TankHelper:CheckTemplates("MainMenuFrameButtonTemplate") and "MainMenuFrameButtonTemplate" or "GameMenuButtonTemplate"
+	THMarkTankAndHealer = CreateFrame("Button", "THMarkTankAndHealer", markerHolder, "SecureActionButtonTemplate," .. menuButtonTemplate)
+	THMarkTankAndHealer:SetWidth(220)
 	if THTAB["THMarkTankAndHealer" .. "point"] then
 		THMarkTankAndHealer:SetPoint(THTAB["THMarkTankAndHealer" .. "point"], UIParent, THTAB["THMarkTankAndHealer" .. "relativePoint"], THTAB["THMarkTankAndHealer" .. "ofsx"], THTAB["THMarkTankAndHealer" .. "ofsy"])
 	else
