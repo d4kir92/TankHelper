@@ -376,7 +376,7 @@ function TankHelper:InitSettings()
 		return THTAB["nameplatethreat"] == true
 	end
 
-	for _, widget in ipairs({AddCheckbox("nameplatethreaticon", true, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddCheckbox("nameplatethreathealthcolor", false, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddSlider("nameplatethreatx", 0, -150, 150, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08"), AddSlider("nameplatethreaty", 70, -50, 150, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08")}) do
+	for _, widget in ipairs({AddCheckbox("nameplatethreaticon", true, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddCheckbox("nameplatethreathealthcolor", false, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddSlider("nameplatethreatx", 0, -200, 200, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08"), AddSlider("nameplatethreaty", 70, -150, 150, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08")}) do
 		thset:AddRequirement(widget, nameplateThreat)
 		thset:AddDependency(widget, IsNameplateThreatEnabled)
 	end
@@ -400,7 +400,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.12.3")
+		TankHelper:SetVersion(132362, "1.12.4")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
