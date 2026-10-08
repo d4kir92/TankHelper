@@ -1313,13 +1313,11 @@ function TankHelper:UpdateThreatStatus(np, reset)
 		np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
 	end
 
-	if TankHelper:GetConfig("nameplatethreaticon", true) then
-		np.th_threat.texture:SetAlpha(1)
-	else
-		np.th_threat.texture:SetAlpha(0)
-	end
-
 	np.th_threat.texture:SetVertexColor(r, g, b, 1)
+	local showIcon = TankHelper:GetConfig("nameplatethreaticon", true) == true
+	np.th_threat.texture:SetShown(showIcon)
+	np.th_threat.texture:SetAlpha(showIcon and 1 or 0)
+
 	if status ~= nil and TankHelper:GetConfig("nameplatethreathealthcolor", false) then
 		SetThreatHealthColor(np, r, g, b)
 	else
