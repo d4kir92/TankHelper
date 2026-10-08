@@ -1150,8 +1150,61 @@ frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+local threatBars = {}
+local function GetThreatHealthBar(np)
+	local unitFrame = np.UnitFrame
+	if unitFrame == nil then return nil end
+	local bar = unitFrame.healthBar
+	if bar == nil and unitFrame.HealthBarsContainer then bar = unitFrame.HealthBarsContainer.healthBar end
+	if bar == nil or bar:IsForbidden() or type(bar.GetStatusBarColor) ~= "function" then return nil end
+	return bar
+end
+
+local function IsSameColor(r1, g1, b1, r2, g2, b2)
+	if r2 == nil or g2 == nil or b2 == nil then return false end
+	return math.abs(r1 - r2) < 0.01 and math.abs(g1 - g2) < 0.01 and math.abs(b1 - b2) < 0.01
+end
+
+local function ApplyThreatHealthColor(np)
+	local threat = np.th_threat
+	local bar = GetThreatHealthBar(np)
+	if threat == nil or bar == nil then return end
+	local r, g, b = bar:GetStatusBarColor()
+	if TankHelper:IsSecret(r) or TankHelper:IsSecret(g) or TankHelper:IsSecret(b) or type(r) ~= "number" or type(g) ~= "number" or type(b) ~= "number" then return end
+	local applied = IsSameColor(r, g, b, threat.appliedR, threat.appliedG, threat.appliedB)
+	if threat.wantR == nil then
+		if applied and threat.origR ~= nil then bar:SetStatusBarColor(threat.origR, threat.origG, threat.origB) end
+		threat.appliedR, threat.appliedG, threat.appliedB = nil, nil, nil
+		threat.origR, threat.origG, threat.origB = nil, nil, nil
+		return
+	end
+
+	if not applied or threat.origR == nil then threat.origR, threat.origG, threat.origB = r, g, b end
+	bar:SetStatusBarColor(threat.wantR, threat.wantG, threat.wantB)
+	threat.appliedR, threat.appliedG, threat.appliedB = bar:GetStatusBarColor()
+end
+
+local function SetThreatHealthColor(np, r, g, b)
+	local threat = np.th_threat
+	if threat == nil then return end
+	if r == nil and threat.wantR == nil and threat.appliedR == nil then return end
+	threat.wantR, threat.wantG, threat.wantB = r, g, b
+	ApplyThreatHealthColor(np)
+end
+
+local threatHealthHooked = false
+local function HookThreatHealthColor()
+	if threatHealthHooked or type(CompactUnitFrame_UpdateHealthColor) ~= "function" then return end
+	threatHealthHooked = true
+	hooksecurefunc("CompactUnitFrame_UpdateHealthColor", function(unitFrame)
+		local np = threatBars[unitFrame]
+		if np ~= nil and np.th_threat ~= nil and np.th_threat.wantR ~= nil then ApplyThreatHealthColor(np) end
+	end)
+end
+
 local function ClearThreatDisplay(np)
 	if np.th_threat == nil then return end
+	SetThreatHealthColor(np, nil)
 	np.th_threat.text:SetText("")
 	np.th_threat.text:SetTextColor(0, 0, 0, 0)
 	np.th_threat.texture:SetTexture(nil)
@@ -1165,11 +1218,32 @@ local function CreateThreatDisplay(np)
 	np.th_threat:SetPoint("CENTER", np, "CENTER", 0, 0)
 	np.th_threat.texture = np:CreateTexture(nil, "OVERLAY")
 	np.th_threat.texture:SetSize(42, 42)
-	np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
 	np.th_threat.text = np:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	TankHelper:SetFontSize(np.th_threat.text, 12, "THINOUTLINE")
-	np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", 0, 70)
+	TankHelper:UpdateThreatPosition(np)
 	ClearThreatDisplay(np)
+end
+
+function TankHelper:UpdateThreatPosition(np)
+	if np.th_threat == nil then return end
+	local x = TankHelper:GetConfig("nameplatethreatx", 0)
+	local y = TankHelper:GetConfig("nameplatethreaty", 70)
+	np.th_threat.texture:ClearAllPoints()
+	np.th_threat.texture:SetPoint("CENTER", np.th_threat, "TOP", x, y)
+	np.th_threat.text:ClearAllPoints()
+	np.th_threat.text:SetPoint("CENTER", np.th_threat, "TOP", x, y)
+end
+
+function TankHelper:UpdateThreatPositions()
+	for _, np in pairs(nps) do
+		TankHelper:UpdateThreatPosition(np)
+	end
+end
+
+function TankHelper:UpdateThreatDisplays()
+	for _, np in pairs(nps) do
+		TankHelper:UpdateThreatStatus(np)
+	end
 end
 
 function TankHelper:UpdateThreatStatus(np, reset)
@@ -1239,8 +1313,18 @@ function TankHelper:UpdateThreatStatus(np, reset)
 		np.th_threat.texture:SetTexCoord(0, 0.5, 0, 0.5)
 	end
 
-	np.th_threat.texture:SetAlpha(1)
+	if TankHelper:GetConfig("nameplatethreaticon", true) then
+		np.th_threat.texture:SetAlpha(1)
+	else
+		np.th_threat.texture:SetAlpha(0)
+	end
+
 	np.th_threat.texture:SetVertexColor(r, g, b, 1)
+	if status ~= nil and TankHelper:GetConfig("nameplatethreathealthcolor", false) then
+		SetThreatHealthColor(np, r, g, b)
+	else
+		SetThreatHealthColor(np, nil)
+	end
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -1253,6 +1337,12 @@ frame:SetScript("OnEvent", function(self, event, ...)
 		local np = C_NamePlate.GetNamePlateForUnit(unit)
 		if np == nil or np:IsForbidden() then return end
 		CreateThreatDisplay(np)
+		TankHelper:UpdateThreatPosition(np)
+		if np.UnitFrame ~= nil then
+			threatBars[np.UnitFrame] = np
+			HookThreatHealthColor()
+		end
+
 		local previousUnit = np.th_threat.unit
 		if previousUnit ~= nil then nps[previousUnit] = nil end
 		np.th_threat.unit = unit

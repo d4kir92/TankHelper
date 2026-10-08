@@ -104,7 +104,7 @@ end
 local function AddCheckbox(key, default, func, added)
 	local value = THTAB[key]
 	if value == nil then value = default end
-	thset:AddCheckbox({
+	return thset:AddCheckbox({
 		["label"] = "LID_" .. key,
 		["search"] = key,
 		["value"] = value,
@@ -116,11 +116,12 @@ local function AddCheckbox(key, default, func, added)
 	})
 end
 
-local function AddSlider(key, default, min, max, step, decimals, func)
-	thset:AddSlider({
+local function AddSlider(key, default, min, max, step, decimals, func, added)
+	return thset:AddSlider({
 		["label"] = "LID_" .. key,
 		["search"] = key,
 		["value"] = TankHelper:GetConfig(key, default),
+		["added"] = added,
 		["min"] = min,
 		["max"] = max,
 		["step"] = step,
@@ -366,7 +367,21 @@ function TankHelper:InitSettings()
 	})
 
 	AddCategory("nameplate")
-	AddCheckbox("nameplatethreat", false)
+	local nameplateThreat = AddCheckbox("nameplatethreat", false, function()
+		TankHelper:UpdateThreatDisplays()
+		thset:UpdateDependencies()
+	end)
+
+	local function IsNameplateThreatEnabled()
+		return THTAB["nameplatethreat"] == true
+	end
+
+	for _, widget in ipairs({AddCheckbox("nameplatethreaticon", true, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddCheckbox("nameplatethreathealthcolor", false, TankHelper.UpdateThreatDisplays, "2026-10-08"), AddSlider("nameplatethreatx", 0, -150, 150, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08"), AddSlider("nameplatethreaty", 70, -50, 150, 1, 0, TankHelper.UpdateThreatPositions, "2026-10-08")}) do
+		thset:AddRequirement(widget, nameplateThreat)
+		thset:AddDependency(widget, IsNameplateThreatEnabled)
+	end
+
+	thset:UpdateDependencies()
 	AddCategory("status")
 	AddCheckbox("hidestatus", true)
 	if UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then AddCheckbox("statusonlyhealers", true) end
@@ -385,7 +400,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.12.1")
+		TankHelper:SetVersion(132362, "1.12.2")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
