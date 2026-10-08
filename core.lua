@@ -22,16 +22,38 @@ function TankHelper:UpdateRaidManager()
 	if InCombatLockdown() then return end
 	local manager = CompactRaidFrameManager
 	if not manager then return end
-	if not manager.thVisibilityHooked then
-		manager.thVisibilityHooked = true
-		manager:HookScript("OnShow", function() if TankHelper:GetConfig("hideraidmanager", true) then TankHelper:UpdateRaidManager() end end)
+	local hide = TankHelper:GetConfig("hideraidmanager", true)
+	manager.thHiddenFrames = manager.thHiddenFrames or {}
+	for _, region in ipairs({manager:GetRegions()}) do
+		region:SetAlpha(hide and 0 or 1)
 	end
 
-	if TankHelper:GetConfig("hideraidmanager", true) then
-		manager:Hide()
-	elseif CompactRaidFrameManager_UpdateShown then
-		CompactRaidFrameManager_UpdateShown(manager)
+	manager:EnableMouse(not hide)
+	for _, child in ipairs({manager:GetChildren()}) do
+		if child ~= manager.container and child ~= manager.containerResizeFrame then
+			if not child.thVisibilityHooked then
+				child.thVisibilityHooked = true
+				child:HookScript("OnShow", function(sel)
+					if TankHelper:GetConfig("hideraidmanager", true) and not InCombatLockdown() then
+						manager.thHiddenFrames[sel] = true
+						sel:Hide()
+					end
+				end)
+			end
+
+			if hide then
+				if child:IsShown() then
+					manager.thHiddenFrames[child] = true
+					child:Hide()
+				end
+			elseif manager.thHiddenFrames[child] then
+				manager.thHiddenFrames[child] = nil
+				child:Show()
+			end
+		end
 	end
+
+	if not hide and CompactRaidFrameManager_UpdateShown then CompactRaidFrameManager_UpdateShown(manager) end
 end
 
 function TankHelper:UpdateRaidManagerIcons()
