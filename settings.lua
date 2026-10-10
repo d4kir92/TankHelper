@@ -337,6 +337,9 @@ function TankHelper:InitSettings()
 
 	AddMarkerIconDropdown("marktankicon", 6)
 	AddMarkerIconDropdown("markhealericon", 5)
+	local wrongMarkCheckbox = AddCheckbox("marktankhealerwrong", false, function() TankHelper:UpdateTankHealerMarkerButton() end, "2026-10-10")
+	wrongMarkCheckbox.uiElement.depth = wrongMarkCheckbox.uiElement.depth + 1
+	tinsert(markerIconDropdowns, wrongMarkCheckbox)
 	UpdateMarkerIconDropdowns()
 	AddCategory("specialbar")
 	AddCheckbox("hidespecialbar", false, TankHelper.UpdateDesign)
@@ -400,7 +403,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.12.5")
+		TankHelper:SetVersion(132362, "1.12.6")
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end

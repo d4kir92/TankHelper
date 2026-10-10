@@ -136,6 +136,22 @@ function TankHelper:GetRaidIconText(index)
 	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":16|t"
 end
 
+TankHelper.roleMarkConfirmed = {}
+TankHelper.ownMarkTime = 0
+function TankHelper:NeedsRoleMark(role, unit, icon)
+	local marker = GetRaidTargetIndex(unit)
+	if TankHelper:IsSecret(marker) then return TankHelper:GetConfig("marktankhealerwrong", false) and TankHelper.roleMarkConfirmed[role] ~= unit .. ":" .. icon end
+	if marker == nil then return true end
+	if marker == icon then return false end
+	if TankHelper:GetConfig("marktankhealerwrong", false) then return true end
+	local autoIcon = TankHelper:GetConfig("autoselect", 8)
+	return autoIcon ~= -1 and marker == autoIcon
+end
+
+function TankHelper:OnRaidTargetUpdate()
+	if GetTime() - TankHelper.ownMarkTime > 1.5 then TankHelper.roleMarkConfirmed = {} end
+end
+
 function TankHelper:UpdateTankHealerMarkerButton()
 	if THMarkTankAndHealer == nil or InCombatLockdown() then return end
 	local tankIcon = TankHelper:GetConfig("marktankicon", 6)
@@ -151,15 +167,19 @@ function TankHelper:UpdateTankHealerMarkerButton()
 	if tankUnit and healerIcon == tankIcon then healerUnit = nil end
 	if tankUnit and not IsUnitNearby(tankUnit) then tankUnit = nil end
 	if healerUnit and not IsUnitNearby(healerUnit) then healerUnit = nil end
-	local tankMarker = tankUnit and GetRaidTargetIndex(tankUnit)
-	local healerMarker = healerUnit and GetRaidTargetIndex(healerUnit)
-	local markTank = tankUnit and not TankHelper:IsSecret(tankMarker) and tankMarker ~= tankIcon
-	local markHealer = healerUnit and not TankHelper:IsSecret(healerMarker) and healerMarker ~= healerIcon
+	local markTank = tankUnit and TankHelper:NeedsRoleMark("TANK", tankUnit, tankIcon)
+	local markHealer = healerUnit and TankHelper:NeedsRoleMark("HEALER", healerUnit, healerIcon)
 	local macro = ""
-	if markTank then macro = "/tm [@" .. tankUnit .. "] " .. tankIcon end
+	THMarkTankAndHealer.pending = {}
+	if markTank then
+		macro = "/tm [@" .. tankUnit .. "] !" .. tankIcon
+		THMarkTankAndHealer.pending["TANK"] = tankUnit .. ":" .. tankIcon
+	end
+
 	if markHealer then
 		if macro ~= "" then macro = macro .. "\n" end
-		macro = macro .. "/tm [@" .. healerUnit .. "] " .. healerIcon
+		macro = macro .. "/tm [@" .. healerUnit .. "] !" .. healerIcon
+		THMarkTankAndHealer.pending["HEALER"] = healerUnit .. ":" .. healerIcon
 	end
 
 	if macro == "" then
@@ -432,11 +452,21 @@ function TankHelper:InitFrames()
 	THMarkTankAndHealer:RegisterForClicks("LeftButtonDown")
 	THMarkTankAndHealer:SetAttribute("type", "macro")
 	THMarkTankAndHealer:SetAttribute("pressAndHoldAction", "1")
+	THMarkTankAndHealer:HookScript("OnClick", function(sel)
+		TankHelper.ownMarkTime = GetTime()
+		for role, key in pairs(sel.pending or {}) do
+			TankHelper.roleMarkConfirmed[role] = key
+		end
+	end)
+
 	THMarkTankAndHealer:Hide()
 	THTabMarker = CreateFrame("Button", "THTabMarker", UIParent, "SecureActionButtonTemplate")
 	THTabMarker:RegisterForClicks("LeftButtonDown")
 	THTabMarker:SetAttribute("type", "macro")
 	THTabMarker:SetAttribute("pressAndHoldAction", "1")
+	THTabMarker:HookScript("OnClick", function()
+		TankHelper.ownMarkTime = GetTime()
+	end)
 	TankHelper:InitFrame(THCockpit, 0, 0)
 	TankHelper:InitFrame(THWorldMarkers, 0, 0)
 	TankHelper:InitFrame(THTargetMarkers, 0, -40)
@@ -468,6 +498,7 @@ function TankHelper:InitFrames()
 		THTargetMarkers["btnM" .. btnId]:SetAttribute("pressAndHoldAction", "1")
 		THTargetMarkers["btnM" .. btnId]:HookScript("OnClick", function(sel, btn, down)
 			if btn == "LeftButton" then
+				if UnitCanAttack("PLAYER", "TARGET") then TankHelper.ownMarkTime = GetTime() end
 				pcall(function() TankHelper:UpdateRaidIcons() end)
 			elseif btn == "RightButton" and btnId > 0 then
 				if TankHelper:GetConfig("autoselect", 8) ~= btnId then
@@ -668,6 +699,7 @@ function TankHelper:InitFrames()
 		end
 
 		if e == "UNIT_HEALTH" or e == "UNIT_POWER_UPDATE" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" then TankHelper:SetStatusText() end
+		if e == "RAID_TARGET_UPDATE" then TankHelper:OnRaidTargetUpdate() end
 		if e == "PLAYER_ENTERING_WORLD" or e == "GROUP_ROSTER_UPDATE" or e == "RAID_ROSTER_UPDATE" or e == "PLAYER_ROLES_ASSIGNED" or e == "ROLE_CHANGED_INFORM" or e == "RAID_TARGET_UPDATE" or e == "PLAYER_REGEN_ENABLED" or e == "PLAYER_DEAD" or e == "PLAYER_ALIVE" or e == "PLAYER_UNGHOST" then TankHelper:UpdateTankHealerMarkerButton() end
 	end)
 
