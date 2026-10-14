@@ -1,5 +1,5 @@
 local _, TankHelper = ...
-TankHelper:SetAddonOutput("TankHelper", 132362)
+TankHelper:SetAddonOutput()
 function TankHelper:GetConfig(str, val)
 	local setting = val
 	THTAB = THTAB or {}

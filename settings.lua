@@ -192,9 +192,9 @@ function TankHelper:InitSettings()
 	if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
 	TankHelper:CreateMinimapButton({
 		["name"] = "TankHelper",
-		["icon"] = 132362,
+		["icon"] = TankHelper:GetAddonIcon(),
 		["dbtab"] = THTAB,
-		["vTT"] = {{"|T132362:16:16:0:0|t TankHelper", "v" .. TankHelper:GetVersion()}, {TankHelper:Trans("LID_LEFTCLICK"), TankHelper:Trans("LID_OPENSETTINGS")}, {TankHelper:Trans("LID_RIGHTCLICK"), TankHelper:Trans("LID_HIDEMINIMAPBUTTON")}},
+		["vTT"] = {{format("|T%s:16:16:0:0|t TankHelper", TankHelper:GetAddonIcon()),"v" .. TankHelper:GetVersion()}, {TankHelper:Trans("LID_LEFTCLICK"), TankHelper:Trans("LID_OPENSETTINGS")}, {TankHelper:Trans("LID_RIGHTCLICK"), TankHelper:Trans("LID_HIDEMINIMAPBUTTON")}},
 		["funcL"] = function() TankHelper:ToggleSettings() end,
 		["funcR"] = function()
 			THTAB["MMBTN"] = not THTAB["MMBTN"]
@@ -229,7 +229,7 @@ function TankHelper:InitSettings()
 		end,
 		["getCollapsed"] = function(key) return GetCollapsed(key) end,
 		["setCollapsed"] = function(key, collapsed) SetCollapsed(key, collapsed) end,
-		["title"] = format("|T132362:16:16:0:0|t TankHelper by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", TankHelper:GetVersion())
+		["title"] = format("|T%s:16:16:0:0|t TankHelper by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", TankHelper:GetAddonIcon(), TankHelper:GetVersion())
 	})
 
 	thset.translatedElements = {}
@@ -403,7 +403,7 @@ function frame:OnEvent(event)
 		THTAB = THTAB or {}
 		THTAB["MMBTNTAB"] = THTAB["MMBTNTAB"] or {}
 		if THTAB["MMBTN"] == nil then THTAB["MMBTN"] = TankHelper:GetWoWBuild() ~= "RETAIL" end
-		TankHelper:SetVersion(132362, "1.12.8")
+		TankHelper:SetVersion()
 		TankHelper:InitSettings()
 		TankHelper:InitSetup()
 	end
