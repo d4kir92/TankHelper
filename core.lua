@@ -56,6 +56,17 @@ function TankHelper:UpdateRaidManager()
 	if not hide and CompactRaidFrameManager_UpdateShown then CompactRaidFrameManager_UpdateShown(manager) end
 end
 
+function TankHelper:ShortText(text)
+	if type(text) ~= "string" then return text end
+	local chars = {}
+	for c in string.gmatch(text, "[%z\1-\127\194-\244][\128-\191]*") do
+		chars[#chars + 1] = c
+		if #chars == 3 then return chars[1] .. chars[2] .. "." end
+	end
+
+	return text
+end
+
 function TankHelper:UpdateRaidManagerIcons()
 	if not THExtras then return end
 	local manager = CompactRaidFrameManager
@@ -85,7 +96,7 @@ function TankHelper:UpdateRaidManagerIcons()
 
 				button:SetText("")
 			else
-				button:SetText(info[4])
+				button:SetText(TankHelper:ShortText(info[4]))
 			end
 
 			button:SetScript("OnEnter", function(sel)
@@ -607,7 +618,7 @@ function TankHelper:InitFrames()
 	if InitiateRolePoll then
 		THExtras["btnRolepoll"] = TankHelper:CreateInvisibleButton("btnRolepoll", THExtras)
 		THExtras["btnRolepoll"]:SetSize(iconbtn, iconbtn)
-		THExtras["btnRolepoll"]:SetText(string.sub(ROLE_POLL, 1, 6))
+		THExtras["btnRolepoll"]:SetText(TankHelper:ShortText(ROLE_POLL))
 		THExtras["btnRolepoll"]:SetScript("OnClick", function(sel, btn, down) InitiateRolePoll() end)
 	end
 
