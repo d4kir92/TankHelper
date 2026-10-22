@@ -805,6 +805,7 @@ function TankHelper:InitFrames()
 end
 
 function TankHelper:TargetIconLogic()
+	if TankHelper:GetConfig("disableautomarkincombat", false) and InCombatLockdown() then return false end
 	if TankHelper:GetWoWBuild() == "RETAIL" then return false end
 	if UnitGroupRolesAssigned and (TankHelper:GetWoWBuildNr() > 19999 or TankHelper:IsForever()) then
 		local role = UnitGroupRolesAssigned("PLAYER")
@@ -846,7 +847,8 @@ function TankHelper:UpdateTabMarker()
 		end
 	end
 
-	local macro = "/targetenemy\n/tm [harm,nodead] ~" .. TankHelper:GetConfig("autoselect", 8)
+	local conditions = TankHelper:GetConfig("disableautomarkincombat", false) and "[nocombat,harm,nodead]" or "[harm,nodead]"
+	local macro = "/targetenemy\n/tm " .. conditions .. " ~" .. TankHelper:GetConfig("autoselect", 8)
 	local state = table.concat(keys, ",") .. "|" .. macro
 	if THTabMarker.state == state then return end
 	THTabMarker.state = state
