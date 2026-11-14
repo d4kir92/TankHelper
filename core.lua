@@ -286,20 +286,28 @@ function TankHelper:CheckUnit(unit, dead, health, power)
 		local can = true
 		if TankHelper:GetConfig("statusonlyhealers", true) and UnitGroupRolesAssigned and TankHelper:GetWoWBuildNr() > 19999 then
 			local role = UnitGroupRolesAssigned(unit)
-			if role ~= "HEALER" then can = false end
+			if TankHelper:IsSecret(role) or role ~= "HEALER" then can = false end
 		end
 
 		if can then
-			local hpercent = UnitHealth(unit) / UnitHealthMax(unit)
-			if hpercent < health then health = hpercent end
+			local hp = UnitHealth(unit)
+			local hpmax = UnitHealthMax(unit)
+			if not TankHelper:IsSecret(hp) and not TankHelper:IsSecret(hpmax) and type(hp) == "number" and type(hpmax) == "number" and hpmax > 0 then
+				local hpercent = hp / hpmax
+				if hpercent < health then health = hpercent end
+			end
+
 			local powertype = UnitPowerType(unit)
-			if powertype == 0 and UnitPower(unit) > 0 and UnitPowerMax(unit) > 0 then
-				local ppercent = UnitPower(unit) / UnitPowerMax(unit)
+			local pp = UnitPower(unit)
+			local ppmax = UnitPowerMax(unit)
+			if not TankHelper:IsSecret(powertype) and not TankHelper:IsSecret(pp) and not TankHelper:IsSecret(ppmax) and powertype == 0 and type(pp) == "number" and type(ppmax) == "number" and pp > 0 and ppmax > 0 then
+				local ppercent = pp / ppmax
 				if ppercent < power then power = ppercent end
 			end
 		end
 
-		if UnitIsDead(unit) then dead = true end
+		local isDead = UnitIsDead(unit)
+		if not TankHelper:IsSecret(isDead) and isDead then dead = true end
 	end
 	return dead, health, power
 end
